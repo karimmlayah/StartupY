@@ -107,86 +107,88 @@ Strict Rules:
 
   // 1. Try Gemini if configured
   if (geminiApiKey && geminiApiKey !== 'your_gemini_api_key_here') {
-    try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: `${systemInstructions}\n\n=== CONTEXT CHUNKS ===\n${contextString}\n\n=== USER QUESTION (Role: ${role}) ===\n${question}`
-                }
-              ]
+    const geminiModels = ['gemini-2.5-flash-lite', 'gemini-flash-latest', 'gemini-3.8-flash', 'gemini-1.5-flash'];
+    for (const model of geminiModels) {
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiApiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: `${systemInstructions}\n\n=== CONTEXT CHUNKS ===\n${contextString}\n\n=== USER QUESTION (Role: ${role}) ===\n${question}`
+                  }
+                ]
+              }
+            ],
+            generationConfig: {
+              temperature: 0.2,
+              maxOutputTokens: 800
             }
-          ],
-          generationConfig: {
-            temperature: 0.2,
-            maxOutputTokens: 800
-          }
-        })
-      });
+          })
+        });
 
-      if (response.ok) {
-        const data = await response.json();
-        let answerText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (answerText) {
-          if (!answerText.includes(MANDATORY_DISCLAIMER)) {
-            answerText += `\n\n${MANDATORY_DISCLAIMER}`;
+        if (response.ok) {
+          const data = await response.json();
+          let answerText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (answerText) {
+            if (!answerText.includes(MANDATORY_DISCLAIMER)) {
+              answerText += `\n\n${MANDATORY_DISCLAIMER}`;
+            }
+            return {
+              answer: answerText.trim(),
+              sources,
+              mode: "live"
+            };
           }
-          return {
-            answer: answerText.trim(),
-            sources,
-            mode: "live"
-          };
         }
-      } else {
-        console.warn(`Gemini API returned status ${response.status}. Falling back to local RAG.`);
+      } catch (err) {
+        // try next model or fallback
       }
-    } catch (err) {
-      console.warn("Gemini API call failed, falling back to local RAG:", err.message);
     }
   }
 
   // 2. Try Groq if configured
   if (groqApiKey && groqApiKey !== 'your_groq_api_key_here') {
-    try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${groqApiKey}`
-        },
-        body: JSON.stringify({
-          model: 'llama-3.1-8b-instant',
-          messages: [
-            { role: 'system', content: systemInstructions },
-            { role: 'user', content: `=== CONTEXT CHUNKS ===\n${contextString}\n\n=== USER QUESTION (Role: ${role}) ===\n${question}` }
-          ],
-          temperature: 0.2,
-          max_tokens: 800
-        })
-      });
+    const groqModels = ['qwen/qwen3.8-27b', 'openai/gpt-oss-20b', 'openai/gpt-oss-120b', 'llama-3.1-8b-instant'];
+    for (const model of groqModels) {
+      try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${groqApiKey}`
+          },
+          body: JSON.stringify({
+            model,
+            messages: [
+              { role: 'system', content: systemInstructions },
+              { role: 'user', content: `=== CONTEXT CHUNKS ===\n${contextString}\n\n=== USER QUESTION (Role: ${role}) ===\n${question}` }
+            ],
+            temperature: 0.2,
+            max_tokens: 800
+          })
+        });
 
-      if (response.ok) {
-        const data = await response.json();
-        let answerText = data.choices?.[0]?.message?.content;
-        if (answerText) {
-          if (!answerText.includes(MANDATORY_DISCLAIMER)) {
-            answerText += `\n\n${MANDATORY_DISCLAIMER}`;
+        if (response.ok) {
+          const data = await response.json();
+          let answerText = data.choices?.[0]?.message?.content;
+          if (answerText) {
+            if (!answerText.includes(MANDATORY_DISCLAIMER)) {
+              answerText += `\n\n${MANDATORY_DISCLAIMER}`;
+            }
+            return {
+              answer: answerText.trim(),
+              sources,
+              mode: "live"
+            };
           }
-          return {
-            answer: answerText.trim(),
-            sources,
-            mode: "live"
-          };
         }
-      } else {
-        console.warn(`Groq API returned status ${response.status}. Falling back to local RAG.`);
+      } catch (err) {
+        // try next model
       }
-    } catch (err) {
-      console.warn("Groq API call failed, falling back to local RAG:", err.message);
     }
   }
 
