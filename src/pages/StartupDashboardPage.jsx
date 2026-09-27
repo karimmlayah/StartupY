@@ -5,21 +5,18 @@ import {
   Sparkles, 
   Users, 
   Eye, 
-  TrendingUp, 
   Clock, 
-  ArrowRight, 
-  CheckCircle2, 
   Check, 
   X, 
-  DollarSign, 
+  Coins, 
   Layers, 
   MapPin, 
   Send,
   PlusCircle,
   ExternalLink,
-  MessageSquare
+  BookOpen
 } from 'lucide-react';
-import { getCurrentStartup, getInterestedStartupIds } from '../utils/storage';
+import { getCurrentStartup } from '../utils/storage';
 import { INITIAL_INVESTORS, MOCK_INTERESTED_REQUESTS } from '../data/mockInvestors';
 
 export default function StartupDashboardPage({ onOpenAiGuide }) {
@@ -54,7 +51,6 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
 
   if (!profile) return null;
 
-  // Number of interested investors: base count + dynamic requests length
   const interestedCount = (profile.interestedInvestorsCount || 6) + investorRequests.length;
 
   return (
@@ -75,24 +71,26 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/60 border border-blue-800/60 text-xs font-semibold text-blue-400 mb-2">
             <Building2 className="w-3.5 h-3.5" />
-            <span>Founder Portal</span>
+            <span>Tunisian Founder Portal</span>
+            <span className="text-slate-500">•</span>
+            <span className="text-slate-400">Demo Data</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
             Startup Dashboard
           </h1>
           <p className="text-sm text-slate-400 mt-1">
-            Real-time pipeline monitoring, investor inbound requests, and AI fundraising guidance.
+            Track interested Tunisian investors, manage inbound checks in TND, and access AI guidance.
           </p>
         </div>
 
-        {/* Required Button: “Ask Startup AI Guide” */}
+        {/* Required Button: “Ask Startup Tunisia Guide” */}
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => onOpenAiGuide('startup')}
             className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 hover:from-violet-500 hover:to-blue-500 shadow-xl shadow-violet-600/30 transition-all cursor-pointer transform hover:-translate-y-0.5"
           >
             <Sparkles className="w-4 h-4 text-violet-200 animate-pulse" />
-            <span>Ask Startup AI Guide</span>
+            <span>Ask Startup Tunisia Guide</span>
           </button>
 
           <Link
@@ -118,7 +116,7 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
             {interestedCount}
           </div>
           <div className="text-xs text-emerald-400 mt-1 flex items-center gap-1">
-            <span>+{investorRequests.length} new inbounds this week</span>
+            <span>+{investorRequests.length} active inbounds</span>
           </div>
         </div>
 
@@ -129,10 +127,10 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
             <Eye className="w-4 h-4 text-violet-400" />
           </div>
           <div className="text-3xl font-black text-white">
-            348
+            184
           </div>
           <div className="text-xs text-slate-400 mt-1">
-            28 VC partners viewed your deck
+            Angels & funds in Tunisia
           </div>
         </div>
 
@@ -146,21 +144,21 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
             94/100
           </div>
           <div className="text-xs text-slate-400 mt-1">
-            Strong traction & unit economics
+            Verified stage traction
           </div>
         </div>
 
         {/* KPI 4: Avg Response Speed */}
         <div className="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-lg">
           <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider">Intro Acceptance</span>
+            <span className="text-xs font-bold uppercase tracking-wider">Average Intro Speed</span>
             <Clock className="w-4 h-4 text-amber-400" />
           </div>
           <div className="text-3xl font-black text-white">
-            86%
+            24h
           </div>
           <div className="text-xs text-slate-400 mt-1">
-            Avg. partner call in 48 hours
+            Tunis & coastal networks
           </div>
         </div>
 
@@ -172,26 +170,29 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
           
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-black text-xl flex items-center justify-center shadow-lg shadow-blue-600/30">
-              {profile.name ? profile.name.slice(0, 2).toUpperCase() : 'SB'}
+              {profile.name ? profile.name.slice(0, 2).toUpperCase() : 'TN'}
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                  {profile.name || 'OmniPulse AI'}
+                  {profile.name || 'AgriSmart Tunisia (Demo)'}
                 </h2>
                 <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                   {profile.stage || 'Early Revenue'}
                 </span>
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  {profile.legalStatus || 'SARL'}
+                </span>
               </div>
               <p className="text-slate-600 text-xs sm:text-sm mt-1 max-w-2xl">
-                {profile.pitch || 'Autonomous AI agent workforce for multi-channel enterprise customer operations.'}
+                {profile.pitch || 'Precision drip irrigation IoT telemetry optimizing water and olive crop yields across Sfax.'}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             <Link
-              to={`/startup/${profile.id || 'omnipulse-ai'}`}
+              to={`/startup/${profile.id || 'agrismart-tunisia'}`}
               className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-slate-800 bg-slate-100 hover:bg-slate-200 transition-colors"
             >
               <span>View Public Profile</span>
@@ -206,25 +207,25 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
           <div>
             <span className="text-slate-400 font-medium block">Sector</span>
             <span className="font-bold text-slate-800 text-sm mt-0.5 block">
-              {profile.sector || 'AI & Machine Learning'}
+              {profile.sector || 'AgriTech'}
             </span>
           </div>
           <div>
-            <span className="text-slate-400 font-medium block">Funding Target</span>
+            <span className="text-slate-400 font-medium block">Funding Target (TND)</span>
             <span className="font-bold text-blue-600 text-sm mt-0.5 block">
-              {profile.fundingNeeded || '$1,800,000'}
+              {profile.fundingNeeded || '450,000 TND'}
             </span>
           </div>
           <div>
-            <span className="text-slate-400 font-medium block">Headquarters</span>
+            <span className="text-slate-400 font-medium block">Governorate</span>
             <span className="font-bold text-slate-800 text-sm mt-0.5 block">
-              {profile.country || 'United States'}
+              {profile.governorate || 'Sfax'}, Tunisia
             </span>
           </div>
           <div>
-            <span className="text-slate-400 font-medium block">Team Size</span>
+            <span className="text-slate-400 font-medium block">Funding Type Sought</span>
             <span className="font-bold text-slate-800 text-sm mt-0.5 block">
-              {profile.teamSize || '8 members'}
+              {profile.fundingTypeSought || 'Seed Investment'}
             </span>
           </div>
         </div>
@@ -233,7 +234,7 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
       {/* Two Column Grid: Inbound Investor Requests + Suggested Investor Matches */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
-        {/* Column 1: Inbound Investor Requests (Number of Interested Investors) */}
+        {/* Column 1: Inbound Investor Requests */}
         <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-slate-800">
             <div>
@@ -242,7 +243,7 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
                 <span>Interested Investors Inbound</span>
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">
-                Investors who clicked "I'm Interested" or requested data room access.
+                Investors requesting intro meetings or data room access.
               </p>
             </div>
             <span className="text-xs font-bold text-blue-300 bg-blue-950 px-2.5 py-1 rounded-full border border-blue-800">
@@ -290,22 +291,22 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
               ))
             ) : (
               <div className="py-8 text-center text-slate-400 text-sm">
-                No pending investor inbounds. We are featuring your profile to new syndicates.
+                No pending investor inbounds. We are featuring your profile to Tunisian angel syndicates.
               </div>
             )}
           </div>
         </div>
 
-        {/* Column 2: Suggested Investor Matches */}
+        {/* Column 2: Suggested Investor Matches in Tunisia */}
         <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-slate-800">
             <div>
               <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-violet-400" />
-                <span>Suggested Investor Matches</span>
+                <span>Suggested Tunisian Investors</span>
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">
-                Funds algorithmically matched to your sector and stage.
+                Funds and angels matched to your sector and ticket size in TND.
               </p>
             </div>
             <span className="text-xs font-bold text-violet-300 bg-violet-950 px-2.5 py-1 rounded-full border border-violet-800">
@@ -327,12 +328,12 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
                         </span>
                       </div>
                       <div className="text-xs text-slate-400 mt-0.5">
-                        {inv.partner} • {inv.location}
+                        {inv.partner} • {inv.type}
                       </div>
                     </div>
 
                     <span className="text-xs font-bold text-slate-200 bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-700">
-                      {inv.checkSize}
+                      {inv.ticketSize}
                     </span>
                   </div>
 

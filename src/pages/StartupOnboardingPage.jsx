@@ -9,10 +9,15 @@ import {
   Users, 
   MapPin, 
   Layers, 
-  Rocket 
+  Rocket,
+  Coins,
+  Building,
+  Globe,
+  Calendar,
+  ShieldCheck
 } from 'lucide-react';
 import { saveNewStartup } from '../utils/storage';
-import { ALL_SECTORS } from '../data/mockStartups';
+import { ALL_SECTORS, TUNISIAN_GOVERNORATES, LEGAL_STATUS_OPTIONS, FUNDING_TYPES } from '../data/mockStartups';
 
 export default function StartupOnboardingPage() {
   const navigate = useNavigate();
@@ -20,11 +25,16 @@ export default function StartupOnboardingPage() {
   const [formData, setFormData] = useState({
     name: '',
     pitch: '',
-    sector: 'AI & Machine Learning',
+    sector: 'AgriTech',
     stage: 'Early Revenue',
-    fundingNeeded: '$1,500,000',
-    country: 'United States',
-    teamSize: '5'
+    fundingNeeded: '350,000 TND',
+    teamSize: '5',
+    governorate: 'Tunis',
+    legalStatus: 'SARL',
+    foundedYear: new Date().getFullYear().toString(),
+    website: '',
+    fundingTypeSought: 'Seed Investment',
+    registeredInTunisia: 'Yes'
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,30 +47,17 @@ export default function StartupOnboardingPage() {
     { id: 'Growth', label: 'Growth', desc: 'Scaling unit economics' }
   ];
 
-  const fundingOptions = [
-    '$250,000',
-    '$500,000',
-    '$1,000,000',
-    '$1,500,000',
-    '$2,500,000',
-    '$5,000,000+'
-  ];
-
-  const countryOptions = [
-    'United States',
-    'United Kingdom',
-    'Germany',
-    'France',
-    'Canada',
-    'Singapore',
-    'United Arab Emirates',
-    'Australia',
-    'India',
-    'Netherlands',
-    'Other'
+  const fundingAmountPresets = [
+    '50,000 TND',
+    '150,000 TND',
+    '300,000 TND',
+    '500,000 TND',
+    '1,000,000 TND',
+    '2,000,000+ TND'
   ];
 
   const selectableSectors = ALL_SECTORS.filter(s => s !== 'All');
+  const selectableGovernorates = TUNISIAN_GOVERNORATES.filter(g => g !== 'All');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,20 +88,25 @@ export default function StartupOnboardingPage() {
     setIsSubmitting(true);
     setError('');
 
-    // Save to localStorage
+    // Save to localStorage with Tunisian parameters
     const saved = saveNewStartup({
       name: formData.name.trim(),
       pitch: formData.pitch.trim(),
       sector: formData.sector,
       stage: formData.stage,
       fundingNeeded: formData.fundingNeeded,
-      country: formData.country,
-      teamSize: formData.teamSize
+      teamSize: formData.teamSize,
+      governorate: formData.governorate,
+      legalStatus: formData.legalStatus,
+      foundedYear: formData.foundedYear,
+      website: formData.website.trim(),
+      fundingTypeSought: formData.fundingTypeSought,
+      registeredInTunisia: formData.registeredInTunisia,
+      country: 'Tunisia'
     });
 
     setTimeout(() => {
       setIsSubmitting(false);
-      // Navigate to the Startup Dashboard
       navigate('/dashboard/startup');
     }, 600);
   };
@@ -123,10 +125,10 @@ export default function StartupOnboardingPage() {
           </div>
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Publish Your Startup Profile
+              Publish Your Tunisian Startup Profile
             </h1>
             <p className="text-sm text-slate-400">
-              Get matched with strategic investors and unlock AI pitch guidance.
+              Connect with Tunisian business angels, local funds, and diaspora investors in TND.
             </p>
           </div>
         </div>
@@ -143,10 +145,11 @@ export default function StartupOnboardingPage() {
 
         <form onSubmit={handleSubmit} className="space-y-8">
           
-          {/* Section 1: Core Identity */}
+          {/* Section 1: Core Identity & Registration */}
           <div className="space-y-5">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
-              1. Startup Identity
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2 flex items-center justify-between">
+              <span>1. Startup Identity & Legal Structure</span>
+              <span className="text-xs font-semibold text-blue-600">Tunisia Ecosystem</span>
             </h2>
 
             {/* Startup Name */}
@@ -154,18 +157,16 @@ export default function StartupOnboardingPage() {
               <label htmlFor="startup-name" className="block text-sm font-bold text-slate-800 mb-1.5">
                 Startup Name <span className="text-blue-600">*</span>
               </label>
-              <div className="relative">
-                <input
-                  id="startup-name"
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="e.g. OmniPulse AI, Nexus Energy, MediFlow"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all"
-                  required
-                />
-              </div>
+              <input
+                id="startup-name"
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="e.g. AgriSmart Tunisia, DinarPay, SahhaTech"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all"
+                required
+              />
             </div>
 
             {/* One-Line Pitch */}
@@ -179,20 +180,132 @@ export default function StartupOnboardingPage() {
                 rows={3}
                 value={formData.pitch}
                 onChange={handleChange}
-                placeholder="What does your startup do, who is it for, and what unfair advantage do you have? (e.g. Autonomous AI agent workforce for multi-channel customer operations)"
+                placeholder="What does your startup do in Tunisia and what unfair advantage do you have? (e.g. Smart IoT telemetry reducing agricultural water loss across the Sahel by 30%)"
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all resize-none"
                 required
               />
               <span className="text-xs text-slate-400 mt-1 block">
-                Keep it concise and outcome-driven for investor deal flow cards.
+                Short and punchy for Tunisian investor deal cards.
               </span>
+            </div>
+
+            {/* Tunisian Governorate + Legal Status + Year Founded */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              
+              {/* Tunisian Governorate */}
+              <div>
+                <label htmlFor="governorate-select" className="block text-sm font-bold text-slate-800 mb-1.5">
+                  Tunisian Governorate <span className="text-blue-600">*</span>
+                </label>
+                <div className="relative">
+                  <select
+                    id="governorate-select"
+                    name="governorate"
+                    value={formData.governorate}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all cursor-pointer"
+                  >
+                    {selectableGovernorates.map((gov) => (
+                      <option key={gov} value={gov}>
+                        {gov}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Legal Status */}
+              <div>
+                <label htmlFor="legal-status-select" className="block text-sm font-bold text-slate-800 mb-1.5">
+                  Legal Status in Tunisia <span className="text-blue-600">*</span>
+                </label>
+                <select
+                  id="legal-status-select"
+                  name="legalStatus"
+                  value={formData.legalStatus}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all cursor-pointer"
+                >
+                  {LEGAL_STATUS_OPTIONS.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Year Founded */}
+              <div>
+                <label htmlFor="year-founded" className="block text-sm font-bold text-slate-800 mb-1.5">
+                  Year Founded <span className="text-blue-600">*</span>
+                </label>
+                <input
+                  id="year-founded"
+                  type="number"
+                  name="foundedYear"
+                  min="2015"
+                  max="2030"
+                  value={formData.foundedYear}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all"
+                  required
+                />
+              </div>
+
+            </div>
+
+            {/* Is your startup registered in Tunisia? + Website / LinkedIn */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              
+              {/* Registered in Tunisia Yes/No */}
+              <div>
+                <label className="block text-sm font-bold text-slate-800 mb-2">
+                  Is your startup registered in Tunisia? <span className="text-blue-600">*</span>
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {['Yes', 'No'].map((ans) => {
+                    const isSelected = formData.registeredInTunisia === ans;
+                    return (
+                      <button
+                        key={ans}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, registeredInTunisia: ans }))}
+                        className={`py-2.5 px-4 rounded-xl border font-bold text-sm transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                        }`}
+                      >
+                        {ans === 'Yes' ? '✓ Registered' : 'Not yet'}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Website or LinkedIn (optional) */}
+              <div>
+                <label htmlFor="website-input" className="block text-sm font-bold text-slate-800 mb-1.5">
+                  Website or LinkedIn <span className="text-slate-400 font-normal">(Optional)</span>
+                </label>
+                <input
+                  id="website-input"
+                  type="url"
+                  name="website"
+                  value={formData.website}
+                  onChange={handleChange}
+                  placeholder="https://yourstartup.tn or linkedin.com/..."
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all"
+                />
+              </div>
+
             </div>
           </div>
 
           {/* Section 2: Sector & Stage */}
           <div className="space-y-5">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
-              2. Industry & Development Stage
+              2. Industry Sector & Development Stage
             </h2>
 
             {/* Sector */}
@@ -248,18 +361,18 @@ export default function StartupOnboardingPage() {
             </div>
           </div>
 
-          {/* Section 3: Financing & Team */}
+          {/* Section 3: Financing in TND & Funding Type */}
           <div className="space-y-5">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
-              3. Capital Requirements & Operations
+              3. Funding Needed in TND & Team Size
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               
-              {/* Funding Needed */}
+              {/* Funding Needed in TND */}
               <div>
                 <label htmlFor="funding-needed" className="block text-sm font-bold text-slate-800 mb-1.5">
-                  Funding Needed <span className="text-blue-600">*</span>
+                  Funding Needed in TND <span className="text-blue-600">*</span>
                 </label>
                 <div className="relative">
                   <select
@@ -267,9 +380,9 @@ export default function StartupOnboardingPage() {
                     name="fundingNeeded"
                     value={formData.fundingNeeded}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all cursor-pointer"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all cursor-pointer font-bold text-blue-700"
                   >
-                    {fundingOptions.map((opt) => (
+                    {fundingAmountPresets.map((opt) => (
                       <option key={opt} value={opt}>
                         {opt}
                       </option>
@@ -278,21 +391,21 @@ export default function StartupOnboardingPage() {
                 </div>
               </div>
 
-              {/* Country */}
+              {/* Funding Type Sought */}
               <div>
-                <label htmlFor="country-select" className="block text-sm font-bold text-slate-800 mb-1.5">
-                  Country <span className="text-blue-600">*</span>
+                <label htmlFor="funding-type-sought" className="block text-sm font-bold text-slate-800 mb-1.5">
+                  Funding Type Sought <span className="text-blue-600">*</span>
                 </label>
                 <select
-                  id="country-select"
-                  name="country"
-                  value={formData.country}
+                  id="funding-type-sought"
+                  name="fundingTypeSought"
+                  value={formData.fundingTypeSought}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all cursor-pointer"
                 >
-                  {countryOptions.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
+                  {FUNDING_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
                     </option>
                   ))}
                 </select>
@@ -309,7 +422,7 @@ export default function StartupOnboardingPage() {
                   name="teamSize"
                   value={formData.teamSize}
                   onChange={handleChange}
-                  placeholder="e.g. 5 or 8 members"
+                  placeholder="e.g. 5 members"
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all"
                   required
                 />
@@ -322,7 +435,7 @@ export default function StartupOnboardingPage() {
           <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-xs text-slate-500 flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-violet-600" />
-              <span>Instant AI Match Scoring will be calculated upon publication.</span>
+              <span>Instant AI Match Scoring will be calculated for Tunisian investors upon publication.</span>
             </div>
 
             <button

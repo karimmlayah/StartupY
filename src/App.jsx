@@ -11,6 +11,7 @@ import ExplorePage from './pages/ExplorePage';
 import StartupDetailsPage from './pages/StartupDetailsPage';
 import StartupDashboardPage from './pages/StartupDashboardPage';
 import InvestorDashboardPage from './pages/InvestorDashboardPage';
+import OfficialResourcesPage from './pages/OfficialResourcesPage';
 
 // Helper to scroll to top on route navigation
 function ScrollToTop() {
@@ -50,6 +51,7 @@ export default function App() {
             <Route path="/onboarding/startup" element={<StartupOnboardingPage />} />
             <Route path="/onboarding/investor" element={<InvestorOnboardingPage />} />
             <Route path="/explore" element={<ExplorePage />} />
+            <Route path="/resources" element={<OfficialResourcesPage onOpenAiGuide={handleOpenAiGuide} />} />
             <Route path="/startup/:id" element={<StartupDetailsPage onOpenAiGuide={handleOpenAiGuide} />} />
             <Route path="/dashboard/startup" element={<StartupDashboardPage onOpenAiGuide={handleOpenAiGuide} />} />
             <Route path="/dashboard/investor" element={<InvestorDashboardPage onOpenAiGuide={handleOpenAiGuide} />} />
@@ -61,7 +63,7 @@ export default function App() {
         {/* Footer */}
         <Footer onOpenAiGuide={handleOpenAiGuide} />
 
-        {/* AI Guide Modal (Accessible globally and with pre-selected tab) */}
+        {/* AI Guide Modal (Startup Tunisia Guide / Investor Tunisia Guide) */}
         <AiGuideModal
           isOpen={aiModalOpen}
           onClose={handleCloseAiGuide}

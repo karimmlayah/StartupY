@@ -32,7 +32,7 @@ export default function InterestSuccessModal({
           </div>
 
           <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 mb-2">
-            Match Protocol Initiated
+            Tunisian Ecosystem Protocol Initiated
           </span>
 
           <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-2">
@@ -40,7 +40,7 @@ export default function InterestSuccessModal({
           </h3>
 
           <p className="text-sm text-slate-600 leading-relaxed mb-6">
-            We have securely dispatched your investor profile, thesis alignment score, and contact mandate to the founding team of <strong className="text-slate-900">{startupName}</strong>.
+            We have securely dispatched your investor profile, ticket size in TND, and contact mandate to the founding team of <strong className="text-slate-900">{startupName}</strong>.
           </p>
         </div>
 
@@ -54,7 +54,7 @@ export default function InterestSuccessModal({
               <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">
                 1
               </div>
-              <p>Founder receives an instant notification in their Startup Dashboard with your check size.</p>
+              <p>The Tunisian founder receives an instant notification in their Startup Dashboard with your check size in TND.</p>
             </div>
             <div className="flex items-start gap-2.5">
               <div className="w-5 h-5 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">
@@ -66,7 +66,7 @@ export default function InterestSuccessModal({
               <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold flex-shrink-0 mt-0.5">
                 3
               </div>
-              <p>A direct intro thread is created with suggested 20-minute introductory meeting slots.</p>
+              <p>A direct intro thread is generated to coordinate an initial meeting (in Tunis, Sfax, Sousse, or remote video).</p>
             </div>
           </div>
         </div>

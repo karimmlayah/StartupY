@@ -5,13 +5,16 @@ import {
   Sparkles, 
   ArrowRight, 
   CheckCircle2, 
-  DollarSign, 
+  Coins, 
   Globe, 
   Layers, 
-  ShieldCheck 
+  ShieldCheck,
+  Building2,
+  MapPin
 } from 'lucide-react';
 import { saveCurrentInvestor } from '../utils/storage';
-import { ALL_SECTORS } from '../data/mockStartups';
+import { ALL_SECTORS, TUNISIAN_GOVERNORATES } from '../data/mockStartups';
+import { INVESTOR_TYPES, INVESTMENT_TYPES } from '../data/mockInvestors';
 
 export default function InvestorOnboardingPage() {
   const navigate = useNavigate();
@@ -19,10 +22,13 @@ export default function InvestorOnboardingPage() {
   const [formData, setFormData] = useState({
     name: '',
     firm: '',
-    sectors: ['AI & Machine Learning', 'B2B SaaS', 'FinTech'],
-    budgetRange: '$250,000 - $1,000,000',
+    investorType: 'Angel Investor',
+    sectors: ['AgriTech', 'FinTech', 'AI / SaaS'],
+    ticketSize: '100,000 - 500,000 TND',
     preferredStage: 'Early Revenue',
-    region: 'North America & Europe',
+    preferredGovernorates: ['Tunis', 'Sfax', 'Sousse'],
+    investmentType: 'Equity',
+    portfolioLink: '',
     bio: ''
   });
 
@@ -31,33 +37,40 @@ export default function InvestorOnboardingPage() {
 
   const stageOptions = ['Idea', 'MVP', 'Early Revenue', 'Growth'];
 
-  const budgetOptions = [
-    '$50,000 - $250,000 (Angel / Scout)',
-    '$250,000 - $1,000,000 (Seed Check)',
-    '$1,000,000 - $3,000,000 (Lead Seed)',
-    '$3,000,000 - $10,000,000 (Series A / Multi-stage)'
-  ];
-
-  const regionOptions = [
-    'North America',
-    'Europe & UK',
-    'North America & Europe',
-    'Asia-Pacific',
-    'Latin America',
-    'Middle East & Africa',
-    'Global / Remote First'
+  const ticketOptions = [
+    '20,000 - 50,000 TND (Micro Grant / Prototype)',
+    '50,000 - 250,000 TND (Angel Ticket)',
+    '250,000 - 750,000 TND (Seed Round)',
+    '750,000 - 2,000,000+ TND (Venture / Series A)'
   ];
 
   const selectableSectors = ALL_SECTORS.filter(s => s !== 'All');
+  const majorGovernorates = ['All Governorates', 'Tunis', 'Ariana', 'Ben Arous', 'Sfax', 'Sousse', 'Monastir', 'Nabeul', 'Bizerte', 'Médenine', 'Kairouan'];
 
   const toggleSector = (sector) => {
     setFormData(prev => {
       const exists = prev.sectors.includes(sector);
       if (exists) {
-        if (prev.sectors.length === 1) return prev; // Keep at least one
+        if (prev.sectors.length === 1) return prev;
         return { ...prev, sectors: prev.sectors.filter(s => s !== sector) };
       } else {
         return { ...prev, sectors: [...prev.sectors, sector] };
+      }
+    });
+  };
+
+  const toggleGovernorate = (gov) => {
+    setFormData(prev => {
+      if (gov === 'All Governorates') {
+        return { ...prev, preferredGovernorates: ['All Governorates'] };
+      }
+      const cleaned = prev.preferredGovernorates.filter(g => g !== 'All Governorates');
+      const exists = cleaned.includes(gov);
+      if (exists) {
+        if (cleaned.length === 1) return prev;
+        return { ...prev, preferredGovernorates: cleaned.filter(g => g !== gov) };
+      } else {
+        return { ...prev, preferredGovernorates: [...cleaned, gov] };
       }
     });
   };
@@ -73,7 +86,7 @@ export default function InvestorOnboardingPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.name.trim()) {
-      setError('Please provide your Investor or Syndicate Name');
+      setError('Please provide your Investor or Firm Name');
       return;
     }
 
@@ -83,13 +96,16 @@ export default function InvestorOnboardingPage() {
     saveCurrentInvestor({
       name: formData.name.trim(),
       firm: formData.firm.trim() || `${formData.name.trim()} Capital`,
+      type: formData.investorType,
       focus: formData.sectors,
-      budgetRange: formData.budgetRange,
+      budgetRange: formData.ticketSize,
       preferredStage: formData.preferredStage,
-      region: formData.region,
-      bio: formData.bio || 'Active investor backing visionary founders shaping the future of technology.',
-      totalInvested: '$12.5M',
-      activeInvestments: 8
+      region: formData.preferredGovernorates.join(', '),
+      investmentType: formData.investmentType,
+      linkedIn: formData.portfolioLink.trim(),
+      bio: formData.bio || 'Active investor deploying smart capital in Tunisian Dinars (TND) across Tunisian startups.',
+      totalInvested: '1,800,000 TND (Demo)',
+      activeInvestments: 6
     });
 
     setTimeout(() => {
@@ -112,10 +128,10 @@ export default function InvestorOnboardingPage() {
           </div>
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Create Your Investor Profile
+              Create Your Investor Profile (Tunisia)
             </h1>
             <p className="text-sm text-slate-400">
-              Set your mandate and get matched with deal flow aligned to your thesis.
+              Set your mandate in TND and connect with deal flow matching your sector and governorate focus.
             </p>
           </div>
         </div>
@@ -132,16 +148,16 @@ export default function InvestorOnboardingPage() {
 
         <form onSubmit={handleSubmit} className="space-y-8">
           
-          {/* Section 1: Investor Identity */}
+          {/* Section 1: Investor Entity & Type */}
           <div className="space-y-5">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
-              1. Investor & Entity Details
+              1. Investor Entity & Investor Type
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label htmlFor="investor-name" className="block text-sm font-bold text-slate-800 mb-1.5">
-                  Investor Name <span className="text-violet-600">*</span>
+                  Investor or Firm Name <span className="text-violet-600">*</span>
                 </label>
                 <input
                   id="investor-name"
@@ -149,7 +165,7 @@ export default function InvestorOnboardingPage() {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="e.g. Victoria Stirling or Sterling Ventures"
+                  placeholder="e.g. Slimane Ben Youssef or Carthage Angels"
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all"
                   required
                 />
@@ -157,7 +173,7 @@ export default function InvestorOnboardingPage() {
 
               <div>
                 <label htmlFor="firm-name" className="block text-sm font-bold text-slate-800 mb-1.5">
-                  Firm / Syndicate / Angel Affiliation
+                  Firm / Legal Structure
                 </label>
                 <input
                   id="firm-name"
@@ -165,9 +181,29 @@ export default function InvestorOnboardingPage() {
                   name="firm"
                   value={formData.firm}
                   onChange={handleChange}
-                  placeholder="e.g. Apex Horizon Capital (or Solo Angel)"
+                  placeholder="e.g. Carthage Ventures (Demo)"
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all"
                 />
+              </div>
+
+              {/* Investor Type */}
+              <div>
+                <label htmlFor="investor-type" className="block text-sm font-bold text-slate-800 mb-1.5">
+                  Investor Type <span className="text-violet-600">*</span>
+                </label>
+                <select
+                  id="investor-type"
+                  name="investorType"
+                  value={formData.investorType}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all cursor-pointer"
+                >
+                  {INVESTOR_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
@@ -176,10 +212,10 @@ export default function InvestorOnboardingPage() {
           <div className="space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-2">
               <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400">
-                2. Investment Focus / Sectors <span className="text-violet-600">*</span>
+                2. Investment Sectors in Tunisia <span className="text-violet-600">*</span>
               </h2>
               <span className="text-xs text-slate-500">
-                Select all that apply
+                Select your target categories
               </span>
             </div>
 
@@ -205,27 +241,27 @@ export default function InvestorOnboardingPage() {
             </div>
           </div>
 
-          {/* Section 3: Criteria & Range */}
+          {/* Section 3: Ticket Size in TND, Investment Type & Preferred Governorates */}
           <div className="space-y-5">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
-              3. Check Size, Preferred Stage & Geography
+              3. Ticket Size in TND, Stage & Governorates
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               
-              {/* Budget Range */}
+              {/* Ticket Size in TND */}
               <div>
-                <label htmlFor="budget-range" className="block text-sm font-bold text-slate-800 mb-1.5">
-                  Budget / Check Size Range <span className="text-violet-600">*</span>
+                <label htmlFor="ticket-size" className="block text-sm font-bold text-slate-800 mb-1.5">
+                  Ticket Size in TND <span className="text-violet-600">*</span>
                 </label>
                 <select
-                  id="budget-range"
-                  name="budgetRange"
-                  value={formData.budgetRange}
+                  id="ticket-size"
+                  name="ticketSize"
+                  value={formData.ticketSize}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all cursor-pointer"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all cursor-pointer font-bold text-violet-700"
                 >
-                  {budgetOptions.map((b) => (
+                  {ticketOptions.map((b) => (
                     <option key={b} value={b}>
                       {b}
                     </option>
@@ -253,34 +289,77 @@ export default function InvestorOnboardingPage() {
                 </select>
               </div>
 
-              {/* Region */}
-              <div className="sm:col-span-2">
-                <label htmlFor="region-select" className="block text-sm font-bold text-slate-800 mb-1.5">
-                  Country / Geographic Focus <span className="text-violet-600">*</span>
+              {/* Investment Type */}
+              <div>
+                <label htmlFor="investment-type" className="block text-sm font-bold text-slate-800 mb-1.5">
+                  Investment Type <span className="text-violet-600">*</span>
                 </label>
                 <select
-                  id="region-select"
-                  name="region"
-                  value={formData.region}
+                  id="investment-type"
+                  name="investmentType"
+                  value={formData.investmentType}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all cursor-pointer"
                 >
-                  {regionOptions.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
+                  {INVESTMENT_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
                     </option>
                   ))}
                 </select>
               </div>
 
             </div>
+
+            {/* Preferred Tunisian Governorates (Multi-select) */}
+            <div className="pt-2">
+              <label className="block text-sm font-bold text-slate-800 mb-2">
+                Preferred Tunisian Governorates <span className="text-violet-600">*</span>
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {majorGovernorates.map((gov) => {
+                  const isSelected = formData.preferredGovernorates.includes(gov);
+                  return (
+                    <button
+                      key={gov}
+                      type="button"
+                      onClick={() => toggleGovernorate(gov)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      }`}
+                    >
+                      {gov}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Portfolio or LinkedIn Link (Optional) */}
+            <div className="pt-2">
+              <label htmlFor="portfolio-link" className="block text-sm font-bold text-slate-800 mb-1.5">
+                Portfolio or LinkedIn Link <span className="text-slate-400 font-normal">(Optional)</span>
+              </label>
+              <input
+                id="portfolio-link"
+                type="url"
+                name="portfolioLink"
+                value={formData.portfolioLink}
+                onChange={handleChange}
+                placeholder="https://linkedin.com/in/... or website"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all"
+              />
+            </div>
+
           </div>
 
           {/* Submission CTA */}
           <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-xs text-slate-500 flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-violet-600" />
-              <span>AI deal-matching algorithm will rank matching startups immediately.</span>
+              <span>Tunisia AI matchmaking will score deals based on TND ticket size, stage, and governorate.</span>
             </div>
 
             <button

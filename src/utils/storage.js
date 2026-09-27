@@ -2,11 +2,11 @@ import { INITIAL_STARTUPS } from "../data/mockStartups";
 import { DEFAULT_INVESTOR_PROFILE, DEFAULT_STARTUP_PROFILE } from "../data/mockInvestors";
 
 const KEYS = {
-  CUSTOM_STARTUPS: "startupbridge_custom_startups",
-  CURRENT_STARTUP: "startupbridge_current_startup",
-  CURRENT_INVESTOR: "startupbridge_current_investor",
-  SAVED_STARTUPS: "startupbridge_saved_startups",
-  INTERESTED_STARTUPS: "startupbridge_interested_startups",
+  CUSTOM_STARTUPS: "startupbridge_tunisia_custom_startups",
+  CURRENT_STARTUP: "startupbridge_tunisia_current_startup",
+  CURRENT_INVESTOR: "startupbridge_tunisia_current_investor",
+  SAVED_STARTUPS: "startupbridge_tunisia_saved_startups",
+  INTERESTED_STARTUPS: "startupbridge_tunisia_interested_startups",
 };
 
 export function getAllStartups() {
@@ -41,33 +41,41 @@ export function saveNewStartup(startupData) {
       pitch: startupData.pitch,
       sector: startupData.sector,
       stage: startupData.stage,
-      fundingNeeded: startupData.fundingNeeded,
-      country: startupData.country,
-      teamSize: startupData.teamSize ? `${startupData.teamSize} members` : "5 members",
-      foundedYear: new Date().getFullYear(),
+      fundingNeeded: startupData.fundingNeeded.includes("TND") ? startupData.fundingNeeded : `${startupData.fundingNeeded} TND`,
+      governorate: startupData.governorate || "Tunis",
+      city: `${startupData.governorate || "Tunis"} Region`,
+      country: "Tunisia",
+      legalStatus: startupData.legalStatus || "SARL",
+      registeredInTunisia: startupData.registeredInTunisia || "Yes",
+      fundingTypeSought: startupData.fundingTypeSought || "Seed Investment",
+      website: startupData.website || "",
+      teamSize: startupData.teamSize ? (startupData.teamSize.includes("member") ? startupData.teamSize : `${startupData.teamSize} members`) : "5 members",
+      foundedYear: startupData.foundedYear ? parseInt(startupData.foundedYear, 10) : new Date().getFullYear(),
       logoBg: "from-blue-600 via-indigo-600 to-violet-600",
       aiMatchScore: Math.floor(Math.random() * 8) + 90, // 90-97%
       aiScores: {
         sectorFit: Math.floor(Math.random() * 6) + 92,
-        stageFit: Math.floor(Math.random() * 6) + 90,
-        growthRate: Math.floor(Math.random() * 8) + 88,
-        teamStrength: Math.floor(Math.random() * 6) + 91,
+        ticketFit: Math.floor(Math.random() * 6) + 90,
+        stageFit: Math.floor(Math.random() * 8) + 88,
+        governorateFit: Math.floor(Math.random() * 6) + 91,
+        fundingTypeFit: Math.floor(Math.random() * 6) + 90,
+        preferencesFit: Math.floor(Math.random() * 6) + 92,
       },
-      aiThesis: `High-conviction opportunity in ${startupData.sector}. The team demonstrates clear stage-appropriate execution velocity for the ${startupData.stage} phase.`,
-      problem: `Unmet market demand in ${startupData.sector} creating operational friction and inefficiencies.`,
+      aiThesis: `High-conviction Tunisian opportunity in ${startupData.sector} located in ${startupData.governorate}. The team demonstrates clear stage-appropriate execution velocity for the ${startupData.stage} phase under ${startupData.fundingTypeSought} criteria.`,
+      problem: `Unmet market demand in ${startupData.sector} creating operational friction in the Tunisian market.`,
       solution: startupData.pitch,
       traction: [
-        "Product launched and active in market",
-        "Growing initial user engagement and stakeholder validation",
-        `Seeking ${startupData.fundingNeeded} to accelerate expansion and scale team`,
-        "Verified profile on StartupBridge AI",
+        "Product launched and active in Tunisian market",
+        `Seeking ${startupData.fundingNeeded} (${startupData.fundingTypeSought}) to accelerate team hiring and expansion`,
+        `Registered legal entity: ${startupData.legalStatus} based in ${startupData.governorate}`,
+        "Verified profile on StartupBridge AI Tunisia",
       ],
-      highlights: [startupData.sector, startupData.stage, startupData.country],
+      highlights: [startupData.sector, startupData.stage, startupData.governorate, startupData.fundingTypeSought],
       team: [
         {
           name: "Founder & Team",
           role: "Founding Executive",
-          bio: `Experienced builders and innovators based in ${startupData.country}.`,
+          bio: `Experienced builders and innovators based in ${startupData.governorate}, Tunisia.`,
         },
       ],
       financials: {
@@ -78,7 +86,7 @@ export function saveNewStartup(startupData) {
       },
       useOfFunds: {
         "Product & Engineering": "50%",
-        "Go-To-Market & Growth": "30%",
+        "Commercial Growth in Tunisia": "30%",
         "Operations & Talent": "20%",
       },
       ...startupData,
@@ -136,9 +144,9 @@ export function saveCurrentInvestor(profile) {
 export function getSavedStartupIds() {
   try {
     const raw = localStorage.getItem(KEYS.SAVED_STARTUPS);
-    return raw ? JSON.parse(raw) : ["omnipulse-ai", "vaultmesh-security"];
+    return raw ? JSON.parse(raw) : ["agrismart-tunisia", "dinarpay-solutions"];
   } catch (err) {
-    return ["omnipulse-ai", "vaultmesh-security"];
+    return ["agrismart-tunisia", "dinarpay-solutions"];
   }
 }
 

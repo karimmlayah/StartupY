@@ -8,25 +8,26 @@ import {
   SlidersHorizontal,
   Layers,
   ArrowUpDown,
-  Building2
+  Building2,
+  MapPin
 } from 'lucide-react';
 import StartupCard from '../components/StartupCard';
 import { getAllStartups, getSavedStartupIds, toggleSaveStartup } from '../utils/storage';
-import { ALL_SECTORS, ALL_STAGES, ALL_COUNTRIES } from '../data/mockStartups';
+import { ALL_SECTORS, ALL_STAGES, TUNISIAN_GOVERNORATES, FUNDING_TYPES } from '../data/mockStartups';
 
 export default function ExplorePage() {
   const [startups, setStartups] = useState([]);
   const [savedIds, setSavedIds] = useState([]);
   
-  // Filters & Search
+  // Filters & Search (Tunisia localized)
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSector, setSelectedSector] = useState('All');
   const [selectedStage, setSelectedStage] = useState('All');
-  const [selectedCountry, setSelectedCountry] = useState('All');
+  const [selectedGovernorate, setSelectedGovernorate] = useState('All');
+  const [selectedFundingType, setSelectedFundingType] = useState('All');
   const [sortBy, setSortBy] = useState('match'); // 'match' | 'funding' | 'name'
 
   useEffect(() => {
-    // Load startups (includes mock + any newly published via onboarding)
     setStartups(getAllStartups());
     setSavedIds(getSavedStartupIds());
   }, []);
@@ -40,11 +41,12 @@ export default function ExplorePage() {
     setSearchQuery('');
     setSelectedSector('All');
     setSelectedStage('All');
-    setSelectedCountry('All');
+    setSelectedGovernorate('All');
+    setSelectedFundingType('All');
     setSortBy('match');
   };
 
-  // Filter and sort startups
+  // Filter and sort Tunisian startups
   const filteredStartups = useMemo(() => {
     return startups
       .filter((s) => {
@@ -54,8 +56,8 @@ export default function ExplorePage() {
           const matchName = s.name?.toLowerCase().includes(q);
           const matchPitch = s.pitch?.toLowerCase().includes(q);
           const matchSector = s.sector?.toLowerCase().includes(q);
-          const matchCountry = s.country?.toLowerCase().includes(q);
-          if (!matchName && !matchPitch && !matchSector && !matchCountry) {
+          const matchGov = s.governorate?.toLowerCase().includes(q);
+          if (!matchName && !matchPitch && !matchSector && !matchGov) {
             return false;
           }
         }
@@ -70,8 +72,13 @@ export default function ExplorePage() {
           return false;
         }
 
-        // Country filter
-        if (selectedCountry !== 'All' && s.country !== selectedCountry) {
+        // Governorate filter (Replaces Country Filter as required)
+        if (selectedGovernorate !== 'All' && s.governorate !== selectedGovernorate) {
+          return false;
+        }
+
+        // Funding Type filter
+        if (selectedFundingType !== 'All' && s.fundingTypeSought !== selectedFundingType) {
           return false;
         }
 
@@ -85,7 +92,6 @@ export default function ExplorePage() {
           return a.name.localeCompare(b.name);
         }
         if (sortBy === 'funding') {
-          // Parse funding numbers roughly
           const getNum = (str) => {
             if (!str) return 0;
             return parseInt(str.replace(/[^0-9]/g, ''), 10) || 0;
@@ -94,13 +100,14 @@ export default function ExplorePage() {
         }
         return 0;
       });
-  }, [startups, searchQuery, selectedSector, selectedStage, selectedCountry, sortBy]);
+  }, [startups, searchQuery, selectedSector, selectedStage, selectedGovernorate, selectedFundingType, sortBy]);
 
   const hasActiveFilters = 
     searchQuery.trim() !== '' || 
     selectedSector !== 'All' || 
     selectedStage !== 'All' || 
-    selectedCountry !== 'All' ||
+    selectedGovernorate !== 'All' ||
+    selectedFundingType !== 'All' ||
     sortBy !== 'match';
 
   return (
@@ -110,21 +117,23 @@ export default function ExplorePage() {
       <div className="mb-10 text-center sm:text-left">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs font-semibold text-blue-400 mb-3">
           <Compass className="w-3.5 h-3.5" />
-          <span>Vetted Deal Flow Engine</span>
+          <span>Tunisian Deal Flow Directory</span>
+          <span className="text-slate-500">•</span>
+          <span className="text-slate-400">Demo Data</span>
         </div>
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Explore Startups
+              Explore Tunisian Startups
             </h1>
             <p className="mt-1 text-sm sm:text-base text-slate-400 max-w-2xl">
-              Discover seed and early-stage companies vetted with algorithmic AI Match Scoring, real metrics, and verified founders.
+              Discover innovative startups from Tunis, Sfax, Sousse, Bizerte, Nabeul, and all 24 governorates with AI Match Scoring and verified traction in TND.
             </p>
           </div>
           
           <div className="flex items-center gap-3">
             <span className="text-xs font-bold text-slate-300 bg-slate-800/90 px-3 py-1.5 rounded-lg border border-slate-700">
-              Showing {filteredStartups.length} of {startups.length} Startups
+              Showing {filteredStartups.length} of {startups.length} Tunisian Startups
             </span>
           </div>
         </div>
@@ -142,7 +151,7 @@ export default function ExplorePage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by startup name, sector, technology, or country..."
+              placeholder="Search by startup name, governorate, sector, or keyword..."
               className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white placeholder-slate-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
             />
             {searchQuery && (
@@ -157,7 +166,7 @@ export default function ExplorePage() {
 
           {/* Sort Dropdown */}
           <div className="flex items-center gap-2">
-            <div className="relative min-w-[200px]">
+            <div className="relative min-w-[210px]">
               <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                 <ArrowUpDown className="w-3.5 h-3.5" />
               </div>
@@ -167,15 +176,15 @@ export default function ExplorePage() {
                 className="w-full pl-9 pr-8 py-3 rounded-xl bg-slate-800/90 border border-slate-700/80 text-white text-xs sm:text-sm focus:outline-none focus:border-blue-500 cursor-pointer"
               >
                 <option value="match">Sort: Highest AI Match</option>
-                <option value="funding">Sort: Funding Seeking</option>
-                <option value="name">Sort: Company Name (A-Z)</option>
+                <option value="funding">Sort: Funding in TND</option>
+                <option value="name">Sort: Startup Name (A-Z)</option>
               </select>
             </div>
           </div>
         </div>
 
-        {/* Filter Dropdowns */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-3 pt-2 border-t border-slate-800/80">
+        {/* Filter Dropdowns: Sector, Stage, Tunisian Governorate, Funding Type */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-2 border-t border-slate-800/80">
           
           {/* Sector Filter */}
           <div>
@@ -213,19 +222,38 @@ export default function ExplorePage() {
             </select>
           </div>
 
-          {/* Country Filter */}
+          {/* Governorate Filter (Replaces Country Filter) */}
           <div>
             <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
-              Country / Region
+              Tunisian Governorate
             </label>
             <select
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
+              value={selectedGovernorate}
+              onChange={(e) => setSelectedGovernorate(e.target.value)}
               className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-blue-500 cursor-pointer"
             >
-              {ALL_COUNTRIES.map((cty) => (
-                <option key={cty} value={cty}>
-                  {cty === 'All' ? 'All Countries' : cty}
+              {TUNISIAN_GOVERNORATES.map((gov) => (
+                <option key={gov} value={gov}>
+                  {gov === 'All' ? 'All Governorates' : gov}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Funding Type Filter */}
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+              Funding Type
+            </label>
+            <select
+              value={selectedFundingType}
+              onChange={(e) => setSelectedFundingType(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-blue-500 cursor-pointer"
+            >
+              <option value="All">All Funding Types</option>
+              {FUNDING_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {type}
                 </option>
               ))}
             </select>
@@ -269,9 +297,9 @@ export default function ExplorePage() {
           <div className="w-14 h-14 rounded-2xl bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-4">
             <Building2 className="w-7 h-7" />
           </div>
-          <h3 className="text-xl font-bold text-white mb-2">No matching startups found</h3>
+          <h3 className="text-xl font-bold text-white mb-2">No matching Tunisian startups found</h3>
           <p className="text-sm text-slate-400 mb-6">
-            We couldn't find any startups matching your current search criteria. Try loosening your sector, stage, or country filters.
+            We couldn't find any startups matching your current criteria. Try loosening your sector, stage, or governorate filter.
           </p>
           <button
             onClick={handleResetFilters}

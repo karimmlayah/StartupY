@@ -11,9 +11,10 @@ import {
   Building2,
   TrendingUp,
   Check,
-  Copy
+  Copy,
+  AlertCircle
 } from 'lucide-react';
-import { AI_SUGGESTED_QUESTIONS, generateCustomAiResponse } from '../data/aiResponses';
+import { AI_SUGGESTED_QUESTIONS, generateCustomAiResponse, AI_DISCLAIMER } from '../data/aiResponses';
 
 export default function AiGuideModal({ 
   isOpen, 
@@ -24,18 +25,18 @@ export default function AiGuideModal({
   const [inputQuery, setInputQuery] = useState('');
   const [copiedId, setCopiedId] = useState(null);
   
-  // Separate message histories for startup & investor
+  // Separate message histories for Startup Tunisia Guide & Investor Tunisia Guide
   const [messages, setMessages] = useState({
     startup: [
       {
         id: 'welcome-startup',
         sender: 'ai',
-        title: 'Startup AI Guidance Engine',
-        content: `Welcome to the **StartupBridge Founder AI Guide**. 
+        title: 'Startup Tunisia Guide',
+        content: `Marhaban! Welcome to the **Startup Tunisia Guide**. 
 
-I specialize in pitch deck structure, valuation benchmarking, investor due diligence readiness, and fundraising storytelling. 
+I provide strategic assistance for Tunisian entrepreneurs on business creation (SARL/SUARL), RNE registration, pitch decks for local angels & VCs, and funding pathways. 
 
-Select one of the suggested prompts below or ask any question to evaluate your startup strategy!`,
+Select one of the 5 suggested questions below or ask any question about the Tunisian startup ecosystem!`,
         isDemo: true,
         timestamp: 'Just now'
       }
@@ -44,12 +45,12 @@ Select one of the suggested prompts below or ask any question to evaluate your s
       {
         id: 'welcome-investor',
         sender: 'ai',
-        title: 'Investor AI Deal Flow Advisory',
-        content: `Welcome to the **StartupBridge Investor AI Guide**. 
+        title: 'Investor Tunisia Guide',
+        content: `Welcome to the **Investor Tunisia Guide**. 
 
-I assist venture funds and angel syndicates with deal qualification, traction validation, dilution scenarios, and founder risk assessments. 
+I assist local angels, venture capital funds, corporate investors, and the Tunisian diaspora in evaluating deal flow, analyzing pitch decks in TND, evaluating founder traction, and mitigating regulatory and currency risks. 
 
-Choose a question below or enter a custom diligence query to explore demo insights!`,
+Select a question below or enter your diligence query!`,
         isDemo: true,
         timestamp: 'Just now'
       }
@@ -139,10 +140,10 @@ Choose a question below or enter a custom diligence query to explore demo insigh
         {
           id: `welcome-${activeTab}-${Date.now()}`,
           sender: 'ai',
-          title: activeTab === 'startup' ? 'Startup AI Guidance Engine' : 'Investor AI Deal Flow Advisory',
+          title: activeTab === 'startup' ? 'Startup Tunisia Guide' : 'Investor Tunisia Guide',
           content: activeTab === 'startup'
-            ? 'Conversation reset. What founder or fundraising question would you like to explore next?'
-            : 'Conversation reset. What investment diligence or market question can I assist you with?',
+            ? 'Conversation reset. What Tunisian startup creation or fundraising question can I help you with?'
+            : 'Conversation reset. What investment diligence or market evaluation question can I assist you with?',
           isDemo: true,
           timestamp: 'Just now'
         }
@@ -172,14 +173,14 @@ Choose a question below or enter a custom diligence query to explore demo insigh
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-bold text-white tracking-tight">
-                  StartupBridge AI Guide
+                  StartupBridge AI Tunisia
                 </h3>
                 <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-violet-950 text-violet-300 border border-violet-700/50">
                   Demo AI Engine
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                Interactive strategic guidance for founders and investment decision-makers.
+                AI Guidance for Tunisian founders, investors, and business-support organizations.
               </p>
             </div>
           </div>
@@ -214,7 +215,7 @@ Choose a question below or enter a custom diligence query to explore demo insigh
               }`}
             >
               <Building2 className="w-4 h-4" />
-              <span>Startup Guide</span>
+              <span>Startup Tunisia Guide</span>
             </button>
             
             <button
@@ -226,17 +227,17 @@ Choose a question below or enter a custom diligence query to explore demo insigh
               }`}
             >
               <TrendingUp className="w-4 h-4" />
-              <span>Investor Guide</span>
+              <span>Investor Tunisia Guide</span>
             </button>
           </div>
 
           <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400 font-medium">
             <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
-            <span>Predefined demo answers</span>
+            <span>Tunisia Ecosystem Advisory</span>
           </div>
         </div>
 
-        {/* Suggested Questions Pill Carousel */}
+        {/* Suggested Questions Pill Carousel (5 questions per role) */}
         <div className="px-6 py-3 bg-[#0A0F1D]/60 border-b border-slate-800/70 overflow-x-auto">
           <div className="flex items-center gap-2 text-xs">
             <span className="text-slate-400 flex items-center gap-1 font-semibold flex-shrink-0">
@@ -278,12 +279,12 @@ Choose a question below or enter a custom diligence query to explore demo insigh
                 </div>
 
                 {/* Message Bubble */}
-                <div className={`max-w-[85%] sm:max-w-[78%] space-y-1.5`}>
+                <div className="max-w-[88%] sm:max-w-[82%] space-y-1.5">
                   
                   {isAi && (
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold text-violet-400">
-                        StartupBridge AI
+                        {activeTab === 'startup' ? 'Startup Tunisia Guide' : 'Investor Tunisia Guide'}
                       </span>
                       {msg.isDemo && (
                         <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-violet-950 text-violet-300 border border-violet-800/60">
@@ -308,9 +309,16 @@ Choose a question below or enter a custom diligence query to explore demo insigh
                         <div className="whitespace-pre-line text-slate-200 text-sm leading-relaxed">
                           {msg.content}
                         </div>
+
+                        {/* Mandatory Disclaimer Box */}
+                        <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-800/40 text-amber-300 text-[11px] leading-tight flex items-start gap-2">
+                          <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                          <span>{AI_DISCLAIMER}</span>
+                        </div>
+
                         <div className="pt-2 border-t border-slate-700/50 flex items-center justify-between text-xs text-slate-400">
                           <span className="text-[11px] italic text-slate-400">
-                            Educational demo model for review.
+                            Tunisian Entrepreneurial Ecosystem Demo.
                           </span>
                           <button
                             onClick={() => copyToClipboard(msg.content, msg.id)}
@@ -350,8 +358,8 @@ Choose a question below or enter a custom diligence query to explore demo insigh
               onChange={(e) => setInputQuery(e.target.value)}
               placeholder={
                 activeTab === 'startup'
-                  ? 'Ask about valuation, pitch deck structure, SAFE terms, traction...'
-                  : 'Ask about founder evaluation, dilution math, cap tables, red flags...'
+                  ? 'Ask about creating a SARL/SUARL, RNE registration, pitch decks, TND valuations...'
+                  : 'Ask about founder evaluation, due diligence in Tunisia, currency risk, ticket sizes in TND...'
               }
               className="flex-1 bg-slate-800/90 text-white placeholder-slate-400 text-sm rounded-xl px-4 py-3 border border-slate-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all"
             />
@@ -365,8 +373,8 @@ Choose a question below or enter a custom diligence query to explore demo insigh
             </button>
           </form>
           <div className="flex items-center justify-between mt-2 px-1 text-[11px] text-slate-400">
-            <span>Click any suggested pill above or type any query to get instantaneous advice.</span>
-            <span className="hidden sm:inline">No real external API keys required</span>
+            <span>Click any suggested prompt pill above or ask custom queries about the Tunisian ecosystem.</span>
+            <span className="hidden sm:inline">English interface • FR & AR localized soon</span>
           </div>
         </div>
       </div>

@@ -2,13 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   MapPin, 
-  TrendingUp, 
-  DollarSign, 
+  Coins, 
   Sparkles, 
   Bookmark, 
   ArrowRight,
   Layers,
-  CheckCircle2
+  CheckCircle2,
+  Building
 } from 'lucide-react';
 
 export default function StartupCard({ 
@@ -23,7 +23,9 @@ export default function StartupCard({
     sector,
     stage,
     fundingNeeded,
-    country,
+    governorate = "Tunis",
+    legalStatus = "SARL",
+    fundingTypeSought = "Seed Investment",
     aiMatchScore = 92,
     logoBg = "from-blue-600 to-indigo-600"
   } = startup;
@@ -36,6 +38,8 @@ export default function StartupCard({
   };
 
   const initials = name
+    .replace(/\(.*?\)/g, '')
+    .trim()
     .split(' ')
     .map(w => w[0])
     .join('')
@@ -50,7 +54,7 @@ export default function StartupCard({
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex items-center gap-3.5">
             {/* Logo Placeholder */}
-            <div className={`w-13 h-13 rounded-xl bg-gradient-to-br ${logoBg} text-white font-extrabold text-lg flex items-center justify-center shadow-md shadow-blue-500/20 ring-2 ring-slate-100`}>
+            <div className={`w-13 h-13 rounded-xl bg-gradient-to-br ${logoBg} text-white font-extrabold text-lg flex items-center justify-center shadow-md shadow-blue-500/20 ring-2 ring-slate-100 flex-shrink-0`}>
               {initials}
             </div>
             
@@ -59,12 +63,12 @@ export default function StartupCard({
                 <h3 className="font-bold text-lg text-slate-900 group-hover:text-blue-600 transition-colors">
                   {name}
                 </h3>
-                <CheckCircle2 className="w-4 h-4 text-blue-500 inline-block flex-shrink-0" title="Verified Profile" />
+                <CheckCircle2 className="w-4 h-4 text-blue-500 inline-block flex-shrink-0" title="Verified Demo Entity" />
               </div>
               <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-500">
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                  {country}
+                <span className="flex items-center gap-1 font-medium text-slate-700">
+                  <MapPin className="w-3.5 h-3.5 text-blue-500" />
+                  {governorate}, Tunisia
                 </span>
                 <span>•</span>
                 <span className="flex items-center gap-1">
@@ -109,6 +113,10 @@ export default function StartupCard({
           <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-slate-100 text-slate-700 border border-slate-200">
             {sector}
           </span>
+          <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1">
+            <Building className="w-3 h-3 text-blue-500" />
+            {legalStatus}
+          </span>
         </div>
       </div>
 
@@ -116,9 +124,9 @@ export default function StartupCard({
       <div className="pt-4 border-t border-slate-100 space-y-4">
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
-            <span className="text-slate-400 font-medium block mb-0.5">Seeking</span>
+            <span className="text-slate-400 font-medium block mb-0.5">Seeking ({fundingTypeSought})</span>
             <div className="font-bold text-slate-900 text-sm flex items-center text-blue-600">
-              <DollarSign className="w-3.5 h-3.5 mr-0.5" />
+              <Coins className="w-3.5 h-3.5 mr-1 text-blue-500" />
               {fundingNeeded}
             </div>
           </div>

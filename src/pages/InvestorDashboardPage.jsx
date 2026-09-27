@@ -5,18 +5,16 @@ import {
   Sparkles, 
   Bookmark, 
   ArrowRight, 
-  CheckCircle2, 
-  DollarSign, 
+  Coins, 
   Layers, 
   MapPin, 
   Trash2, 
   HeartHandshake,
   Compass,
   Edit,
-  ExternalLink,
-  ShieldCheck,
   Building2,
-  PieChart
+  PieChart,
+  BookOpen
 } from 'lucide-react';
 import { 
   getCurrentInvestor, 
@@ -57,10 +55,8 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
 
   if (!investor) return null;
 
-  // Filter saved startups
   const savedStartups = allStartups.filter(s => savedIds.includes(s.id));
 
-  // Recommended startups: top startups sorted by match score that are NOT already saved
   const recommendedStartups = allStartups
     .filter(s => !savedIds.includes(s.id))
     .sort((a, b) => (b.aiMatchScore || 85) - (a.aiMatchScore || 85))
@@ -74,24 +70,26 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-950/60 border border-violet-800/60 text-xs font-semibold text-violet-400 mb-2">
             <TrendingUp className="w-3.5 h-3.5" />
-            <span>Institutional Investor Portal</span>
+            <span>Tunisian Investor & Angel Portal</span>
+            <span className="text-slate-500">•</span>
+            <span className="text-slate-400">Demo Data</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
             Investor Dashboard
           </h1>
           <p className="text-sm text-slate-400 mt-1">
-            Curated deal flow, portfolio watchlist, and AI-assisted diligence analysis.
+            Curated deal flow in TND, regional watchlists across governorates, and AI diligence tools.
           </p>
         </div>
 
-        {/* Required Button: “Ask Investor AI Guide” */}
+        {/* Required Button: “Ask Investor Tunisia Guide” */}
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => onOpenAiGuide('investor')}
             className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 hover:from-violet-500 hover:to-blue-500 shadow-xl shadow-violet-600/30 transition-all cursor-pointer transform hover:-translate-y-0.5"
           >
             <Sparkles className="w-4 h-4 text-violet-200 animate-pulse" />
-            <span>Ask Investor AI Guide</span>
+            <span>Ask Investor Tunisia Guide</span>
           </button>
 
           <Link
@@ -117,21 +115,21 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
             {savedStartups.length}
           </div>
           <div className="text-xs text-slate-400 mt-1">
-            High-conviction companies
+            Tunisian startups under review
           </div>
         </div>
 
         {/* KPI 2: Deals Evaluated */}
         <div className="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-lg">
           <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider">Deals Screened</span>
+            <span className="text-xs font-bold uppercase tracking-wider">Deals Screened (TND)</span>
             <PieChart className="w-4 h-4 text-blue-400" />
           </div>
           <div className="text-3xl font-black text-white">
-            52
+            28
           </div>
           <div className="text-xs text-emerald-400 mt-1">
-            Top 6% passed stage filters
+            Across 9 governorates
           </div>
         </div>
 
@@ -142,10 +140,10 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
             <Sparkles className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="text-3xl font-black text-emerald-400">
-            91.4%
+            91.2%
           </div>
           <div className="text-xs text-slate-400 mt-1">
-            Aligned to your sector focus
+            Aligned to your ticket in TND
           </div>
         </div>
 
@@ -156,7 +154,7 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
             <Building2 className="w-4 h-4 text-amber-400" />
           </div>
           <div className="text-3xl font-black text-white">
-            {interestedIds.length || 3}
+            {interestedIds.length || 2}
           </div>
           <div className="text-xs text-slate-400 mt-1">
             Founders reviewing mandate
@@ -171,7 +169,7 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
           
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white font-black text-xl flex items-center justify-center shadow-lg shadow-violet-600/30">
-              {investor.name ? investor.name.slice(0, 2).toUpperCase() : 'VC'}
+              {investor.name ? investor.name.slice(0, 2).toUpperCase() : 'TN'}
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -179,11 +177,14 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
                   {investor.name}
                 </h2>
                 <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
-                  {investor.firm || 'Venture Capital Partner'}
+                  {investor.type || 'Angel Investor'}
+                </span>
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                  {investor.firm || 'Tunisia Syndicate'}
                 </span>
               </div>
               <p className="text-slate-600 text-xs sm:text-sm mt-1 max-w-2xl">
-                {investor.bio || 'Seed to Series A investor targeting high-velocity software, AI infrastructure, and defensible tech.'}
+                {investor.bio || 'Deploying smart capital in Tunisian Dinars across high-potential Tunisian founders and university spin-offs.'}
               </p>
             </div>
           </div>
@@ -194,36 +195,36 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
               className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-white bg-slate-900 hover:bg-slate-800 transition-colors"
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>Explore More Deals</span>
+              <span>Explore Tunisian Deals</span>
             </Link>
           </div>
 
         </div>
 
-        {/* Profile Mandate Strip */}
+        {/* Profile Mandate Strip in TND */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 text-xs">
           <div>
-            <span className="text-slate-400 font-medium block">Check Size Range</span>
+            <span className="text-slate-400 font-medium block">Ticket Size in TND</span>
             <span className="font-bold text-violet-700 text-sm mt-0.5 block">
-              {investor.budgetRange || '$250,000 - $1,000,000'}
+              {investor.budgetRange || '100,000 - 500,000 TND'}
             </span>
           </div>
           <div>
-            <span className="text-slate-400 font-medium block">Preferred Stage</span>
+            <span className="text-slate-400 font-medium block">Investment Type</span>
             <span className="font-bold text-slate-800 text-sm mt-0.5 block">
-              {investor.preferredStage || 'Early Revenue'}
+              {investor.investmentType || 'Equity'}
             </span>
           </div>
           <div>
-            <span className="text-slate-400 font-medium block">Target Geography</span>
+            <span className="text-slate-400 font-medium block">Preferred Governorates</span>
             <span className="font-bold text-slate-800 text-sm mt-0.5 block">
-              {investor.region || 'North America & Europe'}
+              {investor.region || 'Tunis, Sfax, Sousse'}
             </span>
           </div>
           <div>
-            <span className="text-slate-400 font-medium block">Sectors Under Mandate</span>
+            <span className="text-slate-400 font-medium block">Target Sectors</span>
             <div className="flex flex-wrap gap-1 mt-1">
-              {(investor.focus || ['AI & ML', 'FinTech']).map((sec) => (
+              {(investor.focus || ['AgriTech', 'FinTech', 'AI / SaaS']).map((sec) => (
                 <span key={sec} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium text-[11px]">
                   {sec}
                 </span>
@@ -242,10 +243,10 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
             <div>
               <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
                 <Bookmark className="w-5 h-5 text-blue-400" />
-                <span>Saved Startups (Watchlist)</span>
+                <span>Saved Tunisian Startups (Watchlist)</span>
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">
-                Companies you bookmarked for due diligence or partner review.
+                Companies you bookmarked for partner review in Tunisia.
               </p>
             </div>
             <span className="text-xs font-bold text-blue-300 bg-blue-950 px-2.5 py-1 rounded-full border border-blue-800">
@@ -260,7 +261,7 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
                       <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.logoBg || 'from-blue-600 to-indigo-600'} text-white font-extrabold text-sm flex items-center justify-center shadow-md`}>
-                        {s.name.slice(0, 2).toUpperCase()}
+                        {s.name.replace(/\(.*?\)/g, '').trim().slice(0, 2).toUpperCase()}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
@@ -272,7 +273,7 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
                         <div className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
                           <span>{s.sector}</span>
                           <span>•</span>
-                          <span>{s.country}</span>
+                          <span className="text-blue-400">{s.governorate}</span>
                         </div>
                       </div>
                     </div>
@@ -319,23 +320,23 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500"
                 >
                   <Compass className="w-3.5 h-3.5" />
-                  <span>Browse Startups to Bookmark</span>
+                  <span>Browse Startups in Tunisia</span>
                 </Link>
               </div>
             )}
           </div>
         </div>
 
-        {/* Column 2: Recommended Startup Matches */}
+        {/* Column 2: Recommended Startup Matches in Tunisia */}
         <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-slate-800">
             <div>
               <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-violet-400" />
-                <span>Recommended Startup Matches</span>
+                <span>Recommended Tunisian Matches</span>
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">
-                Top AI scoring opportunities matching your stage and sector thesis.
+                Top AI scoring opportunities matching your stage and TND ticket size.
               </p>
             </div>
             <span className="text-xs font-bold text-violet-300 bg-violet-950 px-2.5 py-1 rounded-full border border-violet-800">
@@ -349,7 +350,7 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.logoBg || 'from-indigo-600 to-violet-600'} text-white font-extrabold text-sm flex items-center justify-center shadow-md`}>
-                      {s.name.slice(0, 2).toUpperCase()}
+                      {s.name.replace(/\(.*?\)/g, '').trim().slice(0, 2).toUpperCase()}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
@@ -374,7 +375,7 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
                 </p>
 
                 <div className="flex items-center justify-between pt-2 border-t border-slate-700/60 text-xs">
-                  <span className="text-slate-400">{s.country}</span>
+                  <span className="text-slate-400">{s.governorate}, Tunisia</span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleSendInterest(s)}
@@ -401,7 +402,7 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
               to="/explore"
               className="text-xs font-bold text-blue-400 hover:text-blue-300 inline-flex items-center gap-1"
             >
-              <span>Explore all filtered deal flow</span>
+              <span>Explore all Tunisian deal flow</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>

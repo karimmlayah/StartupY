@@ -1,110 +1,210 @@
+export const AI_DISCLAIMER = "Demo guidance only — not legal, tax, investment or financial advice. Official Tunisian sources should be consulted.";
+
 export const AI_SUGGESTED_QUESTIONS = {
   startup: [
     {
       id: "q-s1",
-      question: "How can I optimize my pitch deck for early-stage VCs?",
-      answer: `**Pitch Deck Optimization Strategy for Seed & Series A**
+      question: "How can I create a startup in Tunisia?",
+      answer: `**Steps to Create and Structure a Startup in Tunisia (Overview)**
 
-1. **Tighten the Narrative (10-12 Slides Max):**
-   - **Slide 1-2:** Problem & Unfair Insight (Quantify the commercial pain in hard dollars or hours lost).
-   - **Slide 3-4:** Solution & Live Product Proof (Show, don't tell. Screen recordings or real telemetry outperform static wireframes).
-   - **Slide 5-6:** Market Size & Why Now (Highlight regulatory or technological tipping points).
-   - **Slide 7-8:** Traction & Cohort Retention (Show MoM expansion, pilot conversions, or active engagement).
-   - **Slide 9-10:** Unit Economics & Business Model (Gross margins, CAC-to-LTV payback period).
-   - **Slide 11-12:** Team Pedigree & The Ask (Capital target, 18-month hiring & milestone roadmap).
+1. **Choose the Appropriate Legal Form:**
+   - **SUARL (Société Unipersonnelle à Responsabilité Limitée):** Ideal for solo founders seeking limited liability with single-shareholder governance.
+   - **SARL (Société à Responsabilité Limitée):** The most common vehicle for 2 to 50 co-founders; provides liability protection and flexible capital distribution.
+   - **SA (Société Anonyme):** Recommended for capital-intensive ventures requiring institutional board structures and multiple share classes.
 
-2. **Common Mistakes to Eliminate:**
-   - Avoid leading with technical jargon; lead with the enterprise customer's burning problem.
-   - Don't present inflated $100B generic TAMs; calculate bottom-up addressable market.
-   - Ensure the "Ask" gives at least 18 to 24 months of runway with clear milestone triggers for the next round.`
+2. **Core Administrative Milestones:**
+   - Reserve and register company name (dénomination sociale).
+   - Draft and legalize company articles of association (Statuts).
+   - Deposit minimum startup share capital in an escrow bank account.
+   - Register with the National Business Registry (RNE - Registre National des Entreprises) and obtain the Matricule Fiscal.
+   - Open corporate bank accounts in Tunisian Dinars (TND).
+
+3. **Ecosystem Readiness:**
+   - Review eligibility criteria for local innovation support programs and incubator calls.
+   - Ensure founder intellectual property (code, designs, patents) is formally assigned to the corporate entity.
+
+*${AI_DISCLAIMER}*`
     },
     {
       id: "q-s2",
-      question: "What valuation multiple applies to my sector and stage today?",
-      answer: `**Current Market Valuation Multiples & Benchmarks**
+      question: "What documents should I prepare before seeking investment?",
+      answer: `**Essential Due Diligence Package for Tunisian Startups**
 
-1. **Early-Stage Benchmarks (Post-2024 Market Realities):**
-   - **Pre-Seed / MVP:** Priced typically on SAFE notes with post-money caps of **$4M - $8M**, depending on founder pedigree and technical defensibility.
-   - **Seed / Early Revenue ($10k - $50k MRR):** Post-money caps range between **$8M - $14M**. Founders typically dilute 15% to 20% in this round.
-   - **Series A ($1M - $3M ARR):** Trailing ARR multiples have recalibrated to **10x - 18x ARR** for tier-1 generative AI and cyber, and **8x - 12x ARR** for standard B2B SaaS.
+1. **Corporate & Legal Folder:**
+   - Proof of RNE registration and published legal notice.
+   - Up-to-date Cap Table (tableau de répartition du capital) listing all equity holders and options.
+   - Signed IP assignment agreements and founder vesting schedules.
+   - Standard employment contracts and tax compliance receipts.
 
-2. **Key Valuation Levers in Your Favor:**
-   - **Net Dollar Retention (NDR):** Anything above 120% commands premium multiples.
-   - **Gross Margins:** Software gross margins > 75% protect pricing power.
-   - **Capital Efficiency (Burn Multiple):** Net Burn / Net New ARR under 1.5x is considered best-in-class today.`
+2. **Commercial & Financial Documentation:**
+   - 3-year forward financial plan in TND (P&L, projected monthly cash flows, burn rate, and runway).
+   - Bank statements showing recent revenue deposits and operating costs.
+   - Copies of signed Letters of Intent (LOIs), pilot agreements, or commercial customer contracts.
+
+3. **Presentation & Product Evidence:**
+   - Concise 10-12 slide Pitch Deck tailored for local and regional investors.
+   - Product demonstration link or video recording displaying real user workflows.
+   - Customer feedback notes and traction metrics (MRR, retention, active accounts).
+
+*${AI_DISCLAIMER}*`
     },
     {
       id: "q-s3",
-      question: "What are the essential items for an investor due diligence data room?",
-      answer: `**Comprehensive Due Diligence Checklist for Founders**
+      question: "How can I prepare a pitch deck for Tunisian investors?",
+      answer: `**Tailoring Your Pitch Deck for Tunisian Angels & VCs**
 
-1. **Corporate Governance & Legal:**
-   - Articles of Incorporation, Cap Table (Carta or Pulley export with all options & SAFEs).
-   - Board minutes, IP assignment agreements signed by all founders, employees, and contractors.
-   - Standard customer Terms of Service (ToS) and Master Service Agreements (MSAs).
+1. **Structure for Impact (10-12 Slides):**
+   - **Slide 1:** Company name, clear one-line value proposition, governorate base.
+   - **Slide 2:** The specific problem in Tunisia (quantify financial loss, manual hours, or operational bottlenecks).
+   - **Slide 3:** Your solution and live product screenshots or demo metrics.
+   - **Slide 4:** Market size in Tunisia (TAM/SAM/SOM in TND) plus regional expansion potential (North Africa, Europe, Gulf).
+   - **Slide 5:** Real traction and milestones achieved with existing capital.
+   - **Slide 6:** Business model, pricing in TND, and unit economics (customer acquisition vs lifetime value).
+   - **Slide 7:** Competitive landscape and why incumbents cannot easily replicate your speed.
+   - **Slide 8:** Founding team credentials, technical engineering depth, and complementary roles.
+   - **Slide 9:** The Ask: Exact funding needed in TND and 18-month hiring & milestone timeline.
 
-2. **Financials & Operating Model:**
-   - 3-statement historical financial model (P&L, Balance Sheet, Cash Flow) for the past 12-24 months.
-   - Forward 24-month pro-forma operating model with explicit headcount hiring assumptions.
-   - Detailed monthly burn rate, revenue pipeline tracker, and bank account reconciliation statements.
+2. **Key Nuances for Local Investors:**
+   - Clearly explain your foreign exchange risk mitigation if tech infrastructure is billed in USD/EUR while revenue is collected in TND.
+   - Emphasize team execution capability and local regulatory navigation.
 
-3. **Product, Tech & IP:**
-   - Architecture diagrams, cloud infrastructure cost breakdown (AWS/GCP/Azure).
-   - Security compliance certifications (SOC2 Type II, ISO27001, GDPR, HIPAA if healthtech).
-   - Patent applications, trademark filings, and third-party software licensing audits.`
+*${AI_DISCLAIMER}*`
+    },
+    {
+      id: "q-s4",
+      question: "What funding options are available in Tunisia?",
+      answer: `**Landscape of Funding Mechanisms for Tunisian Startups**
+
+1. **Grants & Pre-Seed Non-Dilutive Capital:**
+   - Competitive innovation challenges and bilateral development partner programs (e.g. EU, GIZ, USAID innovation programs).
+   - University and technological pole incubation stipends and prototype development vouchers.
+
+2. **Angel Investors & Local Syndicates:**
+   - Angel networks (e.g., Carthage Angels, diaspora investor networks) writing early checks between 30,000 TND and 250,000 TND.
+   - Hands-on mentoring, commercial introductions, and zero-to-one operational guidance.
+
+3. **Institutional Venture Capital & Private Equity:**
+   - Early-stage VC funds deploying seed and Series A checks from 500,000 TND to over 2,000,000 TND.
+   - Focus on ventures with validated domestic recurring revenue and international export potential.
+
+4. **Debt, Micro-Finance & Bank Facilities:**
+   - Subsidized loan vehicles and specialized innovation banking windows for working capital needs.
+
+*${AI_DISCLAIMER}*`
+    },
+    {
+      id: "q-s5",
+      question: "How do I protect my startup idea?",
+      answer: `**Strategies for Protecting Innovation & IP in Tunisia**
+
+1. **Execution Over Secrecy:**
+   - An idea alone cannot be protected; execution speed, customer relationships, and proprietary data flywheels form the strongest defensible moat.
+   - Investors generally do not sign Non-Disclosure Agreements (NDAs) during first pitch meetings; focus your initial slides on the problem and commercial traction rather than secret source code algorithms.
+
+2. **Legal Instruments:**
+   - **Non-Disclosure Agreements (NDAs):** Use them when sharing proprietary technical blueprints, source code, or manufacturing drawings with external contractors or partners.
+   - **IP Assignment Clauses:** Ensure every co-founder, developer, and freelance engineer signs an explicit IP assignment agreement transferring all code, designs, and brand rights directly to your company.
+
+3. **Formal Registrations:**
+   - Register company trademarks, logos, and domain names (.tn) through official channels.
+   - For novel industrial hardware or physical processes, evaluate filing patent or utility model applications with the National Institute for Standardization and Industrial Property (INNORPI).
+
+*${AI_DISCLAIMER}*`
     }
   ],
   investor: [
     {
       id: "q-i1",
-      question: "What are common red flags in early-stage traction metrics?",
-      answer: `**Early-Stage Traction Red Flags & Quality of Revenue Analysis**
+      question: "How should I evaluate a Tunisian startup?",
+      answer: `**Evaluation Framework for Early-Stage Tunisian Startups**
 
-1. **Leaky Bucket Retention:**
-   - Rapid top-line user growth masked by steep monthly churn (e.g., > 5% logo churn/month in SMB SaaS or > 1.5% in enterprise).
-   - Cohort charts where usage drops sharply after week 2 or trial period expiration.
+1. **Founder-Market Fit & Technical Independence:**
+   - Does the founding team possess in-house engineering and domain expertise, or do they rely entirely on third-party agencies?
+   - Look for resilience, rapid learning velocity, and deep local market understanding.
 
-2. **Unscalable or Non-Standard Revenue:**
-   - High proportion of one-off custom engineering or professional services fees disguised as recurring SaaS.
-   - Heavy concentration risk (e.g., a single customer contributing > 35% of total ARR).
-   - Extended sales cycles (> 9 months) with pilot accounts that lack contractual automatic conversion to paid contracts.
+2. **Quality of Traction in TND:**
+   - Distinguish between vanity metrics (social followers, pilot sign-ups) and verified recurring commercial revenue in TND.
+   - Evaluate customer retention and repeat purchase behavior across target governorates.
 
-3. **Unit Economics & CAC Pitfalls:**
-   - CAC calculated by excluding founder selling time, contractor costs, or paid marketing agency overhead.
-   - Payback periods stretching beyond 18 months at seed stage.`
+3. **Export and Regional Scalability:**
+   - Can the product or service scale beyond Tunisia into the Maghreb, Sub-Saharan Africa, or European markets?
+   - Does the software support multilingual workflows (Arabic, French, English)?
+
+*${AI_DISCLAIMER}*`
     },
     {
       id: "q-i2",
-      question: "How do I calculate cap table dilution across Seed and Series A?",
-      answer: `**Dilution & Ownership Modeling Guide for Investors**
+      question: "What should I check before investing?",
+      answer: `**Pre-Investment Due Diligence Checklist for Tunisian Deals**
 
-1. **Standard Round Dilution Framework:**
-   - **Seed Round:** 15% - 20% equity dilution for a $1.5M - $2.5M check on a $10M post-money valuation.
-   - **Unallocated Option Pool:** Lead investors typically mandate a 10% - 15% post-money unallocated employee option pool, which dilutes prior shareholders before the new cash enters.
-   - **Series A Round:** Typically 20% - 25% dilution for a $7M - $12M check on a $35M - $50M post-money valuation.
+1. **Corporate & Regulatory Health:**
+   - Verify official company registration on the RNE registry and check for any outstanding commercial litigation.
+   - Confirm proper social security (CNSS) and tax registry compliance for core employees.
+   - Verify that all founder equity vesting schedules are formalized in writing.
 
-2. **Cumulative Founder Ownership Trajectory:**
-   - Initial: Founders 100%
-   - Post-Pre-Seed & Seed: Founders typically retain **65% - 75%**.
-   - Post-Series A: Founders typically retain **45% - 55%**.
-   - Target for lead seed investor: Maintain 8% - 15% through pro-rata participation rights into Series A to prevent excessive anti-dilution decay.`
+2. **Cap Table & Dilution Structure:**
+   - Ensure the founding team retains sufficient equity (typically 70%+ prior to seed round) to stay motivated for the long journey.
+   - Check whether earlier advisors or passive shareholders own excessive dead equity without operational contributions.
+
+3. **Financial Unit Economics:**
+   - Review realistic monthly cash burn in TND and evaluate runway length under conservative sales scenarios.
+   - Validate whether gross margins adequately cover local customer acquisition and delivery costs.
+
+*${AI_DISCLAIMER}*`
     },
     {
       id: "q-i3",
-      question: "What frameworks evaluate technical founders with no commercial experience?",
-      answer: `**Technical Founder Evaluation Matrix (The 4 'C's Framework)**
+      question: "How can I analyse a startup’s pitch deck?",
+      answer: `**Critical Analytical Lens for Tunisian Startup Pitch Decks**
 
-1. **Customer Empathy & Iteration Speed:**
-   - Do the founders personally conduct user interviews and shadow customer workflows, or do they retreat into engineering bubbles?
-   - What is their release cadence? Elite teams ship daily or weekly fixes directly based on customer feedback.
+1. **Problem Validation (Slide 2-3):**
+   - Is the founder solving a genuine burning pain point in the Tunisian economy, or attempting to clone a Silicon Valley product with no local demand?
+   - Have they personally spoken with at least 30 prospective paying clients?
 
-2. **Commercial Adaptability & First Sales:**
-   - Has the technical founder personally closed their first 3 to 5 paid pilots before attempting to hire a VP of Sales? Founder-led selling is mandatory before product-market fit.
-   - Can they articulate their product's business value in non-technical terms (ROI, payback period, compliance relief)?
+2. **Unit Economics & Currency Assumptions (Slide 6-7):**
+   - Are pricing tiers benchmarked realistically against Tunisian business purchasing power?
+   - Do financial projections account for extended enterprise payment terms (delays in payment collection)?
 
-3. **Talent Magnetism:**
-   - Ability to convince top-tier engineering talent and veteran commercial advisors to work for below-market cash and equity compensation.
-   - Self-awareness regarding their operational blind spots and willingness to hire strong COO/GTM counterparts.`
+3. **Defensibility & Strategic Moat (Slide 8-9):**
+   - What prevents a well-capitalized local corporate from building an internal replica?
+   - Look for proprietary local datasets, integration with national banking switches, or exclusive agricultural/supplier relationships.
+
+*${AI_DISCLAIMER}*`
+    },
+    {
+      id: "q-i4",
+      question: "What risks should I consider?",
+      answer: `**Key Risk Factors in the Tunisian Startup Ecosystem**
+
+1. **Macroeconomic & Foreign Exchange Exposure:**
+   - Fluctuations in foreign exchange rates when software tooling or cloud hosting is billed in foreign currencies while revenues are earned in TND.
+   - Evaluate whether the company has foreign currency invoicing capabilities through export clients.
+
+2. **Talent Retention & Brain Drain:**
+   - Top Tunisian software engineers frequently receive attractive remote offers from European companies.
+   - Ensure the startup offers competitive local compensation, equity incentives, and an inspiring engineering culture.
+
+3. **Payment Collection Cycles:**
+   - Extended accounts receivable cycles when dealing with local private conglomerates or public institutions.
+   - Startups must maintain sufficient working capital buffer to withstand 60-90 day invoice settlement delays.
+
+*${AI_DISCLAIMER}*`
+    },
+    {
+      id: "q-i5",
+      question: "How can I contact and support a startup?",
+      answer: `**Effective Angel & VC Engagement Protocols**
+
+1. **Direct Communication via StartupBridge AI:**
+   - Use the “I’m Interested” button on any verified startup profile to dispatch your profile and ticket size directly to the founder.
+   - Schedule an introductory 20-minute discussion focused on business model assumptions and founder vision.
+
+2. **Beyond Capital — Value-Add Investor Support:**
+   - **Commercial Introductions:** Introduce the startup to prospective enterprise pilot clients within your corporate network in Tunis, Sfax, or Sousse.
+   - **Regulatory Guidance:** Assist founders in understanding local administrative, fiscal, and corporate structuring best practices.
+   - **Hiring & Governance:** Assist in recruiting senior key hires and establishing quarterly advisory board discipline.
+
+*${AI_DISCLAIMER}*`
     }
   ]
 };
@@ -112,62 +212,61 @@ export const AI_SUGGESTED_QUESTIONS = {
 export function generateCustomAiResponse(role, query) {
   const lower = query.toLowerCase();
 
-  if (lower.includes("valuation") || lower.includes("cap") || lower.includes("worth") || lower.includes("multiple")) {
+  if (lower.includes("create") || lower.includes("rne") || lower.includes("sarl") || lower.includes("suarl") || lower.includes("legal")) {
     return {
-      title: "AI Valuation & Cap Table Guidance",
-      body: `**Valuation Analysis & Strategic Multiples**
-- **Sector Context:** Early-stage multiples depend heavily on growth velocity and recurring revenue quality. Enterprise AI and Cyber command 12x-18x forward ARR, while marketplaces and direct consumer models trade at 3x-6x.
-- **Round Sizing Principle:** Aim to sell no more than 15-20% of your company in any single equity financing round.
-- **SAFE vs Priced Round:** SAFEs with post-money caps offer standard flexibility at Seed, but ensure you model the compounding dilution of multiple simultaneous SAFEs before pricing your Series A.`
+      title: "Tunisian Business Creation Guidance",
+      body: `**Legal & Administrative Considerations in Tunisia**
+- **Entity Type:** Most scalable ventures incorporate as a SARL or SUARL to limit liability while maintaining flexible equity allocation.
+- **RNE Registration:** Complete registration through the National Business Registry (RNE) to obtain official legal personality and Matricule Fiscal.
+- **Bank Deposition:** Ensure statutory capital is deposited in a locked escrow account before notarizing statutory articles.
+
+*${AI_DISCLAIMER}*`
     };
   }
 
-  if (lower.includes("pitch") || lower.includes("deck") || lower.includes("slide") || lower.includes("presentation")) {
+  if (lower.includes("valuation") || lower.includes("tnd") || lower.includes("ticket") || lower.includes("multiple")) {
     return {
-      title: "AI Pitch Deck Review & Polish Recommendations",
-      body: `**Key Recommendations for High-Conversion Pitch Decks**
-- **1st Minute Hook:** Start with the specific quantified status quo failure before introducing your product.
-- **Traction Proof Point:** Investors skim decks in an average of 2 minutes and 42 seconds. Place your traction slide on slide 4 or 5 rather than the appendix.
-- **Clear Defensibility (Moat):** Explicitly explain why a well-funded incumbent or open-source competitor cannot replicate your solution in 6 months (data feedback loops, proprietary integrations, regulatory moats).`
+      title: "Tunisian Valuation & Round Sizing Benchmarks",
+      body: `**Valuation Benchmarks in the Tunisian Ecosystem**
+- **Pre-Seed / MVP:** Rounds typically range from 50,000 TND to 200,000 TND at pre-money valuations between 500,000 TND and 1,500,000 TND.
+- **Seed Round (Early Revenue):** Sized between 300,000 TND and 1,000,000 TND to provide 12-18 months of operating runway.
+- **Dilution Principle:** Founders should aim to sell no more than 15-20% in an early equity round to preserve motivation for downstream capital.
+
+*${AI_DISCLAIMER}*`
     };
   }
 
-  if (lower.includes("diligence") || lower.includes("data room") || lower.includes("legal") || lower.includes("safe")) {
+  if (lower.includes("deck") || lower.includes("pitch") || lower.includes("slide")) {
     return {
-      title: "AI Due Diligence Protocol",
-      body: `**Streamlined Due Diligence Action Plan**
-- **Speed Closes Rounds:** Having a pre-indexed data room organized into Legal, Financial, Tech/IP, and Customers cuts deal cycle times from 8 weeks to under 3 weeks.
-- **Red Flag Mitigation:** Ensure all founder IP assignments and contractor copyright waivers are fully countersigned prior to partner meetings.
-- **Customer Reference Readiness:** Prepare 3 friendly enterprise customer references who have agreed in advance to speak with prospective lead investors.`
+      title: "Pitch Deck Preparation for Local & Regional Investors",
+      body: `**Core Advice for Pitching to Tunisian Investors**
+- **Quantify the Local Problem:** Focus heavily on the practical pain point within target Tunisian governorates.
+- **Show Commercial Proof:** Highlight paying customers, signed pilot agreements, and verifiable month-over-month growth in TND.
+- **Highlight Team Depth:** Showcase technical self-sufficiency and deep sector insight.
+
+*${AI_DISCLAIMER}*`
     };
   }
 
-  if (lower.includes("investor") || lower.includes("angel") || lower.includes("vc") || lower.includes("fund")) {
-    return {
-      title: "AI Investor Matching & Outreach Strategy",
-      body: `**Targeted Investor Outreach Strategy**
-- **Thesis Alignment Over Prestige:** Target partners whose recent blog posts, tweets, or podcast interviews explicitly mention your specific problem statement.
-- **Warm Intros vs Cold Email:** Cold outreach can work if personalized with a crisp 3-sentence blurb, verifiable metrics ($MRR and MoM growth), and a 1-minute Loom video demo.
-- **Momentum Creation:** Consolidate first partner meetings within a 2-week window to generate competitive term sheet pressure and avoid drawn-out diligence traps.`
-    };
-  }
-
-  // General fallback
   if (role === "startup") {
     return {
-      title: "AI Founder Strategic Advisory",
-      body: `**Strategic Recommendations for "${query}"**
-- **Actionable Step:** Focus on customer-obsessed validation. Ensure your pilot users are experiencing measurable ROI and high weekly engagement.
-- **Fundraising Readiness:** Quantify this metric in your updated StartupBridge profile so prospective investors can evaluate your momentum in their deal stream.
-- **Next Milestone:** Target an 18-month operating plan that bridges your current stage to positive unit economics or clear Series A milestones.`
+      title: "Startup Tunisia Strategic Guidance",
+      body: `**Recommendations for "${query}"**
+- **Customer Focus:** Focus on delivering measurable value to your first cohort of paying Tunisian clients.
+- **Runway Management:** Keep monthly cash burn disciplined and monitor operational expenses in TND closely.
+- **Ecosystem Leverage:** Connect with regional incubators, university tech poles, and business-support organizations across Tunisia.
+
+*${AI_DISCLAIMER}*`
     };
   } else {
     return {
-      title: "AI Investment Thesis Analysis",
-      body: `**Due Diligence Assessment for "${query}"**
-- **Thesis Evaluation:** Evaluate whether the company has proprietary distribution advantages, negative churn, or defensible data flywheels.
-- **Risk Mitigation:** Verify founder vesting schedules, customer concentration risk, and runway buffer under conservative revenue projections.
-- **Deal Sizing:** Consider structuring with milestone-based tranches or standard pro-rata participation rights to protect future equity allocation.`
+      title: "Investor Tunisia Due Diligence Guidance",
+      body: `**Investment Assessment for "${query}"**
+- **Thesis Fit:** Evaluate whether the company has strong defensibility in Tunisia and regional export potential.
+- **Execution Quality:** Check founder resilience, customer feedback, and unit economics in TND.
+- **Value-Add Synergy:** Assess how your network and industry experience can accelerate the startup's commercial milestones.
+
+*${AI_DISCLAIMER}*`
     };
   }
 }

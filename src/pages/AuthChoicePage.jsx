@@ -6,9 +6,8 @@ import {
   ArrowRight, 
   CheckCircle2, 
   Sparkles, 
-  ShieldCheck, 
-  DollarSign,
-  Users,
+  Coins,
+  MapPin,
   Compass
 } from 'lucide-react';
 
@@ -20,20 +19,20 @@ export default function AuthChoicePage() {
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs font-semibold text-blue-400 mb-4">
           <Sparkles className="w-3.5 h-3.5 text-violet-400" />
-          <span>Role Selection</span>
+          <span>Tunisian Innovation Community</span>
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-          How would you like to use <br />
+          How would you like to join <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-violet-400">
-            StartupBridge AI?
+            StartupBridge AI Tunisia?
           </span>
         </h1>
         <p className="mt-4 text-base text-slate-400 max-w-xl mx-auto leading-relaxed">
-          Select your journey to access personalized matchmaking, tailored analytics, and specialized AI guidance.
+          Select your journey to access personalized matchmaking across all 24 Tunisian governorates, tailored deal analytics, and localized AI guidance.
         </p>
       </div>
 
-      {/* Two Large Cards */}
+      {/* Two Large Cards (Crisp White Cards on Dark Navy Background) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto w-full">
         
         {/* Startup Card */}
@@ -45,7 +44,7 @@ export default function AuthChoicePage() {
             </div>
 
             <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-              For Founders & Teams
+              For Tunisian Founders & Teams
             </span>
 
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-3 mb-3">
@@ -53,30 +52,30 @@ export default function AuthChoicePage() {
             </h2>
 
             <p className="text-slate-600 text-sm leading-relaxed mb-6">
-              Raise smart capital from active funds and angels who match your industry and stage. Showcase your real traction and get AI feedback on your pitch deck.
+              Raise smart capital in Tunisian Dinars (TND) from business angels, local venture funds, incubators, and the diaspora. Showcase your verified traction and get AI feedback on your pitch deck.
             </p>
 
             {/* Benefits */}
             <div className="space-y-3 mb-8">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Key Benefits:
+                Key Benefits for Tunisian Founders:
               </h4>
               <ul className="space-y-2.5 text-sm text-slate-700">
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                  <span>Publish your pitch deck and metrics to 420+ active investors</span>
+                  <span>Publish your pitch and traction to active investors in TND</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                  <span>Receive inbound interest requests with check sizes</span>
+                  <span>Receive inbound interest requests with verified ticket sizes</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                  <span>Access the AI Pitch & Valuation Advisor 24/7</span>
+                  <span>Access the Startup Tunisia AI Guide for legal & pitch advisory</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                  <span>Live tracking of profile views and investor saves</span>
+                  <span>Visibility across all 24 Tunisian governorates</span>
                 </li>
               </ul>
             </div>
@@ -109,7 +108,7 @@ export default function AuthChoicePage() {
             </div>
 
             <span className="text-xs font-bold uppercase tracking-wider text-violet-600 bg-violet-50 px-3 py-1 rounded-full border border-violet-200">
-              For VCs, Angels & Syndicates
+              For Angels, VCs, Incubators & Diaspora
             </span>
 
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-3 mb-3">
@@ -117,30 +116,30 @@ export default function AuthChoicePage() {
             </h2>
 
             <p className="text-slate-600 text-sm leading-relaxed mb-6">
-              Source vetted deal flow matched to your mandate. Review standardized traction data, AI fit scores, and send direct interest requests in one click.
+              Source verified deal flow from Tunis, Sfax, Sousse, Bizerte, and interior regions. Filter by ticket size in TND, legal status, and AI thesis compatibility.
             </p>
 
             {/* Benefits */}
             <div className="space-y-3 mb-8">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Key Benefits:
+                Key Benefits for Investors:
               </h4>
               <ul className="space-y-2.5 text-sm text-slate-700">
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-violet-600 flex-shrink-0" />
-                  <span>Curated deal flow filtered by sector, stage, and geography</span>
+                  <span>Curated Tunisian deal flow filtered by governorates & sectors</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-violet-600 flex-shrink-0" />
-                  <span>Objective AI Match Scoring against your fund thesis</span>
+                  <span>Objective AI Match Scoring calibrated for local stage metrics</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-violet-600 flex-shrink-0" />
-                  <span>One-click "I'm Interested" outreach to founders</span>
+                  <span>One-click "I'm Interested" outreach directly to founders</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-violet-600 flex-shrink-0" />
-                  <span>Private watchlist and portfolio management</span>
+                  <span>Private watchlist and deal pipeline management in TND</span>
                 </li>
               </ul>
             </div>
@@ -168,9 +167,9 @@ export default function AuthChoicePage() {
 
       {/* Alternative Explore Link */}
       <div className="text-center mt-12 text-sm text-slate-400">
-        Just want to browse without creating a profile?{' '}
-        <Link to="/explore" className="text-blue-400 font-semibold hover:underline inline-flex items-center gap-1">
-          Explore all startups
+        Looking for official Tunisian business creation resources?{' '}
+        <Link to="/resources" className="text-blue-400 font-semibold hover:underline inline-flex items-center gap-1">
+          Explore Official Resources
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>

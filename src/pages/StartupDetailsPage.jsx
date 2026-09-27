@@ -10,7 +10,7 @@ import {
 import { 
   Sparkles, 
   MapPin, 
-  DollarSign, 
+  Coins, 
   Layers, 
   Bookmark, 
   Share2, 
@@ -18,14 +18,16 @@ import {
   CheckCircle2, 
   Users, 
   TrendingUp, 
-  ShieldCheck, 
   Calendar,
   Building,
   Activity,
   HeartHandshake,
-  Check
+  Check,
+  Globe,
+  AlertCircle
 } from 'lucide-react';
 import InterestSuccessModal from '../components/InterestSuccessModal';
+import { AI_DISCLAIMER } from '../data/aiResponses';
 
 export default function StartupDetailsPage({ onOpenAiGuide }) {
   const { id } = useParams();
@@ -85,6 +87,8 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
   };
 
   const initials = startup.name
+    .replace(/\(.*?\)/g, '')
+    .trim()
     .split(' ')
     .map(w => w[0])
     .join('')
@@ -92,11 +96,21 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
     .toUpperCase();
 
   const matchScore = startup.aiMatchScore || 87;
+
+  // Prioritized Match Score breakdown according to Requirement 6:
+  // - Sector compatibility
+  // - Ticket size in TND
+  // - Startup stage
+  // - Tunisian governorate / region
+  // - Funding type
+  // - Investor preferences
   const scores = startup.aiScores || {
-    sectorFit: 94,
+    sectorFit: 95,
+    ticketFit: 93,
     stageFit: 90,
-    growthRate: 88,
-    teamStrength: 92
+    governorateFit: 94,
+    fundingTypeFit: 92,
+    preferencesFit: 91
   };
 
   return (
@@ -109,7 +123,7 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
           className="inline-flex items-center gap-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Back to All Startups</span>
+          <span>Back to Tunisian Startups</span>
         </Link>
 
         <div className="flex items-center gap-2">
@@ -161,10 +175,13 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
                 </h1>
                 <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                   <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-                  Verified Deal
+                  {startup.registeredInTunisia === 'Yes' ? 'Registered in Tunisia' : 'In Creation'}
                 </span>
                 <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-slate-100 text-slate-700">
                   {startup.stage}
+                </span>
+                <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  {startup.legalStatus}
                 </span>
               </div>
 
@@ -173,13 +190,17 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
               </p>
 
               <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-1">
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4 text-slate-400" />
-                  {startup.city ? `${startup.city}, ` : ''}{startup.country}
+                <span className="flex items-center gap-1 font-semibold text-slate-800">
+                  <MapPin className="w-4 h-4 text-blue-600" />
+                  {startup.city ? `${startup.city}, ` : ''}{startup.governorate || 'Tunis'}, Tunisia
                 </span>
                 <span className="flex items-center gap-1">
                   <Layers className="w-4 h-4 text-slate-400" />
                   {startup.sector}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Coins className="w-4 h-4 text-slate-400" />
+                  {startup.fundingTypeSought || 'Seed Investment'}
                 </span>
                 <span className="flex items-center gap-1">
                   <Users className="w-4 h-4 text-slate-400" />
@@ -187,7 +208,7 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
                 </span>
                 <span className="flex items-center gap-1">
                   <Calendar className="w-4 h-4 text-slate-400" />
-                  Founded {startup.foundedYear || 2024}
+                  Founded {startup.foundedYear || 2023}
                 </span>
               </div>
             </div>
@@ -195,7 +216,7 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
 
           {/* Action CTAs */}
           <div className="flex flex-col sm:flex-row md:flex-col gap-3 min-w-[200px] flex-shrink-0">
-            {/* Primary Required "I'm Interested" Button */}
+            {/* Required "I'm Interested" Button */}
             <button
               onClick={handleInterestedClick}
               className={`w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-bold text-sm shadow-xl transition-all cursor-pointer ${
@@ -213,43 +234,43 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
               className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold text-xs text-violet-700 bg-violet-50 hover:bg-violet-100 border border-violet-200 transition-colors cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-violet-600" />
-              <span>Diligence with AI Guide</span>
+              <span>Diligence with Investor Guide</span>
             </button>
           </div>
 
         </div>
 
-        {/* Highlight Stats Strip */}
+        {/* Highlight Stats Strip in TND */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6">
           <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
             <span className="text-xs text-slate-400 font-medium block">Funding Target</span>
-            <div className="text-lg font-black text-slate-900 mt-0.5 text-blue-600">
+            <div className="text-lg font-black text-blue-600 mt-0.5">
               {startup.fundingNeeded}
             </div>
           </div>
           <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-            <span className="text-xs text-slate-400 font-medium block">Target Valuation</span>
+            <span className="text-xs text-slate-400 font-medium block">Target Valuation (TND)</span>
             <div className="text-lg font-black text-slate-900 mt-0.5">
-              {startup.valuation || '$9.0M Post'}
+              {startup.valuation || '1,800,000 TND'}
             </div>
           </div>
           <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-            <span className="text-xs text-slate-400 font-medium block">Prior Capital</span>
+            <span className="text-xs text-slate-400 font-medium block">Prior Capital (TND)</span>
             <div className="text-lg font-black text-slate-900 mt-0.5">
-              {startup.fundingRaised || '$350,000'}
+              {startup.fundingRaised || '100,000 TND'}
             </div>
           </div>
           <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
             <span className="text-xs text-slate-400 font-medium block">Runway</span>
-            <div className="text-lg font-black text-slate-900 mt-0.5 text-emerald-600">
-              {startup.financials?.runway || '14 months'}
+            <div className="text-lg font-black text-emerald-600 mt-0.5">
+              {startup.financials?.runway || '12-16 months'}
             </div>
           </div>
         </div>
 
       </div>
 
-      {/* Main Grid: Details + AI Score Card */}
+      {/* Main Grid: Details + AI Match Score Breakdown (Requirement 6) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Left Column (2 Cols): Problem, Solution, Traction, Team */}
@@ -261,11 +282,11 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
               <div className="flex items-center gap-2 mb-2 text-rose-600">
                 <Activity className="w-4 h-4" />
                 <h3 className="font-extrabold text-sm uppercase tracking-wider">
-                  The Market Problem
+                  The Market Problem in Tunisia
                 </h3>
               </div>
               <p className="text-slate-700 text-sm leading-relaxed">
-                {startup.problem || 'Current enterprise legacy solutions suffer from high latency, disconnected data silos, and severe labor overhead.'}
+                {startup.problem || 'Existing legacy systems in Tunisia suffer from operational bottlenecks, excessive paper bureaucracy, and delayed resolution.'}
               </p>
             </div>
 
@@ -273,7 +294,7 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
               <div className="flex items-center gap-2 mb-2 text-blue-600">
                 <Sparkles className="w-4 h-4" />
                 <h3 className="font-extrabold text-sm uppercase tracking-wider">
-                  Our Proprietary Solution
+                  Our Scalable Solution
                 </h3>
               </div>
               <p className="text-slate-700 text-sm leading-relaxed">
@@ -290,7 +311,7 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
                 <span>Verified Traction & Milestones</span>
               </h3>
               <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                Data Room Verified
+                Demo Verified
               </span>
             </div>
 
@@ -312,7 +333,7 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
           <div className="bg-white text-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-xl">
             <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-4 flex items-center gap-2">
               <Users className="w-5 h-5 text-blue-600" />
-              <span>Leadership & Core Team</span>
+              <span>Leadership & Core Team (Tunisia)</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -330,7 +351,7 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
 
         </div>
 
-        {/* Right Column (1 Col): AI Match Score Card (PROMINENTLY FEATURED) */}
+        {/* Right Column (1 Col): AI Match Score Breakdown Prioritized (Requirement 6) */}
         <div className="space-y-6">
           
           {/* AI Match Score Card */}
@@ -340,9 +361,9 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-bold uppercase tracking-wider text-violet-300 bg-violet-950/80 px-3 py-1 rounded-full border border-violet-700/50 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-violet-400" />
-                Algorithmic Diligence
+                Tunisia Match Logic
               </span>
-              <span className="text-xs text-slate-400 font-mono">v3.2 AI</span>
+              <span className="text-xs text-slate-400 font-mono">TN-v2 AI</span>
             </div>
 
             {/* Score Ring / Number */}
@@ -356,84 +377,111 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed mb-6">
-              {startup.aiThesis || 'High-conviction alignment with institutional investment criteria based on team defensibility, market velocity, and unit economics.'}
+              {startup.aiThesis || 'Algorithmic alignment with active investor mandate across sector, ticket in TND, stage, and governorate.'}
             </p>
 
-            {/* Breakdown Bars */}
+            {/* Breakdown Bars (Required Prioritized Dimensions from Requirement 6) */}
             <div className="space-y-3.5 pt-4 border-t border-slate-700/60">
               
+              {/* 1. Sector compatibility */}
               <div>
                 <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
-                  <span>Sector Alignment</span>
-                  <span className="font-bold text-blue-400">{scores.sectorFit}%</span>
+                  <span>Sector Compatibility</span>
+                  <span className="font-bold text-blue-400">{scores.sectorFit || 95}%</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
                   <div 
                     className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full"
-                    style={{ width: `${scores.sectorFit}%` }}
+                    style={{ width: `${scores.sectorFit || 95}%` }}
                   ></div>
                 </div>
               </div>
 
+              {/* 2. Ticket size in TND */}
               <div>
                 <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
-                  <span>Stage & Valuation Fit</span>
-                  <span className="font-bold text-indigo-400">{scores.stageFit}%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full"
-                    style={{ width: `${scores.stageFit}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
-                  <span>Growth Velocity</span>
-                  <span className="font-bold text-violet-400">{scores.growthRate}%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-violet-500 to-violet-400 rounded-full"
-                    style={{ width: `${scores.growthRate}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
-                  <span>Team Defensibility</span>
-                  <span className="font-bold text-emerald-400">{scores.teamStrength}%</span>
+                  <span>Ticket Size in TND</span>
+                  <span className="font-bold text-emerald-400">{scores.ticketFit || 93}%</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
                   <div 
                     className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full"
-                    style={{ width: `${scores.teamStrength}%` }}
+                    style={{ width: `${scores.ticketFit || 93}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              {/* 3. Startup stage */}
+              <div>
+                <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
+                  <span>Startup Stage</span>
+                  <span className="font-bold text-indigo-400">{scores.stageFit || 90}%</span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full"
+                    style={{ width: `${scores.stageFit || 90}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              {/* 4. Tunisian governorate / region */}
+              <div>
+                <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
+                  <span>Tunisian Governorate / Region</span>
+                  <span className="font-bold text-violet-400">{scores.governorateFit || 94}%</span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-violet-500 to-violet-400 rounded-full"
+                    style={{ width: `${scores.governorateFit || 94}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              {/* 5. Funding type */}
+              <div>
+                <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
+                  <span>Funding Type Compatibility</span>
+                  <span className="font-bold text-cyan-400">{scores.fundingTypeFit || 92}%</span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-cyan-500 to-blue-400 rounded-full"
+                    style={{ width: `${scores.fundingTypeFit || 92}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              {/* 6. Investor preferences */}
+              <div>
+                <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
+                  <span>Investor Mandate Preferences</span>
+                  <span className="font-bold text-amber-400">{scores.preferencesFit || 91}%</span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-amber-500 to-orange-400 rounded-full"
+                    style={{ width: `${scores.preferencesFit || 91}%` }}
                   ></div>
                 </div>
               </div>
 
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-700/60 flex items-center justify-between text-[11px] text-slate-400">
-              <span>Benchmark: Top 8% of sector</span>
-              <button 
-                onClick={() => onOpenAiGuide('investor')} 
-                className="text-violet-400 hover:text-violet-300 font-semibold cursor-pointer underline"
-              >
-                Inquire with AI
-              </button>
+            {/* Mandatory Disclaimer */}
+            <div className="mt-6 pt-4 border-t border-slate-700/60 text-[11px] text-amber-300/80 leading-relaxed">
+              {AI_DISCLAIMER}
             </div>
           </div>
 
-          {/* Use of Funds Card */}
+          {/* Capital Allocation Plan in TND */}
           <div className="bg-white text-slate-900 rounded-3xl p-6 border border-slate-100 shadow-xl">
             <h4 className="font-extrabold text-sm text-slate-900 mb-3 uppercase tracking-wider">
-              Capital Allocation Plan
+              Capital Allocation Plan ({startup.fundingNeeded})
             </h4>
             <div className="space-y-2.5 text-xs">
-              {Object.entries(startup.useOfFunds || { 'R&D': '50%', 'GTM': '30%', 'Ops': '20%' }).map(([key, val]) => (
+              {Object.entries(startup.useOfFunds || { 'Product & Tech': '50%', 'Tunisia GTM': '30%', 'Talent': '20%' }).map(([key, val]) => (
                 <div key={key} className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
                   <span className="text-slate-700 font-medium">{key}</span>
                   <span className="font-bold text-blue-600">{val}</span>

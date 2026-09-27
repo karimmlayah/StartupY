@@ -8,7 +8,9 @@ import {
   X, 
   ArrowRight,
   TrendingUp,
-  UserCheck
+  UserCheck,
+  BookOpen,
+  Globe
 } from 'lucide-react';
 
 export default function Navbar({ onOpenAiGuide }) {
@@ -23,6 +25,7 @@ export default function Navbar({ onOpenAiGuide }) {
 
   const navLinks = [
     { name: 'Explore Startups', path: '/explore', icon: Compass },
+    { name: 'Official Resources', path: '/resources', icon: BookOpen },
     { name: 'Startup Dashboard', path: '/dashboard/startup', icon: LayoutDashboard },
     { name: 'Investor Dashboard', path: '/dashboard/investor', icon: TrendingUp },
   ];
@@ -40,7 +43,7 @@ export default function Navbar({ onOpenAiGuide }) {
                   SB
                 </span>
               </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-[#0A0F1D] animate-pulse"></div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-[#0A0F1D]" title="Tunisia Hub"></div>
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
@@ -48,11 +51,11 @@ export default function Navbar({ onOpenAiGuide }) {
                   StartupBridge
                 </span>
                 <span className="text-xs px-2 py-0.5 rounded-full font-semibold bg-gradient-to-r from-blue-500/20 to-violet-500/20 text-blue-400 border border-blue-500/30">
-                  AI
+                  Tunisia AI
                 </span>
               </div>
               <span className="text-[11px] text-slate-400 font-medium tracking-wide">
-                Where Capital Meets Vision
+                Connecting Tunisian Startups with Smart Capital
               </span>
             </div>
           </Link>
@@ -81,14 +84,25 @@ export default function Navbar({ onOpenAiGuide }) {
 
           {/* Action CTAs */}
           <div className="hidden lg:flex items-center gap-3">
+            
+            {/* Language Selector (Localization Ready) */}
+            <div 
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs text-slate-300 cursor-pointer hover:border-slate-600"
+              title="Interface currently in English — Ready for French and Arabic localization"
+            >
+              <Globe className="w-3.5 h-3.5 text-blue-400" />
+              <span className="font-semibold text-white">EN</span>
+              <span className="text-slate-500">| FR | AR</span>
+            </div>
+
             {/* AI Guide Trigger */}
             <button
               onClick={() => onOpenAiGuide('startup')}
               className="flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold text-violet-300 bg-violet-950/40 border border-violet-700/40 hover:bg-violet-900/50 hover:border-violet-500/60 shadow-sm hover:shadow-violet-600/20 transition-all cursor-pointer"
-              title="Open AI Guide Modal"
+              title="Open Startup Tunisia AI Guide"
             >
               <Sparkles className="w-4 h-4 text-violet-400 animate-pulse" />
-              <span>AI Guide</span>
+              <span>Tunisia AI Guide</span>
             </button>
 
             {/* Auth Choice / Get Started */}
@@ -97,7 +111,7 @@ export default function Navbar({ onOpenAiGuide }) {
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 shadow-md shadow-blue-600/25 hover:shadow-blue-600/40 transition-all transform hover:-translate-y-0.5"
             >
               <UserCheck className="w-4 h-4" />
-              <span>Get Started</span>
+              <span>Join Ecosystem</span>
               <ArrowRight className="w-4 h-4 ml-0.5" />
             </Link>
           </div>
@@ -147,7 +161,13 @@ export default function Navbar({ onOpenAiGuide }) {
               );
             })}
           </nav>
-          <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
+          
+          <div className="pt-2 flex items-center justify-between px-2 text-xs text-slate-400 border-t border-slate-800">
+            <span>Localization:</span>
+            <span className="font-semibold text-blue-400">English (EN) • FR / AR Ready</span>
+          </div>
+
+          <div className="pt-2 border-t border-slate-800 flex flex-col gap-2">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
@@ -156,14 +176,14 @@ export default function Navbar({ onOpenAiGuide }) {
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-violet-300 bg-violet-950/60 border border-violet-700/50"
             >
               <Sparkles className="w-4 h-4 text-violet-400" />
-              <span>Open AI Guide</span>
+              <span>Open Tunisia AI Guide</span>
             </button>
             <Link
               to="/auth"
               onClick={() => setMobileMenuOpen(false)}
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-violet-600 shadow-md"
             >
-              <span>Get Started</span>
+              <span>Join Ecosystem</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
