@@ -27,6 +27,8 @@ import { INITIAL_INVESTORS, MOCK_INTERESTED_REQUESTS } from '../data/mockInvesto
 import { calculateSmartMatch } from '../utils/matchEngine';
 import MeetingCenter from '../components/MeetingCenter';
 import StartupRoadmap from '../components/StartupRoadmap';
+import PublicationStatusPanel from '../components/PublicationStatusPanel';
+import StartupActModule from '../components/StartupActModule';
 
 export default function StartupDashboardPage({ onOpenAiGuide }) {
   const location = useLocation();
@@ -298,6 +300,18 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
           </div>
         </div>
       </div>
+
+      {/* Publication Status & Investor Visibility */}
+      <PublicationStatusPanel
+        startupId={profile?.id || 'agrismart-tunisia'}
+        onStatusChange={(state) => {
+          setNotification(`Status updated to: ${state.publication_status}`);
+          setTimeout(() => setNotification(''), 4000);
+        }}
+      />
+
+      {/* Startup Act Label Module (Optional, Separate from Publication) */}
+      <StartupActModule />
 
       {/* 11-Step Startup Roadmap Engine (Requirement 4) */}
       <StartupRoadmap

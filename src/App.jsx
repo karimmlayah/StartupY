@@ -22,6 +22,7 @@ import InvestorDashboardPage from './pages/InvestorDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import OfficialResourcesPage from './pages/OfficialResourcesPage';
 import MeetingRoomPage from './pages/MeetingRoomPage';
+import FounderIdeaWorkspacePage from './pages/FounderIdeaWorkspacePage';
 
 // Helper to scroll to top on route navigation
 function ScrollToTop() {
@@ -82,6 +83,14 @@ export default function App() {
               />
 
               {/* Startup-Only Experience */}
+              <Route 
+                path="/founder-workspace" 
+                element={
+                  <ProtectedRoute allowedRoles={['startup', 'admin']}>
+                    <FounderIdeaWorkspacePage />
+                  </ProtectedRoute>
+                } 
+              />
               <Route 
                 path="/dashboard/startup" 
                 element={
@@ -159,7 +168,7 @@ export default function App() {
               <Route 
                 path="/startup/:id" 
                 element={
-                  <ProtectedRoute allowedRoles={['investor', 'admin']}>
+                  <ProtectedRoute allowedRoles={['startup', 'investor', 'admin']}>
                     <StartupDetailsPage onOpenAiGuide={handleOpenAiGuide} />
                   </ProtectedRoute>
                 } 

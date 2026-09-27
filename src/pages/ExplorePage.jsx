@@ -14,8 +14,11 @@ import {
 import StartupCard from '../components/StartupCard';
 import { getAllStartups, getSavedStartupIds, toggleSaveStartup } from '../utils/storage';
 import { ALL_SECTORS, ALL_STAGES, TUNISIAN_GOVERNORATES, FUNDING_TYPES } from '../data/mockStartups';
+import { getPublicationState, PUBLICATION_STATUSES } from '../utils/publicationStatus';
+import { useAuth } from '../context/AuthContext';
 
 export default function ExplorePage() {
+  const { role } = useAuth();
   const [startups, setStartups] = useState([]);
   const [savedIds, setSavedIds] = useState([]);
   
@@ -28,9 +31,19 @@ export default function ExplorePage() {
   const [sortBy, setSortBy] = useState('match'); // 'match' | 'funding' | 'name'
 
   useEffect(() => {
-    setStartups(getAllStartups());
+    // Filter by publication_status: investors can only see 'approved' startups
+    const allStartups = getAllStartups();
+    const visibleStartups = role === 'admin' 
+      ? allStartups 
+      : allStartups.filter(s => {
+          const pubState = getPublicationState(s.id);
+          // Mock data defaults to approved for demo purposes
+          const status = pubState?.publication_status || (s.id?.startsWith('draft-') ? 'draft' : 'approved');
+          return status === PUBLICATION_STATUSES.APPROVED;
+        });
+    setStartups(visibleStartups);
     setSavedIds(getSavedStartupIds());
-  }, []);
+  }, [role]);
 
   const handleToggleSave = (id) => {
     const updated = toggleSaveStartup(id);

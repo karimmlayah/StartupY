@@ -45,7 +45,8 @@ export default function ChooseRolePage() {
       if (selectedRole === 'investor') {
         navigate('/dashboard/investor');
       } else {
-        navigate('/dashboard/startup');
+        // Redirect startup founders to the private AI idea workspace
+        navigate('/founder-workspace');
       }
     } catch (err) {
       console.error('Failed to assign role:', err);

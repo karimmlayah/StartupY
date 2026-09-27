@@ -43,8 +43,9 @@ export default function Navbar({ onOpenAiGuide }) {
     if (role === 'startup') {
       return [
         { name: 'Dashboard', path: '/dashboard/startup', icon: LayoutDashboard },
+        { name: 'Idea Lab', path: '/founder-workspace', icon: Sparkles },
         { name: 'Roadmap', path: '/roadmap', icon: Compass },
-        { name: 'AI Guide', isAction: true, action: () => onOpenAiGuide('startup'), icon: Sparkles },
+        { name: 'AI Guide', isAction: true, action: () => onOpenAiGuide('startup'), icon: BookOpen },
         { name: 'My Profile', path: '/startup-profile', icon: User },
         { name: 'Meetings', path: '/startup-meetings', icon: Video }
       ];
