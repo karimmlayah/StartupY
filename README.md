@@ -1,32 +1,27 @@
 # StartupBridge AI Tunisia 🇹🇳
 > **Connecting Tunisian Startups with Smart Capital.**
 
-StartupBridge AI is a specialized, responsive two-sided matchmaking platform focused exclusively on **Tunisia**, connecting Tunisian startups, founders, business angels, local venture funds, incubators, and the Tunisian diaspora, augmented by an interactive AI guidance engine.
+StartupBridge AI is a specialized, responsive two-sided matchmaking platform focused exclusively on **Tunisia**, connecting Tunisian startups, founders, business angels, local venture funds, incubators, and the Tunisian diaspora, augmented by a real, secure **Tunisia-focused RAG (Retrieval-Augmented Generation) assistant**.
 
 ---
 
-## 🌟 Key Updates & Tunisia Localization
+## 🌟 Key Features & Tunisia Focus
 
 - **Tunisia-First Product Positioning:**
   - Tagline: *“Connecting Tunisian Startups with Smart Capital.”*
   - Dedicated exclusively to the Tunisian entrepreneurial ecosystem.
-  - English user interface, engineered to be ready for future French and Arabic localization.
+  - English user interface, engineered to be ready for future French and Arabic localization (`EN | FR | AR`).
 - **Default Currency: Tunisian Dinars (TND):**
   - All financial metrics, ticket sizes, valuations, funding requirements, and burn rates are denominated in **TND**.
 - **Tunisian Governorates (No Country Selectors):**
   - Replaced country filters and inputs with **Tunisian Governorates** (Tunis, Ariana, Ben Arous, Manouba, Sfax, Sousse, Monastir, Nabeul, Bizerte, Kairouan, Gabès, Médenine, etc.).
-- **Startup Onboarding Enhancements:**
-  - Added fields: *Tunisian governorate*, *Legal status (SUARL, SARL, SA, In creation, Idea)*, *Year founded*, *Website / LinkedIn*, *Funding type sought (Grant, Angel Investment, Seed Investment, Venture Capital, Loan, Partnership)*, and *“Is your startup registered in Tunisia?” (Yes / No)*.
-- **Investor Onboarding Enhancements:**
-  - Added fields: *Investor type (Angel Investor, Venture Capital, Fund, Corporate, Incubator, Bank, Diaspora Investor)*, *Ticket size in TND*, *Preferred startup stage*, *Preferred Tunisian governorates*, *Investment type (Equity, Convertible Note, Grant, Loan, Partnership)*, and optional portfolio link.
+- **Startup Onboarding:**
+  - Includes *Tunisian governorate*, *Legal status (SUARL, SARL, SA, In creation, Idea)*, *Year founded*, *Website / LinkedIn*, *Funding type sought*, and *“Is your startup registered in Tunisia?” (Yes / No)*.
+- **Investor Onboarding:**
+  - Includes *Investor type (Angel Investor, Venture Capital, Fund, Corporate, Incubator, Bank, Diaspora Investor)*, *Ticket size in TND*, *Preferred startup stage*, *Preferred Tunisian governorates*, and *Investment type*.
 - **Realistic Fictional Tunisian Mock Data (Demo Data):**
-  - 8+ Tunisian startups across AgriTech (*AgriSmart Tunisia*), FinTech (*DinarPay Solutions*), HealthTech (*SahhaTech Telemedicine*), EdTech (*EduKhatwa*), TourismTech (*DjerbaXperience*), E-commerce (*SoukCraft Tunisia*), CleanTech (*CleanSun Carthage*), and AI / SaaS (*ElKalam AI*).
+  - 8+ Tunisian startups across AgriTech, FinTech, HealthTech, EdTech, TourismTech, E-commerce, CleanTech, and AI / SaaS.
   - Tunisian investors: *Carthage Angels Network (Demo)*, *Jasmine Capital Partners (Demo)*, *El Ghazala Tech Seed Fund (Demo)*, and *Tunisian Diaspora Venture Syndicate (Demo)*.
-- **Tunisia-Focused AI Assistants:**
-  - Renamed: **“Startup Tunisia Guide”** and **“Investor Tunisia Guide”**.
-  - Suggested questions addressing company creation (SARL/SUARL), documents for investment rounds, pitch decks for Tunisian angels & VCs, funding options, and founder evaluation frameworks.
-  - Mandatory disclaimer on all demo responses:
-    > *“Demo guidance only — not legal, tax, investment or financial advice. Official Tunisian sources should be consulted.”*
 - **Prioritized Matching Logic:**
   - Sector compatibility
   - Ticket size in TND
@@ -42,47 +37,110 @@ StartupBridge AI is a specialized, responsive two-sided matchmaking platform foc
 
 ---
 
-## 📱 Navigation & Routes
+## 🧠 Real, Secure Tunisia RAG Assistant
 
-| Route | Page | Description |
-| :--- | :--- | :--- |
-| `/` | [Landing Page](file:///d:/downloads/gomycode/src/pages/LandingPage.jsx) | Hero, demo platform statistics, Tunisia Ecosystem section (4 cards), 3-step workflow, and featured startups. |
-| `/auth` | [Auth Choice Page](file:///d:/downloads/gomycode/src/pages/AuthChoicePage.jsx) | Two large cards: *“I’m a Startup”* and *“I’m an Investor”* with Tunisia-specific benefits. |
-| `/onboarding/startup` | [Startup Onboarding](file:///d:/downloads/gomycode/src/pages/StartupOnboardingPage.jsx) | Publish profile with governorate, legal status (SARL/SUARL), funding in TND, and registration status. |
-| `/onboarding/investor` | [Investor Onboarding](file:///d:/downloads/gomycode/src/pages/InvestorOnboardingPage.jsx) | Configure mandate with investor type, ticket in TND, preferred governorates, and investment type. |
-| `/explore` | [Explore Startups](file:///d:/downloads/gomycode/src/pages/ExplorePage.jsx) | Search & filter by sector, stage, Tunisian governorate, and funding type in TND. |
-| `/resources` | [Official Resources](file:///d:/downloads/gomycode/src/pages/OfficialResourcesPage.jsx) | Repository of official Tunisian legal, funding, tax, support, and IP resource categories. |
-| `/startup/:id` | [Startup Details](file:///d:/downloads/gomycode/src/pages/StartupDetailsPage.jsx) | Comprehensive profile with prioritized 6-dimension AI Match score breakdown and *“I’m Interested”* action. |
-| `/dashboard/startup` | [Startup Dashboard](file:///d:/downloads/gomycode/src/pages/StartupDashboardPage.jsx) | Manage inbound investor requests in TND, suggested investor matches, and access *“Ask Startup Tunisia Guide”*. |
-| `/dashboard/investor` | [Investor Dashboard](file:///d:/downloads/gomycode/src/pages/InvestorDashboardPage.jsx) | Saved startups watchlist, recommended matches, and access *“Ask Investor Tunisia Guide”*. |
+StartupBridge AI features an intelligent, server-side RAG engine grounded in local Tunisian ecosystem knowledge:
+
+### 1. Architecture & API Security
+- **No API keys in frontend code, browser, or Git:** All LLM communications are handled exclusively by the server-side Express backend located in `/server`.
+- **Backend API Endpoint:** `POST /api/ai/guide`
+  - Input: `{ "role": "startup" | "investor", "question": "user question" }`
+  - Output: `{ "answer": "...", "sources": [ { "title": "...", "category": "..." } ], "mode": "live" | "demo" }`
+- **Supported LLM Providers via Environment Variables:**
+  - `GEMINI_API_KEY` (Google Gemini 1.5 Flash)
+  - `GROQ_API_KEY` (Groq Llama 3.1)
+  - **Graceful Demo Fallback:** If neither API key is configured or an external API call fails, the system automatically uses the local structured Tunisia RAG knowledge base.
+
+### 2. Local Structured Knowledge Base (`server/data/tunisiaKnowledgeBase.js`)
+Contains cautious, general educational content grouped into:
+1. *Business creation and registration*
+2. *Pitch deck and investment readiness*
+3. *Funding options*
+4. *Investor due diligence*
+5. *Intellectual property*
+6. *Tax and compliance awareness*
+7. *Responsible investment and risk*
+
+Every chunk is marked with:
+- `sourceLabel: "Educational draft — official verification required"`
+- `sourceUrl: ""` (left empty until officially verified)
+- `verified: false`
+
+### 3. Lightweight RAG Retrieval & Prompt Safeguards
+- Evaluates user queries via keyword matching and role relevance.
+- Retrieves the top 3 most relevant chunks.
+- Instructs the model to answer **only** from this retrieved context.
+- If context is insufficient, it responds:
+  > *“I do not have enough verified Tunisia-specific information to answer this reliably. Please consult an official adviser or source.”*
+- Every response ends with:
+  > *“Information for educational guidance only — not legal, tax, financial or investment advice.”*
+
+### 4. UI Transparency Badges & Warning
+- **“Live AI guidance”**: Displayed when live LLM generation succeeded.
+- **“Demo guidance”**: Displayed when local knowledge fallback is used.
+- **Sources Consulted**: Interactive source cards displayed beneath answers.
+- **Source Verification Warning**: Warns users that educational drafts are pending official regulatory confirmation.
 
 ---
 
-## 🛠️ Technology Stack
+## ⚠️ Security Warning: Never Commit API Keys
 
-- **Framework:** React 19 + Vite 8
-- **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`) with dark navy background (`#0A0F1D`) and crisp white cards
-- **Icons:** Lucide React (`lucide-react`)
-- **Routing:** React Router DOM v7 (`react-router-dom`)
-- **Persistence:** Browser `localStorage` (Profiles, Watchlists, Inbounds, and Custom Startups)
+> [!CAUTION]
+> **NEVER commit `.env` or any file containing live API keys to Git or GitHub.**
+> - The `.gitignore` file is pre-configured to ignore all `.env` files.
+> - Only `.env.example` with placeholder strings is tracked in version control.
+> - Always keep your API keys stored locally in `.env`.
 
 ---
 
-## 🚀 Installation & Local Execution
+## 🚀 Installation & Running the Application
 
 ### 1. Install Dependencies
+Install all required dependencies for both the React/Vite frontend and the Node/Express backend:
+
 ```bash
 cd d:/downloads/gomycode
 npm install
 ```
 
-### 2. Run Local Development Server
+### 2. Configure Environment Variables
+Copy `.env.example` to `.env`:
+
+```bash
+cp .env.example .env
+```
+*(On Windows PowerShell: `Copy-Item .env.example .env`)*
+
+Edit `.env` to optionally add your API key:
+```env
+# Option 1: Google Gemini (Recommended)
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Option 2: Groq (Alternative)
+GROQ_API_KEY=your_groq_api_key_here
+
+# Server Port
+PORT=5000
+```
+> **Note:** If you leave the keys empty or unchanged, StartupBridge AI will run seamlessly in **Tunisia RAG Demo mode** using the local structured knowledge base.
+
+### 3. Running Frontend and Backend
+
+You can run both services concurrently:
+
+#### Terminal 1 — Start Backend Server (Port 5000)
+```bash
+npm run server
+```
+
+#### Terminal 2 — Start Frontend Dev Server (Port 5173)
 ```bash
 npm run dev
 ```
-Open `http://localhost:5173/` in your browser.
 
-### 3. Build & Production Preview
+Open **`http://localhost:5173/`** in your browser. Vite is pre-configured with a reverse proxy routing all `/api` requests to `http://localhost:5000`.
+
+### 4. Production Build & Preview
 ```bash
 npm run build
 npm run preview
@@ -90,5 +148,7 @@ npm run preview
 
 ---
 
-## 📄 Disclaimer
-*Demo platform data only — not legal, tax, investment or financial advice. Official Tunisian sources should be consulted.*
+## 📑 Source-Verification Limitation & Legal Disclaimer
+
+- **Source Limitation:** The initial knowledge base entries are educational drafts compiled for demonstration purposes. Official verification by accredited Tunisian legal, fiscal, and institutional bodies is pending.
+- **Legal Disclaimer:** *Information for educational guidance only — not legal, tax, financial or investment advice. Official Tunisian sources and accredited legal/tax counsel should always be consulted.*
