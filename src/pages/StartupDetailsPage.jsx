@@ -38,10 +38,12 @@ import MeetingRequestModal from '../components/MeetingRequestModal';
 import { AI_DISCLAIMER } from '../data/aiResponses';
 import { calculateSmartMatch } from '../utils/matchEngine';
 import { INITIAL_INVESTORS } from '../data/mockInvestors';
+import { useAuth } from '../context/AuthContext';
 
 export default function StartupDetailsPage({ onOpenAiGuide }) {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user, role } = useAuth();
 
   const [startup, setStartup] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
@@ -49,6 +51,19 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
   const [showInterestModal, setShowInterestModal] = useState(false);
   const [showMeetingModal, setShowMeetingModal] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+  const [accreditationWarning, setAccreditationWarning] = useState('');
+
+  // Check if current user is an investor with unapproved status
+  const isInvestorUnapproved = role === 'investor' && (() => {
+    try {
+      const stored = localStorage.getItem('bidaya_tunisia_investor_verification');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return parsed.status !== 'approved';
+      }
+    } catch (e) {}
+    return false;
+  })();
   
   // Active investor to evaluate match against
   const [selectedInvestorId, setSelectedInvestorId] = useState(null);
@@ -96,9 +111,23 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
   };
 
   const handleInterestedClick = () => {
+    if (isInvestorUnapproved) {
+      setAccreditationWarning('Accreditation Required: Your investor verification dossier is currently under review. Verification is reviewed when the submitted file is complete.');
+      setTimeout(() => setAccreditationWarning(''), 6000);
+      return;
+    }
     addInterestStartup(startup.id);
     setHasExpressedInterest(true);
     setShowInterestModal(true);
+  };
+
+  const handleOpenMeetingModal = () => {
+    if (isInvestorUnapproved) {
+      setAccreditationWarning('Accreditation Required: In-platform Bidaya Meetings are accessible once your investor verification is approved. Verification is reviewed when the submitted file is complete.');
+      setTimeout(() => setAccreditationWarning(''), 6000);
+      return;
+    }
+    setShowMeetingModal(true);
   };
 
   const handleShareClick = () => {
@@ -180,6 +209,17 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
         </div>
       </div>
 
+      {/* Accreditation Warning Banner */}
+      {accreditationWarning && (
+        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs sm:text-sm flex items-start gap-3 animate-fade-in">
+          <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <span className="font-bold text-amber-300 block">Accreditation Required</span>
+            <p className="leading-relaxed">{accreditationWarning}</p>
+          </div>
+        </div>
+      )}
+
       {/* Main Header Card (Crisp White Card on Dark Navy Background) */}
       <div className="bg-white text-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-2xl shadow-slate-950/40">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-8 border-b border-slate-100">
@@ -253,7 +293,7 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
 
             {/* Request a Bidaya Meeting (Requirement 4) */}
             <button
-              onClick={() => setShowMeetingModal(true)}
+              onClick={handleOpenMeetingModal}
               className="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl font-bold text-xs sm:text-sm text-slate-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-all cursor-pointer shadow-sm hover:shadow"
             >
               <Video className="w-4 h-4 text-blue-600" />

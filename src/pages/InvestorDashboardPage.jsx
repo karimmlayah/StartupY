@@ -30,6 +30,7 @@ import {
 import { calculateSmartMatch } from '../utils/matchEngine';
 import InterestSuccessModal from '../components/InterestSuccessModal';
 import MeetingCenter from '../components/MeetingCenter';
+import InvestorVerificationFlow from '../components/InvestorVerificationFlow';
 
 export default function InvestorDashboardPage({ onOpenAiGuide }) {
   const navigate = useNavigate();
@@ -294,6 +295,11 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
           </div>
         </div>
       </div>
+
+      {/* 7-Step Investor Onboarding & Verification Workflow (Requirement 5) */}
+      <InvestorVerificationFlow
+        investor={investor}
+      />
 
       {/* Bidaya Meeting Center (Requirements 4, 6, 7, 8) */}
       <MeetingCenter

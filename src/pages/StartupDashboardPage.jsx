@@ -25,6 +25,7 @@ import { getCurrentStartup } from '../utils/storage';
 import { INITIAL_INVESTORS, MOCK_INTERESTED_REQUESTS } from '../data/mockInvestors';
 import { calculateSmartMatch } from '../utils/matchEngine';
 import MeetingCenter from '../components/MeetingCenter';
+import StartupRoadmap from '../components/StartupRoadmap';
 
 export default function StartupDashboardPage({ onOpenAiGuide }) {
   const [profile, setProfile] = useState(() => getCurrentStartup());
@@ -287,6 +288,11 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
           </div>
         </div>
       </div>
+
+      {/* 11-Step Startup Roadmap Engine (Requirement 4) */}
+      <StartupRoadmap
+        onOpenAiGuide={onOpenAiGuide}
+      />
 
       {/* Bidaya Meeting Center (Requirements 4, 6, 7, 8) */}
       <MeetingCenter

@@ -242,7 +242,79 @@ npm run preview
 
 ---
 
+## 🔒 Supabase Authentication, PostgreSQL Schema & Row Level Security (RLS)
+
+Bidaya Tunisia provides an enterprise-grade backend data persistence layer powered by **Supabase** with strict **Row Level Security (RLS)**, role-based access control (RBAC), and privileged backend operations.
+
+### 1. Supabase Project Setup
+1. Create a project at [supabase.com](https://supabase.com).
+2. Go to **Project Settings > API** and copy:
+   - **Project URL**
+   - **anon / public key**
+   - **service_role secret key** *(Keep strictly secret on the backend server!)*
+3. Go to **SQL Editor** in your Supabase Dashboard:
+   - Open and copy the contents of [`supabase/migrations/20260927_init_schema.sql`](file:///d:/downloads/gomycode/supabase/migrations/20260927_init_schema.sql).
+   - Click **Run** to execute the migration.
+
+### 2. Database Schema & Tables
+The database includes 8 tables with foreign keys and automatic `updated_at` triggers:
+- **`profiles`**: Tied to `auth.users(id)`. Contains `full_name`, `email`, `role` (`admin` | `startup` | `investor`), `avatar_url`.
+- **`startups`**: Tied to `profiles(id)`. Contains startup metadata, funding metrics, and `publication_status` (`draft` | `under_review` | `approved` | `rejected`).
+- **`investors`**: Tied to `profiles(id)`. Contains ticket ranges, sectors, and `verification_status` (`draft` | `submitted` | `under_review` | `documents_required` | `approved` | `rejected` | `suspended`).
+- **`investor_documents`**: Uploaded verification files (tax registrations, syndicate credentials, bank records) with reviewer notes.
+- **`startup_progress`**: 11-step roadmap progress tracking with deliverables and evidence JSON.
+- **`meeting_requests`**: Bidaya Meeting records with ZEGOCLOUD room IDs, participants, agendas, and statuses.
+- **`interests`**: Investor-startup interest tracking and diligence statuses.
+- **`audit_logs`**: Immutable security log tracking all administrative approvals, status mutations, and reviews.
+
+### 3. Row Level Security (RLS) Policies
+All tables have `ENABLE ROW LEVEL SECURITY` with granular policies:
+- **Startup Founders**: Can read and edit only their own startup, progress, interests, and meetings.
+- **Investors**: Can read and edit only their own investor profile, documents, interests, and meetings.
+- **Publication Visibility**: Investors can only see startups whose `publication_status = 'approved'`.
+- **Investor Accreditation**: Startups can only see approved investors where appropriate.
+- **Investor Document Protection**: Sensitive verification files in `investor_documents` are visible only to the document owner and verified `admin` profiles.
+- **Meeting Access**: Participants can access only meetings where their profile ID matches `startup.owner_id` or `investor.owner_id`.
+- **Admin Privacy Constraint**: Admin dashboard displays **metadata only** (participants, date, duration, status) and never exposes call media or chat transcripts.
+
+### 4. Admin Promotion & Security Controls
+> [!IMPORTANT]
+> **Client-side role promotion is strictly blocked.** The `/choose-role` screen only permits selecting `startup` or `investor` and can be chosen only once.
+
+To promote an existing user to **Admin**:
+
+#### Option A: Privileged Backend Script
+Run the privileged script using the Supabase Service Role key:
+```bash
+node server/scripts/promoteAdmin.js admin@bidaya.tn
+```
+
+#### Option B: Supabase SQL Editor
+Execute the following query directly in your Supabase SQL editor:
+```sql
+UPDATE public.profiles
+SET role = 'admin', updated_at = NOW()
+WHERE email = 'admin@bidaya.tn';
+```
+
+### 5. Demo Mode vs. Production Mode
+| Feature | Local Demo Mode (Supabase Missing) | Production Mode (Supabase Configured) |
+| :--- | :--- | :--- |
+| **Data Persistence** | Browser `localStorage` | PostgreSQL database with RLS |
+| **Authentication** | Demo simulation with local session | Real email/password with Supabase Auth |
+| **Demo Admin Login** | Enabled for instant testing and evaluation | **Disabled** — Only authentic database admins can access `/admin` |
+| **Role Enforcement** | Simulated role guards | Cryptographic JWTs validated server-side & in RLS |
+| **Fallback Behavior** | Automatic fallback if `.env` keys are unset | Full cloud database synchronization |
+
+### 6. Investor Verification Notice
+In accordance with platform compliance guidelines, investor onboarding enforces:
+> *"Verification is reviewed when the submitted file is complete."*
+*(Claims of "verified within 24 hours" are strictly prohibited across all interfaces).*
+
+---
+
 ## 📑 Source-Verification Limitation & Legal Disclaimer
 
 - **Source Limitation:** The initial knowledge base entries are educational drafts compiled for demonstration purposes. Official verification by accredited Tunisian legal, fiscal, and institutional bodies is pending.
 - **Legal Disclaimer:** *Information for educational guidance only — not legal, tax, financial or investment advice. Official Tunisian sources and accredited legal/tax counsel should always be consulted.*
+
