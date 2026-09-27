@@ -168,6 +168,29 @@ export default function LandingPage({ onOpenAiGuide }) {
           </span>
         </div>
 
+        {/* Demo Scenario Highlight Card */}
+        <div className="mt-10 max-w-3xl mx-auto p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-emerald-950/60 via-slate-900/90 to-blue-950/60 border border-emerald-500/40 shadow-xl shadow-emerald-500/10 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Smart Match Demo Walkthrough</span>
+            </div>
+            <p className="text-sm sm:text-base font-semibold text-white">
+              “Demo: AgriSmart Tunisia is seeking 450,000 TND for Seed Investment in Sfax. Compare it with compatible investors and see why the match is recommended.”
+            </p>
+            <p className="text-xs text-slate-400">
+              Deterministic 6-criteria scoring engine with full explainability, strengths, gaps, and recommendations.
+            </p>
+          </div>
+          <Link
+            to="/startup/agrismart-tunisia"
+            className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-emerald-600/30 transition-all hover:scale-105"
+          >
+            <span>Inspect AgriSmart Match</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
       </section>
 
       {/* Platform Stats Strip (Clearly Marked as Demo Platform Data) */}

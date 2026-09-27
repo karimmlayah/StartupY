@@ -54,7 +54,9 @@ export default function App() {
             <Route path="/resources" element={<OfficialResourcesPage onOpenAiGuide={handleOpenAiGuide} />} />
             <Route path="/startup/:id" element={<StartupDetailsPage onOpenAiGuide={handleOpenAiGuide} />} />
             <Route path="/dashboard/startup" element={<StartupDashboardPage onOpenAiGuide={handleOpenAiGuide} />} />
+            <Route path="/startup-dashboard" element={<StartupDashboardPage onOpenAiGuide={handleOpenAiGuide} />} />
             <Route path="/dashboard/investor" element={<InvestorDashboardPage onOpenAiGuide={handleOpenAiGuide} />} />
+            <Route path="/investor-dashboard" element={<InvestorDashboardPage onOpenAiGuide={handleOpenAiGuide} />} />
             {/* Fallback */}
             <Route path="*" element={<LandingPage onOpenAiGuide={handleOpenAiGuide} />} />
           </Routes>

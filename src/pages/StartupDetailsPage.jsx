@@ -5,7 +5,8 @@ import {
   getSavedStartupIds, 
   toggleSaveStartup, 
   addInterestStartup,
-  getInterestedStartupIds 
+  getInterestedStartupIds,
+  getCurrentInvestor
 } from '../utils/storage';
 import { 
   Sparkles, 
@@ -24,10 +25,17 @@ import {
   HeartHandshake,
   Check,
   Globe,
-  AlertCircle
+  AlertCircle,
+  HelpCircle,
+  ShieldCheck,
+  AlertTriangle,
+  Lightbulb,
+  ArrowRight
 } from 'lucide-react';
 import InterestSuccessModal from '../components/InterestSuccessModal';
 import { AI_DISCLAIMER } from '../data/aiResponses';
+import { calculateSmartMatch } from '../utils/matchEngine';
+import { INITIAL_INVESTORS } from '../data/mockInvestors';
 
 export default function StartupDetailsPage({ onOpenAiGuide }) {
   const { id } = useParams();
@@ -38,6 +46,10 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
   const [hasExpressedInterest, setHasExpressedInterest] = useState(false);
   const [showInterestModal, setShowInterestModal] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+  
+  // Active investor to evaluate match against
+  const [selectedInvestorId, setSelectedInvestorId] = useState(null);
+  const [availableInvestors, setAvailableInvestors] = useState([]);
 
   useEffect(() => {
     const data = getStartupById(id);
@@ -49,6 +61,12 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
       const interested = getInterestedStartupIds();
       setHasExpressedInterest(interested.includes(data.id));
     }
+
+    const currentInv = getCurrentInvestor();
+    // Merge current investor with INITIAL_INVESTORS
+    const list = [currentInv, ...INITIAL_INVESTORS.filter(i => i.id !== currentInv.id)];
+    setAvailableInvestors(list);
+    setSelectedInvestorId(currentInv.id || list[0].id);
   }, [id]);
 
   if (!startup) {
@@ -95,29 +113,30 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
     .slice(0, 2)
     .toUpperCase();
 
-  const matchScore = startup.aiMatchScore || 87;
+  // Find the selected investor object
+  const activeInvestor = availableInvestors.find(i => i.id === selectedInvestorId) || availableInvestors[0] || getCurrentInvestor();
 
-  // Prioritized Match Score breakdown according to Requirement 6:
-  // - Sector compatibility
-  // - Ticket size in TND
-  // - Startup stage
-  // - Tunisian governorate / region
-  // - Funding type
-  // - Investor preferences
-  const scores = startup.aiScores || {
-    sectorFit: 95,
-    ticketFit: 93,
-    stageFit: 90,
-    governorateFit: 94,
-    fundingTypeFit: 92,
-    preferencesFit: 91
+  // Calculate Deterministic Smart Match
+  const matchResult = calculateSmartMatch(startup, activeInvestor);
+
+  // Label badge styling
+  const labelBadgeClasses = {
+    'Excellent Match': 'bg-emerald-50 text-emerald-700 border-emerald-300 ring-2 ring-emerald-500/20',
+    'Strong Match': 'bg-blue-50 text-blue-700 border-blue-300 ring-2 ring-blue-500/20',
+    'Potential Match': 'bg-amber-50 text-amber-700 border-amber-300 ring-2 ring-amber-500/20',
+    'Low Match': 'bg-rose-50 text-rose-700 border-rose-300 ring-2 ring-rose-500/20'
   };
 
+  // Circular progress calculations for SVG score ring
+  const radius = 45;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (matchResult.score / 100) * circumference;
+
   return (
-    <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+    <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-8">
       
       {/* Top Back Nav & Quick Actions */}
-      <div className="flex items-center justify-between gap-4 mb-8">
+      <div className="flex items-center justify-between gap-4">
         <Link
           to="/explore"
           className="inline-flex items-center gap-2 text-sm font-semibold text-slate-400 hover:text-white transition-colors"
@@ -159,7 +178,7 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
       </div>
 
       {/* Main Header Card (Crisp White Card on Dark Navy Background) */}
-      <div className="bg-white text-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-2xl shadow-slate-950/40 mb-8">
+      <div className="bg-white text-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-2xl shadow-slate-950/40">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-8 border-b border-slate-100">
           
           {/* Logo & Headline */}
@@ -270,7 +289,7 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
 
       </div>
 
-      {/* Main Grid: Details + AI Match Score Breakdown (Requirement 6) */}
+      {/* Main Grid: Details + Explainable Smart Match Engine (Requirement 3) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Left Column (2 Cols): Problem, Solution, Traction, Team */}
@@ -351,122 +370,179 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
 
         </div>
 
-        {/* Right Column (1 Col): AI Match Score Breakdown Prioritized (Requirement 6) */}
+        {/* Right Column (1 Col): Deterministic Smart Match Engine (Requirement 3) */}
         <div className="space-y-6">
           
-          {/* AI Match Score Card */}
-          <div className="bg-gradient-to-br from-[#0F172A] to-[#1E1B4B] text-white rounded-3xl p-6 sm:p-8 border border-violet-500/30 shadow-2xl relative overflow-hidden">
+          {/* Main Explainable Smart Match Card */}
+          <div className="bg-gradient-to-br from-[#0F172A] to-[#1E1B4B] text-white rounded-3xl p-6 sm:p-8 border border-violet-500/40 shadow-2xl relative overflow-hidden">
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-violet-600/20 rounded-full blur-2xl pointer-events-none"></div>
 
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-violet-300 bg-violet-950/80 px-3 py-1 rounded-full border border-violet-700/50 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-violet-400" />
-                Tunisia Match Logic
-              </span>
-              <span className="text-xs text-slate-400 font-mono">TN-v2 AI</span>
+            {/* Header: Match Selector & Badge */}
+            <div className="flex flex-col gap-3 mb-6 pb-4 border-b border-slate-800">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-violet-300 bg-violet-950/90 px-3 py-1 rounded-full border border-violet-700/60 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+                  Deterministic Smart Match
+                </span>
+                <span className="text-xs text-slate-400 font-mono">100-pt Scale</span>
+              </div>
+
+              {/* Investor Switcher for Comparison */}
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                  Evaluating Compatibility Against:
+                </label>
+                <select
+                  value={selectedInvestorId}
+                  onChange={(e) => setSelectedInvestorId(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-xs text-white font-medium focus:outline-none focus:border-violet-500 cursor-pointer"
+                >
+                  {availableInvestors.map((inv) => (
+                    <option key={inv.id} value={inv.id}>
+                      {inv.name} ({inv.type || 'Investor'})
+                    </option>
+                  ))}
+                </select>
+                <div className="text-[11px] text-slate-400 mt-1 flex items-center justify-between">
+                  <span>Ticket: {activeInvestor.budgetRange || activeInvestor.ticketSize}</span>
+                  <span className="text-blue-400">{activeInvestor.governorates ? activeInvestor.governorates.join(', ') : 'All Tunisia'}</span>
+                </div>
+              </div>
             </div>
 
-            {/* Score Ring / Number */}
-            <div className="flex items-baseline gap-2 mb-2">
-              <span className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-violet-400">
-                {matchScore}%
-              </span>
-              <span className="text-sm font-bold text-slate-300">
-                AI Match Score
-              </span>
+            {/* Visual Score Ring & Label (Requirement 3) */}
+            <div className="flex items-center gap-6 mb-6">
+              {/* SVG Score Ring */}
+              <div className="relative w-28 h-28 flex-shrink-0 flex items-center justify-center">
+                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r={radius}
+                    stroke="currentColor"
+                    strokeWidth="8"
+                    fill="transparent"
+                    className="text-slate-800"
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r={radius}
+                    stroke="url(#smartMatchGradient)"
+                    strokeWidth="8"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                    fill="transparent"
+                    className="transition-all duration-700 ease-out"
+                  />
+                  <defs>
+                    <linearGradient id="smartMatchGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#3b82f6" />
+                      <stop offset="100%" stopColor="#8b5cf6" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-2xl font-black text-white">
+                    {matchResult.score}%
+                  </span>
+                  <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">
+                    Score
+                  </span>
+                </div>
+              </div>
+
+              {/* Label & Thesis */}
+              <div className="space-y-1.5 flex-1">
+                <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold border ${labelBadgeClasses[matchResult.label] || 'bg-slate-800 text-slate-200'}`}>
+                  {matchResult.label}
+                </span>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Deterministic alignment calculated from 6 objective weighting dimensions.
+                </p>
+              </div>
             </div>
 
-            <p className="text-xs text-slate-300 leading-relaxed mb-6">
-              {startup.aiThesis || 'Algorithmic alignment with active investor mandate across sector, ticket in TND, stage, and governorate.'}
-            </p>
-
-            {/* Breakdown Bars (Required Prioritized Dimensions from Requirement 6) */}
+            {/* The Six Detailed Scoring Criteria with Real Explanations (Requirement 2 & 3) */}
             <div className="space-y-3.5 pt-4 border-t border-slate-700/60">
-              
-              {/* 1. Sector compatibility */}
-              <div>
-                <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
-                  <span>Sector Compatibility</span>
-                  <span className="font-bold text-blue-400">{scores.sectorFit || 95}%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full"
-                    style={{ width: `${scores.sectorFit || 95}%` }}
-                  ></div>
-                </div>
-              </div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                Detailed Scoring Breakdown (100 Pts):
+              </h4>
 
-              {/* 2. Ticket size in TND */}
-              <div>
-                <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
-                  <span>Ticket Size in TND</span>
-                  <span className="font-bold text-emerald-400">{scores.ticketFit || 93}%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full"
-                    style={{ width: `${scores.ticketFit || 93}%` }}
-                  ></div>
-                </div>
-              </div>
+              {matchResult.breakdown.map((item, idx) => (
+                <div key={idx} className="p-3 rounded-xl bg-slate-800/70 border border-slate-700/70 space-y-1.5 text-xs">
+                  <div className="flex justify-between items-center font-semibold text-slate-200">
+                    <span>{item.criterion}</span>
+                    <span className="text-blue-400 font-mono font-bold">
+                      {item.score} / {item.maxScore} pts
+                    </span>
+                  </div>
 
-              {/* 3. Startup stage */}
-              <div>
-                <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
-                  <span>Startup Stage</span>
-                  <span className="font-bold text-indigo-400">{scores.stageFit || 90}%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full"
-                    style={{ width: `${scores.stageFit || 90}%` }}
-                  ></div>
-                </div>
-              </div>
+                  {/* Progress bar */}
+                  <div className="w-full h-1.5 rounded-full bg-slate-700 overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-blue-500 to-violet-500 rounded-full transition-all duration-500"
+                      style={{ width: `${(item.score / item.maxScore) * 100}%` }}
+                    ></div>
+                  </div>
 
-              {/* 4. Tunisian governorate / region */}
-              <div>
-                <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
-                  <span>Tunisian Governorate / Region</span>
-                  <span className="font-bold text-violet-400">{scores.governorateFit || 94}%</span>
+                  {/* Clear natural language explanation */}
+                  <p className="text-[11px] text-slate-300 leading-relaxed pt-0.5">
+                    {item.explanation}
+                  </p>
                 </div>
-                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-violet-500 to-violet-400 rounded-full"
-                    style={{ width: `${scores.governorateFit || 94}%` }}
-                  ></div>
-                </div>
-              </div>
+              ))}
+            </div>
 
-              {/* 5. Funding type */}
-              <div>
-                <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
-                  <span>Funding Type Compatibility</span>
-                  <span className="font-bold text-cyan-400">{scores.fundingTypeFit || 92}%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-cyan-500 to-blue-400 rounded-full"
-                    style={{ width: `${scores.fundingTypeFit || 92}%` }}
-                  ></div>
-                </div>
-              </div>
+            {/* “Why this match?” Section (Requirement 3) */}
+            <div className="mt-6 pt-5 border-t border-slate-700/70 space-y-4">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-violet-300 flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-violet-400" />
+                <span>Why this match?</span>
+              </h4>
 
-              {/* 6. Investor preferences */}
-              <div>
-                <div className="flex justify-between text-xs font-medium mb-1 text-slate-300">
-                  <span>Investor Mandate Preferences</span>
-                  <span className="font-bold text-amber-400">{scores.preferencesFit || 91}%</span>
+              {/* Top 3 Strengths */}
+              {matchResult.strengths.length > 0 && (
+                <div className="space-y-1.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-400 block">
+                    Top Strengths:
+                  </span>
+                  {matchResult.strengths.map((str, i) => (
+                    <div key={i} className="flex items-start gap-2 text-xs text-slate-200">
+                      <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <span>{str}</span>
+                    </div>
+                  ))}
                 </div>
-                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-amber-500 to-orange-400 rounded-full"
-                    style={{ width: `${scores.preferencesFit || 91}%` }}
-                  ></div>
-                </div>
-              </div>
+              )}
 
+              {/* Up to 3 Gaps or Risks */}
+              {matchResult.gaps.length > 0 && (
+                <div className="space-y-1.5 pt-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 block">
+                    Potential Gaps or Diligence Points:
+                  </span>
+                  {matchResult.gaps.map((gap, i) => (
+                    <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5" />
+                      <span>{gap}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Actionable Recommendation */}
+              <div className="p-3.5 rounded-xl bg-blue-950/70 border border-blue-700/60 text-xs space-y-1">
+                <div className="flex items-center gap-1.5 font-bold text-blue-300">
+                  <Lightbulb className="w-3.5 h-3.5 text-blue-400" />
+                  <span>Actionable Recommendation:</span>
+                </div>
+                <p className="text-slate-200 leading-relaxed text-[11px]">
+                  {matchResult.recommendation}
+                </p>
+              </div>
             </div>
 
             {/* Mandatory Disclaimer */}

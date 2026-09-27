@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Building2, 
@@ -14,17 +14,25 @@ import {
   Send,
   PlusCircle,
   ExternalLink,
-  BookOpen
+  Flame,
+  ArrowRight,
+  ShieldCheck,
+  AlertTriangle,
+  Lightbulb,
+  Info
 } from 'lucide-react';
 import { getCurrentStartup } from '../utils/storage';
 import { INITIAL_INVESTORS, MOCK_INTERESTED_REQUESTS } from '../data/mockInvestors';
+import { calculateSmartMatch } from '../utils/matchEngine';
 
 export default function StartupDashboardPage({ onOpenAiGuide }) {
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState(() => getCurrentStartup());
   const [investorRequests, setInvestorRequests] = useState(MOCK_INTERESTED_REQUESTS);
-  const [suggestedInvestors, setSuggestedInvestors] = useState(INITIAL_INVESTORS);
   const [requestedIntros, setRequestedIntros] = useState({});
   const [notification, setNotification] = useState('');
+  
+  // State for "View Match Details" Modal (Requirement 5)
+  const [selectedMatchInvestor, setSelectedMatchInvestor] = useState(null);
 
   useEffect(() => {
     const current = getCurrentStartup();
@@ -49,9 +57,29 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
     setTimeout(() => setNotification(''), 4000);
   };
 
+  // Evaluate and sort suggested investors by deterministic match score (Requirement 5)
+  const rankedInvestors = useMemo(() => {
+    if (!profile) return INITIAL_INVESTORS;
+
+    return INITIAL_INVESTORS.map(inv => {
+      const match = calculateSmartMatch(profile, inv);
+      return {
+        ...inv,
+        smartMatch: match
+      };
+    }).sort((a, b) => b.smartMatch.score - a.smartMatch.score);
+  }, [profile]);
+
   if (!profile) return null;
 
   const interestedCount = (profile.interestedInvestorsCount || 6) + investorRequests.length;
+
+  const labelBadgeClasses = {
+    'Excellent Match': 'bg-emerald-50 text-emerald-700 border-emerald-300',
+    'Strong Match': 'bg-blue-50 text-blue-700 border-blue-300',
+    'Potential Match': 'bg-amber-50 text-amber-700 border-amber-300',
+    'Low Match': 'bg-rose-50 text-rose-700 border-rose-300'
+  };
 
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
@@ -66,6 +94,34 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
         </div>
       )}
 
+      {/* Prominent Demo Scenario Card (Requirement 6) */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-900/60 via-indigo-900/60 to-violet-900/60 border border-blue-500/50 p-6 sm:p-7 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/30">
+            <Flame className="w-6 h-6 animate-pulse text-amber-300" />
+          </div>
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-300 bg-blue-950 px-2.5 py-0.5 rounded-full border border-blue-800">
+              Deterministic Demo Scenario
+            </span>
+            <h3 className="text-base sm:text-lg font-extrabold text-white">
+              Demo: AgriSmart Tunisia is seeking 450,000 TND for Seed Investment in Sfax. Compare it with compatible investors and see why the match is recommended.
+            </h3>
+            <p className="text-xs text-slate-300">
+              The Smart Match Engine computes exact compatibility across sectors, ticket size in TND, stage, governorate, and funding vehicle.
+            </p>
+          </div>
+        </div>
+
+        <Link
+          to="/startup/agrismart-tunisia"
+          className="flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 shadow-xl shadow-blue-600/30 transition-all cursor-pointer transform hover:scale-105"
+        >
+          <span>Evaluate Match Breakdown</span>
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+
       {/* Dashboard Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-800">
         <div>
@@ -73,13 +129,13 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
             <Building2 className="w-3.5 h-3.5" />
             <span>Tunisian Founder Portal</span>
             <span className="text-slate-500">•</span>
-            <span className="text-slate-400">Demo Data</span>
+            <span className="text-slate-400">Deterministic Match Engine</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
             Startup Dashboard
           </h1>
           <p className="text-sm text-slate-400 mt-1">
-            Track interested Tunisian investors, manage inbound checks in TND, and access AI guidance.
+            Track interested investors in TND and explore deterministic compatibility scores.
           </p>
         </div>
 
@@ -137,14 +193,14 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
         {/* KPI 3: AI Readiness Score */}
         <div className="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-lg">
           <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider">AI Pitch Readiness</span>
+            <span className="text-xs font-bold uppercase tracking-wider">Highest Investor Fit</span>
             <Sparkles className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="text-3xl font-black text-emerald-400">
-            94/100
+            {rankedInvestors[0]?.smartMatch?.score || 95}%
           </div>
           <div className="text-xs text-slate-400 mt-1">
-            Verified stage traction
+            {rankedInvestors[0]?.name}
           </div>
         </div>
 
@@ -231,7 +287,7 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
         </div>
       </div>
 
-      {/* Two Column Grid: Inbound Investor Requests + Suggested Investor Matches */}
+      {/* Two Column Grid: Inbound Investor Requests + Suggested Investor Matches Sorted by Calculated Score */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* Column 1: Inbound Investor Requests */}
@@ -297,7 +353,7 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
           </div>
         </div>
 
-        {/* Column 2: Suggested Investor Matches in Tunisia */}
+        {/* Column 2: Suggested Investor Matches with Real Match Scores (Requirement 5) */}
         <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-slate-800">
             <div>
@@ -306,25 +362,28 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
                 <span>Suggested Tunisian Investors</span>
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">
-                Funds and angels matched to your sector and ticket size in TND.
+                Sorted by deterministic compatibility against your profile.
               </p>
             </div>
             <span className="text-xs font-bold text-violet-300 bg-violet-950 px-2.5 py-1 rounded-full border border-violet-800">
-              High Fit
+              Smart Ranked
             </span>
           </div>
 
           <div className="space-y-4">
-            {suggestedInvestors.map((inv) => {
+            {rankedInvestors.map((inv) => {
               const requested = requestedIntros[inv.id];
+              const match = inv.smartMatch;
+
               return (
                 <div key={inv.id} className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
                         <h4 className="font-bold text-sm text-white">{inv.name}</h4>
-                        <span className="text-[11px] font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400">
-                          {inv.matchScore}% AI Fit
+                        {/* Show Compatibility Score and Label (Requirement 5) */}
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${labelBadgeClasses[match?.label || 'Potential Match']}`}>
+                          {match?.score || 85}% • {match?.label || 'Fit'}
                         </span>
                       </div>
                       <div className="text-xs text-slate-400 mt-0.5">
@@ -332,8 +391,9 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
                       </div>
                     </div>
 
+                    {/* Show Ticket Range (Requirement 5) */}
                     <span className="text-xs font-bold text-slate-200 bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-700">
-                      {inv.ticketSize}
+                      {inv.ticketSize || inv.budgetRange}
                     </span>
                   </div>
 
@@ -341,19 +401,34 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
                     {inv.thesis}
                   </p>
 
-                  <div className="flex flex-wrap gap-1.5 text-[10px]">
-                    {inv.sectors.map((s) => (
-                      <span key={s} className="px-2 py-0.5 rounded-md bg-slate-900 text-slate-400 border border-slate-800">
-                        {s}
-                      </span>
-                    ))}
+                  {/* Show Focus Sectors (Requirement 5) */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      Focus Sectors:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5 text-[10px]">
+                      {(inv.sectors || inv.focus || []).map((s) => (
+                        <span key={s} className="px-2 py-0.5 rounded-md bg-slate-900 text-slate-300 border border-slate-800">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
                   </div>
 
-                  <div className="pt-2">
+                  <div className="pt-2 flex flex-col sm:flex-row gap-2">
+                    {/* View Match Details Action (Requirement 5) */}
+                    <button
+                      onClick={() => setSelectedMatchInvestor(inv)}
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl font-semibold text-xs text-slate-200 bg-slate-800 hover:bg-slate-700 hover:text-white border border-slate-700 transition-colors cursor-pointer"
+                    >
+                      <Info className="w-3.5 h-3.5 text-blue-400" />
+                      <span>View Match Details</span>
+                    </button>
+
                     <button
                       onClick={() => handleRequestIntro(inv.id, inv.name)}
                       disabled={requested}
-                      className={`w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl font-semibold text-xs transition-all cursor-pointer ${
+                      className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl font-semibold text-xs transition-all cursor-pointer ${
                         requested
                           ? 'bg-slate-700 text-emerald-400 border border-emerald-500/30'
                           : 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-md'
@@ -367,7 +442,7 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
                       ) : (
                         <>
                           <Send className="w-3.5 h-3.5" />
-                          <span>Request Curated Introduction</span>
+                          <span>Request Intro</span>
                         </>
                       )}
                     </button>
@@ -379,6 +454,85 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
         </div>
 
       </div>
+
+      {/* Match Details Modal (Requirement 5) */}
+      {selectedMatchInvestor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm animate-in fade-in">
+          <div className="relative w-full max-w-xl bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 text-white shadow-2xl max-h-[90vh] overflow-y-auto space-y-5">
+            <button
+              onClick={() => setSelectedMatchInvestor(null)}
+              className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-violet-400 bg-violet-950 px-2.5 py-0.5 rounded-full border border-violet-800">
+                  Smart Match Evaluation
+                </span>
+                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${labelBadgeClasses[selectedMatchInvestor.smartMatch?.label]}`}>
+                  {selectedMatchInvestor.smartMatch?.score}% • {selectedMatchInvestor.smartMatch?.label}
+                </span>
+              </div>
+              <h3 className="text-xl font-extrabold text-white">
+                Match Details: {profile.name} × {selectedMatchInvestor.name}
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Ticket Range: {selectedMatchInvestor.ticketSize || selectedMatchInvestor.budgetRange} • Focus: {(selectedMatchInvestor.sectors || selectedMatchInvestor.focus || []).join(', ')}
+              </p>
+            </div>
+
+            {/* 6 Criteria Breakdown */}
+            <div className="space-y-2.5 pt-2 border-t border-slate-800">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">
+                Criteria Breakdown (100 Pts):
+              </h4>
+              {selectedMatchInvestor.smartMatch?.breakdown.map((item, idx) => (
+                <div key={idx} className="p-3 rounded-xl bg-slate-800/70 border border-slate-700/60 text-xs space-y-1">
+                  <div className="flex justify-between font-semibold">
+                    <span className="text-slate-200">{item.criterion}</span>
+                    <span className="text-blue-400 font-mono">{item.score} / {item.maxScore} pts</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    {item.explanation}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Strengths & Recommendation */}
+            <div className="space-y-3 pt-2 border-t border-slate-800 text-xs">
+              <div>
+                <h5 className="font-bold text-emerald-400 uppercase tracking-wider text-[11px] mb-1">
+                  Key Strengths:
+                </h5>
+                <ul className="space-y-1">
+                  {selectedMatchInvestor.smartMatch?.strengths.map((str, i) => (
+                    <li key={i} className="flex items-center gap-1.5 text-slate-300">
+                      <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                      <span>{str}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="p-3 rounded-xl bg-blue-950/70 border border-blue-800/60 text-blue-200">
+                <strong>Recommendation:</strong> {selectedMatchInvestor.smartMatch?.recommendation}
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <button
+                onClick={() => setSelectedMatchInvestor(null)}
+                className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-slate-800 hover:bg-slate-700 text-white transition-colors cursor-pointer"
+              >
+                Close Match Details
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

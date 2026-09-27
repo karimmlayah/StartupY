@@ -37,6 +37,54 @@ StartupBridge AI is a specialized, responsive two-sided matchmaking platform foc
 
 ---
 
+## 🎯 Explainable Smart Match Engine (`src/utils/matchEngine.js`)
+
+StartupBridge AI features a **100% deterministic, explainable Smart Match Engine** that replaces static or random compatibility scores with real algorithmic compatibility calculations between Tunisian startups and investors.
+
+### 1. Scoring Weight Distribution (100 Points Total)
+The match engine strictly evaluates 6 objective criteria:
+
+| Criterion | Max Score | Evaluation Rules |
+| :--- | :---: | :--- |
+| **Sector Compatibility** | **30 pts** | • **30 pts**: Exact sector match<br>• **18 pts**: Related sector match (e.g., AgriTech & CleanTech, FinTech & E-commerce)<br>• **0 pts**: No sector overlap |
+| **Ticket Size Compatibility** | **25 pts** | • **25 pts**: Funding requested fits within investor ticket range<br>• **12 pts**: Slightly outside range (within ~40% tolerance)<br>• **0 pts**: Far outside range |
+| **Startup Stage Compatibility** | **15 pts** | • **15 pts**: Exact preferred stage match<br>• **8 pts**: Adjacent stage (e.g., MVP ↔ Early Revenue)<br>• **0 pts**: Stage mismatch |
+| **Governorate / Regional Preference** | **10 pts** | • **10 pts**: Startup's governorate included in investor preferences (or investor covers All 24 governorates)<br>• **6 pts**: No regional preference specified (open to all)<br>• **0 pts**: Governorate excluded from investor focus |
+| **Funding Type Compatibility** | **10 pts** | • **10 pts**: Exact funding type compatibility (e.g., Equity ↔ Equity)<br>• **5 pts**: Related financing instrument (e.g., SAFE ↔ Convertible Note)<br>• **0 pts**: Incompatible financing types |
+| **Investor Mandate Preferences** | **10 pts** | • **10 pts**: Strong alignment with specific thesis (e.g., female founders, export-oriented, AI-first)<br>• **5 pts**: Partial alignment<br>• **0 pts**: No mandate alignment |
+
+### 2. Match Tiers & Labels
+Scores are strictly categorized into 4 explainable tiers:
+- **85 – 100%**: `Excellent Match` (High conviction deal alignment across all key criteria)
+- **70 – 84%**: `Strong Match` (Solid alignment with minor gaps in stage or geography)
+- **50 – 69%**: `Potential Match` (Viable opportunity requiring ticket negotiation or thesis alignment)
+- **0 – 49%**: `Low Match` (Substantial mismatch in sector, ticket size, or mandate)
+
+### 3. Explainability Architecture & UI
+For every pair evaluated, the engine returns:
+- **Score & Tier:** Rendered with an animated SVG circular progress ring and color-coded badge.
+- **Criterion-by-Criterion Breakdown:** Exact points earned vs max points with natural-language context (e.g., *"Funding request of 450,000 TND is within this investor’s 300,000–700,000 TND ticket range."*).
+- **“Why this match?” Section:**
+  - **Top 3 Strengths:** Key factors driving the score.
+  - **Up to 3 Gaps / Risks:** Real diligence flags (e.g. ticket size stretched, stage misalignment).
+  - **Actionable Recommendation:** Practical guidance on how to bridge terms or pitch effectively.
+
+### 4. Interactive Dashboards & Demo Walkthrough
+- **Investor Dashboard:** Startups sorted by real compatibility score, featuring match reason snippets and quick filters (`All`, `Excellent`, `Strong`, `Potential`).
+- **Startup Dashboard:** Investors sorted by compatibility, detailing ticket ranges, focus sectors, and an interactive **“View Match Details”** modal.
+- **Featured Demo Scenario:**
+  > *“Demo: AgriSmart Tunisia is seeking 450,000 TND for Seed Investment in Sfax. Compare it with compatible investors and see why the match is recommended.”*
+
+### 5. Automated Verification & Unit Tests
+`src/utils/matchEngine.js` includes 5 automated test cases (`MATCH_ENGINE_TESTS`):
+1. **Exact High Match:** 100/100 (`Excellent Match`)
+2. **Sector Mismatch:** 65/100 (`Potential Match`)
+3. **Ticket Mismatch:** 75/100 (`Strong Match`)
+4. **Stage Mismatch:** 40/100 (`Low Match`)
+5. **Partial Match:** 81/100 (`Strong Match`)
+
+---
+
 ## 🧠 Real, Secure Tunisia RAG Assistant
 
 StartupBridge AI features an intelligent, server-side RAG engine grounded in local Tunisian ecosystem knowledge:

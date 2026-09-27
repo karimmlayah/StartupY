@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   TrendingUp, 
   Sparkles, 
@@ -9,12 +9,15 @@ import {
   Layers, 
   MapPin, 
   Trash2, 
-  HeartHandshake,
-  Compass,
-  Edit,
-  Building2,
-  PieChart,
-  BookOpen
+  HeartHandshake, 
+  Compass, 
+  Edit, 
+  Building2, 
+  PieChart, 
+  CheckCircle2, 
+  Check, 
+  SlidersHorizontal,
+  Flame
 } from 'lucide-react';
 import { 
   getCurrentInvestor, 
@@ -24,15 +27,21 @@ import {
   addInterestStartup,
   getInterestedStartupIds
 } from '../utils/storage';
+import { calculateSmartMatch } from '../utils/matchEngine';
 import InterestSuccessModal from '../components/InterestSuccessModal';
 
 export default function InvestorDashboardPage({ onOpenAiGuide }) {
-  const [investor, setInvestor] = useState(null);
-  const [allStartups, setAllStartups] = useState([]);
-  const [savedIds, setSavedIds] = useState([]);
-  const [interestedIds, setInterestedIds] = useState([]);
+  const navigate = useNavigate();
+  // Synchronously initialize from storage so initial render has data immediately
+  const [investor, setInvestor] = useState(() => getCurrentInvestor());
+  const [allStartups, setAllStartups] = useState(() => getAllStartups());
+  const [savedIds, setSavedIds] = useState(() => getSavedStartupIds());
+  const [interestedIds, setInterestedIds] = useState(() => getInterestedStartupIds());
   const [activeInterestStartup, setActiveInterestStartup] = useState(null);
   const [showInterestModal, setShowInterestModal] = useState(false);
+  
+  // Match tier filter for recommendations (Requirement 4)
+  const [matchFilter, setMatchFilter] = useState('All'); // 'All' | 'Excellent Match' | 'Strong Match' | 'Potential Match'
 
   useEffect(() => {
     setInvestor(getCurrentInvestor());
@@ -55,16 +64,67 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
 
   if (!investor) return null;
 
+  // Filter saved startups
   const savedStartups = allStartups.filter(s => savedIds.includes(s.id));
 
-  const recommendedStartups = allStartups
-    .filter(s => !savedIds.includes(s.id))
-    .sort((a, b) => (b.aiMatchScore || 85) - (a.aiMatchScore || 85))
-    .slice(0, 3);
+  // Compute deterministic Smart Match for all non-saved startups (Requirement 4)
+  const evaluatedStartups = useMemo(() => {
+    return allStartups
+      .filter(s => !savedIds.includes(s.id))
+      .map(s => {
+        const match = calculateSmartMatch(s, investor);
+        return {
+          ...s,
+          smartMatch: match
+        };
+      })
+      .sort((a, b) => b.smartMatch.score - a.smartMatch.score);
+  }, [allStartups, savedIds, investor]);
+
+  // Apply match tier filter
+  const filteredRecommendations = useMemo(() => {
+    if (matchFilter === 'All') return evaluatedStartups;
+    return evaluatedStartups.filter(s => s.smartMatch.label === matchFilter);
+  }, [evaluatedStartups, matchFilter]);
+
+  const labelBadgeClasses = {
+    'Excellent Match': 'bg-emerald-50 text-emerald-700 border-emerald-300',
+    'Strong Match': 'bg-blue-50 text-blue-700 border-blue-300',
+    'Potential Match': 'bg-amber-50 text-amber-700 border-amber-300',
+    'Low Match': 'bg-rose-50 text-rose-700 border-rose-300'
+  };
 
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
       
+      {/* Prominent Demo Scenario Card (Requirement 6) */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-900/60 via-indigo-900/60 to-violet-900/60 border border-blue-500/50 p-6 sm:p-7 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/30">
+            <Flame className="w-6 h-6 animate-pulse text-amber-300" />
+          </div>
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-300 bg-blue-950 px-2.5 py-0.5 rounded-full border border-blue-800">
+              Interactive Demo Scenario
+            </span>
+            <h3 className="text-base sm:text-lg font-extrabold text-white">
+              Demo: AgriSmart Tunisia is seeking 450,000 TND for Seed Investment in Sfax. Compare it with compatible investors and see why the match is recommended.
+            </h3>
+            <p className="text-xs text-slate-300">
+              Click below to explore the exact 6-criteria scoring breakdown, top strengths, and due diligence points calculated by the Smart Match Engine.
+            </p>
+          </div>
+        </div>
+
+        <Link
+          to="/startup/agrismart-tunisia"
+          className="flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 shadow-xl shadow-blue-600/30 transition-all cursor-pointer transform hover:scale-105"
+        >
+          <span>Evaluate AgriSmart Match</span>
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+
       {/* Dashboard Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-800">
         <div>
@@ -72,13 +132,13 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
             <TrendingUp className="w-3.5 h-3.5" />
             <span>Tunisian Investor & Angel Portal</span>
             <span className="text-slate-500">•</span>
-            <span className="text-slate-400">Demo Data</span>
+            <span className="text-slate-400">Deterministic Match Engine</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
             Investor Dashboard
           </h1>
           <p className="text-sm text-slate-400 mt-1">
-            Curated deal flow in TND, regional watchlists across governorates, and AI diligence tools.
+            Deterministic deal flow sorted by calculated compatibility in TND against your mandate.
           </p>
         </div>
 
@@ -126,24 +186,24 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
             <PieChart className="w-4 h-4 text-blue-400" />
           </div>
           <div className="text-3xl font-black text-white">
-            28
+            {allStartups.length}
           </div>
           <div className="text-xs text-emerald-400 mt-1">
-            Across 9 governorates
+            Ranked by Smart Match Engine
           </div>
         </div>
 
-        {/* KPI 3: Avg AI Match Score */}
+        {/* KPI 3: Top Calculated Match */}
         <div className="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-lg">
           <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider">Avg Thesis Match</span>
+            <span className="text-xs font-bold uppercase tracking-wider">Top Deal Match</span>
             <Sparkles className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="text-3xl font-black text-emerald-400">
-            91.2%
+            {evaluatedStartups[0]?.smartMatch?.score || 95}%
           </div>
           <div className="text-xs text-slate-400 mt-1">
-            Aligned to your ticket in TND
+            {evaluatedStartups[0]?.name || 'AgriSmart Tunisia'}
           </div>
         </div>
 
@@ -195,7 +255,7 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
               className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-white bg-slate-900 hover:bg-slate-800 transition-colors"
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>Explore Tunisian Deals</span>
+              <span>Explore All Deals</span>
             </Link>
           </div>
 
@@ -234,7 +294,7 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
         </div>
       </div>
 
-      {/* Two Columns: Saved Startups (Watchlist) + Recommended Matches */}
+      {/* Two Columns: Saved Startups (Watchlist) + Recommended Matches Sorted by Calculated Score */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* Column 1: Saved Startups (Watchlist) */}
@@ -243,10 +303,10 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
             <div>
               <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
                 <Bookmark className="w-5 h-5 text-blue-400" />
-                <span>Saved Tunisian Startups (Watchlist)</span>
+                <span>Saved Tunisian Startups</span>
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">
-                Companies you bookmarked for partner review in Tunisia.
+                Companies you bookmarked for diligence review.
               </p>
             </div>
             <span className="text-xs font-bold text-blue-300 bg-blue-950 px-2.5 py-1 rounded-full border border-blue-800">
@@ -266,9 +326,6 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
                       <div>
                         <div className="flex items-center gap-2">
                           <h4 className="font-bold text-sm text-white">{s.name}</h4>
-                          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800/60">
-                            {s.aiMatchScore}% Match
-                          </span>
                         </div>
                         <div className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
                           <span>{s.sector}</span>
@@ -327,74 +384,114 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
           </div>
         </div>
 
-        {/* Column 2: Recommended Startup Matches in Tunisia */}
+        {/* Column 2: Recommended Matches with Calculated Score & Match Tier Filter (Requirement 4) */}
         <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
             <div>
               <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-violet-400" />
-                <span>Recommended Tunisian Matches</span>
+                <span>Smart Match Recommendations</span>
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">
-                Top AI scoring opportunities matching your stage and TND ticket size.
+                Deterministic scores calculated against your mandate.
               </p>
             </div>
-            <span className="text-xs font-bold text-violet-300 bg-violet-950 px-2.5 py-1 rounded-full border border-violet-800">
-              Top Ranked
-            </span>
+            
+            {/* Filter: Excellent Match / Strong Match / Potential Match (Requirement 4) */}
+            <div className="flex items-center gap-1.5 overflow-x-auto text-[11px]">
+              {['All', 'Excellent Match', 'Strong Match', 'Potential Match'].map((tier) => (
+                <button
+                  key={tier}
+                  onClick={() => setMatchFilter(tier)}
+                  className={`px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                    matchFilter === tier
+                      ? 'bg-violet-600 text-white shadow-sm'
+                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {tier === 'All' ? 'All Tiers' : tier.replace(' Match', '')}
+                </button>
+              ))}
+            </div>
           </div>
 
+          {/* List of recommended startups */}
           <div className="space-y-4">
-            {recommendedStartups.map((s) => (
-              <div key={s.id} className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.logoBg || 'from-indigo-600 to-violet-600'} text-white font-extrabold text-sm flex items-center justify-center shadow-md`}>
-                      {s.name.replace(/\(.*?\)/g, '').trim().slice(0, 2).toUpperCase()}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-sm text-white">{s.name}</h4>
-                        <span className="text-[10px] font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-400">
-                          {s.aiMatchScore}% Score
-                        </span>
+            {filteredRecommendations.length > 0 ? (
+              filteredRecommendations.slice(0, 4).map((s) => {
+                const match = s.smartMatch;
+                const topReason = match.strengths[0] || match.breakdown[0]?.explanation;
+
+                return (
+                  <div 
+                    key={s.id} 
+                    className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-3 hover:border-violet-500/50 transition-all cursor-pointer group"
+                    onClick={() => navigate(`/startup/${s.id}`)}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.logoBg || 'from-indigo-600 to-violet-600'} text-white font-extrabold text-sm flex items-center justify-center shadow-md`}>
+                          {s.name.replace(/\(.*?\)/g, '').trim().slice(0, 2).toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-bold text-sm text-white group-hover:text-blue-300 transition-colors">
+                              {s.name}
+                            </h4>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${labelBadgeClasses[match.label] || 'bg-violet-50 text-violet-700 border-violet-200'}`}>
+                              {match.score}% • {match.label}
+                            </span>
+                          </div>
+                          <div className="text-xs text-slate-400 mt-0.5">
+                            {s.sector} • <span className="text-slate-300 font-medium">{s.stage}</span> • <span className="text-blue-400">{s.governorate}</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-xs text-slate-400 mt-0.5">
-                        {s.sector} • <span className="text-slate-300 font-medium">{s.stage}</span>
+
+                      <span className="text-xs font-bold text-slate-200 bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-700">
+                        {s.fundingNeeded}
+                      </span>
+                    </div>
+
+                    {/* Short reason on every card (Requirement 4) */}
+                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px] text-slate-300 flex items-start gap-2">
+                      <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                      <span className="line-clamp-2">
+                        <strong>Match Factor:</strong> {topReason}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1 border-t border-slate-700/60 text-xs">
+                      <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                        <span>Vehicle:</span>
+                        <strong className="text-slate-300">{s.fundingTypeSought || 'Seed'}</strong>
+                      </span>
+                      
+                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={() => handleSendInterest(s)}
+                          className="px-3 py-1.5 rounded-lg font-semibold text-xs text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 transition-colors flex items-center gap-1 cursor-pointer"
+                        >
+                          <HeartHandshake className="w-3.5 h-3.5" />
+                          <span>I’m Interested</span>
+                        </button>
+
+                        <Link
+                          to={`/startup/${s.id}`}
+                          className="px-3 py-1.5 rounded-lg font-medium text-xs text-slate-300 bg-slate-700/80 hover:bg-slate-700 hover:text-white transition-colors"
+                        >
+                          Match Details →
+                        </Link>
                       </div>
                     </div>
                   </div>
-
-                  <span className="text-xs font-bold text-slate-200 bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-700">
-                    {s.fundingNeeded}
-                  </span>
-                </div>
-
-                <p className="text-xs text-slate-300 line-clamp-2">
-                  {s.pitch}
-                </p>
-
-                <div className="flex items-center justify-between pt-2 border-t border-slate-700/60 text-xs">
-                  <span className="text-slate-400">{s.governorate}, Tunisia</span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleSendInterest(s)}
-                      className="px-3 py-1.5 rounded-lg font-semibold text-xs text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 transition-colors flex items-center gap-1 cursor-pointer"
-                    >
-                      <HeartHandshake className="w-3.5 h-3.5" />
-                      <span>I’m Interested</span>
-                    </button>
-
-                    <Link
-                      to={`/startup/${s.id}`}
-                      className="px-3 py-1.5 rounded-lg font-medium text-xs text-slate-300 bg-slate-700/80 hover:bg-slate-700 hover:text-white transition-colors"
-                    >
-                      View Details
-                    </Link>
-                  </div>
-                </div>
+                );
+              })
+            ) : (
+              <div className="py-8 text-center text-slate-400 text-sm">
+                No recommended startups match tier "{matchFilter}".
               </div>
-            ))}
+            )}
           </div>
 
           <div className="pt-2 text-center">
