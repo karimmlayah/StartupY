@@ -313,8 +313,37 @@ In accordance with platform compliance guidelines, investor onboarding enforces:
 
 ---
 
+## 🚦 Strict Public-First Route Access Matrix
+
+Bidaya Tunisia operates a strict **public-first, role-based user experience**. Unauthenticated visitors can access only public landing and auth pages. All platform tools are guarded by both frontend route guards and Supabase Row Level Security (RLS) policies.
+
+| Route | Public Visitor | Startup Founder | Investor | Admin | Description |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **`/`** | ✅ Allowed | 🔄 Redirects to Dashboard | 🔄 Redirects to Dashboard | 🔄 Redirects to `/admin` | Public landing page explaining Bidaya Tunisia |
+| **`/login`** | ✅ Allowed | 🔄 Redirects to Dashboard | 🔄 Redirects to Dashboard | 🔄 Redirects to `/admin` | Sign-in portal with optional intent parameter |
+| **`/register`** | ✅ Allowed | 🔄 Redirects to Dashboard | 🔄 Redirects to Dashboard | 🔄 Redirects to `/admin` | Registration with intent support (`?intent=startup\|investor`) |
+| **`/forgot-password`** | ✅ Allowed | 🔄 Redirects to Dashboard | 🔄 Redirects to Dashboard | 🔄 Redirects to `/admin` | Password reset request |
+| **`/choose-role`** | 🔒 Auth Required | 🚫 Role Locked | 🚫 Role Locked | 🚫 Role Locked | One-time role choice (Startup Founder / Investor) |
+| **`/dashboard/startup`** | 🔒 Redirect to Login | ✅ Allowed | ⛔ Access Denied | 👑 Full Access | Founder 11-step roadmap & readiness dashboard |
+| **`/roadmap`** | 🔒 Redirect to Login | ✅ Allowed | ⛔ Access Denied | 👑 Full Access | Founder venture builder roadmap view |
+| **`/startup-profile`** | 🔒 Redirect to Login | ✅ Allowed | ⛔ Access Denied | 👑 Full Access | Founder startup profile editor |
+| **`/startup-documents`** | 🔒 Redirect to Login | ✅ Allowed | ⛔ Access Denied | 👑 Full Access | Founder document uploads |
+| **`/startup-meetings`** | 🔒 Redirect to Login | ✅ Allowed | ⛔ Access Denied | 👑 Full Access | Founder Bidaya Meetings schedule |
+| **`/dashboard/investor`** | 🔒 Redirect to Login | ⛔ Access Denied | ✅ Allowed | 👑 Full Access | Investor dashboard & verification status |
+| **`/investor-verification`**| 🔒 Redirect to Login | ⛔ Access Denied | ✅ Allowed | 👑 Full Access | Investor 7-step accreditation dossier |
+| **`/deal-flow`** | 🔒 Redirect to Login | ⛔ Access Denied | ✅ Verified Only | 👑 Full Access | Approved Tunisian startup deal flow search |
+| **`/explore`** | 🔒 Redirect to Login | ⛔ Access Denied | ✅ Verified Only | 👑 Full Access | Alias for deal flow search |
+| **`/startup/:id`** | 🔒 Redirect to Login | ⛔ Access Denied | ✅ Approved Only | 👑 Full Access | Detailed startup profile & match breakdown |
+| **`/investor-meetings`** | 🔒 Redirect to Login | ⛔ Access Denied | ✅ Verified Only | 👑 Full Access | Investor Bidaya Meetings schedule |
+| **`/admin`** | 🔒 Redirect to Login | ⛔ Access Denied | ⛔ Access Denied | 👑 Full Access | Admin console (Review, Verification, Users, Logs) |
+| **`/meeting/:meetingId`**| 🔒 Redirect to Login | 🤝 Participant Only | 🤝 Participant Only | 👑 Metadata Only | Secure ZEGOCLOUD video call room |
+| **`/resources`** | 🔒 Redirect to Login | ✅ Allowed | ✅ Allowed | 👑 Full Access | Official Tunisian institutional resources |
+
+---
+
 ## 📑 Source-Verification Limitation & Legal Disclaimer
 
 - **Source Limitation:** The initial knowledge base entries are educational drafts compiled for demonstration purposes. Official verification by accredited Tunisian legal, fiscal, and institutional bodies is pending.
 - **Legal Disclaimer:** *Information for educational guidance only — not legal, tax, financial or investment advice. Official Tunisian sources and accredited legal/tax counsel should always be consulted.*
+
 

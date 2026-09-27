@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   User, 
   Mail, 
@@ -15,6 +15,7 @@ import { useAuth } from '../context/AuthContext';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { signUp, isDemoMode } = useAuth();
 
   const [fullName, setFullName] = useState('');
@@ -48,8 +49,8 @@ export default function RegisterPage() {
     try {
       setLoading(true);
       await signUp({ fullName, email, password });
-      // Redirect to /choose-role as required by Requirement 1
-      navigate('/choose-role');
+      // Redirect to /choose-role with intent query preserved
+      navigate('/choose-role' + (location.search || ''));
     } catch (err) {
       console.error('Registration failed:', err);
       setError(err.message || 'Failed to create your account.');

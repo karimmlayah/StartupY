@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Sparkles, 
   ArrowRight, 
@@ -16,14 +16,144 @@ import {
   Coins,
   Building2,
   BookOpen,
-  MapPin
+  MapPin,
+  Video,
+  Rocket,
+  Lock,
+  FileCheck2
 } from 'lucide-react';
 import StartupCard from '../components/StartupCard';
 import { INITIAL_STARTUPS } from '../data/mockStartups';
+import { useAuth } from '../context/AuthContext';
 
 export default function LandingPage({ onOpenAiGuide }) {
+  const navigate = useNavigate();
+  const { user, role } = useAuth();
+
   // Grab top 3 featured Tunisian startups for preview
   const featuredStartups = INITIAL_STARTUPS.slice(0, 3);
+
+  // Helper to handle role-aware destination
+  const getDestinationPath = (defaultUnauthPath) => {
+    if (!user) return defaultUnauthPath;
+    if (role === 'admin') return '/admin';
+    if (role === 'investor') return '/dashboard/investor';
+    if (role === 'startup') return '/dashboard/startup';
+    return '/choose-role';
+  };
+
+  const handleStartStartupJourney = () => {
+    navigate(getDestinationPath('/register?intent=startup'));
+  };
+
+  const handleInvestorJourney = () => {
+    navigate(getDestinationPath('/register?intent=investor'));
+  };
+
+  const handleSignInClick = () => {
+    navigate(getDestinationPath('/login'));
+  };
+
+  const handleFeatureAccess = (targetPath) => {
+    if (!user) {
+      navigate('/login', { 
+        state: { 
+          from: { pathname: targetPath },
+          message: "Please sign in to access Bidaya Tunisia." 
+        } 
+      });
+    } else {
+      if (role === 'investor' && (targetPath === '/deal-flow' || targetPath.startsWith('/startup/'))) {
+        navigate(targetPath);
+      } else if (role === 'startup' && targetPath === '/dashboard/startup') {
+        navigate('/dashboard/startup');
+      } else if (role === 'admin') {
+        navigate(targetPath);
+      } else {
+        navigate(role === 'investor' ? '/dashboard/investor' : role === 'startup' ? '/dashboard/startup' : '/choose-role');
+      }
+    }
+  };
+
+  // 5 Core Platform Pillar Features Required
+  const pillarFeatures = [
+    {
+      title: "11-Step Founder Roadmap",
+      subtitle: "Structured Venture Builder",
+      description: "From Founder Diagnostic to Startup Act Readiness and Investor Pitch Deck, founders complete concrete evidence milestones before accessing investor deal flow.",
+      icon: Rocket,
+      color: "from-blue-500 to-indigo-600",
+      badge: "Founder Roadmap"
+    },
+    {
+      title: "Tunisia AI Guide",
+      subtitle: "Retrieval-Augmented Advisory",
+      description: "Ask AI about legal structures (SARL, SUARL), Central Bank FX regulations, fiscal incentives, and pitch deck preparation tailored to Tunisia.",
+      icon: Bot,
+      color: "from-violet-500 to-purple-600",
+      badge: "RAG Assistant"
+    },
+    {
+      title: "Verified Investors",
+      subtitle: "Accredited Capital Network",
+      description: "Business angels, local venture funds, diaspora syndicates, and corporate venture capital pass rigorous identity and mandate verification.",
+      icon: ShieldCheck,
+      color: "from-emerald-500 to-teal-600",
+      badge: "Accredited Network"
+    },
+    {
+      title: "Smart Match Engine",
+      subtitle: "100% Deterministic Fit",
+      description: "Algorithms score sector alignment, ticket size in TND, stage readiness, and regional governorates with full explainability.",
+      icon: Sparkles,
+      color: "from-amber-500 to-orange-600",
+      badge: "Algorithmic Match"
+    },
+    {
+      title: "Bidaya Meeting",
+      subtitle: "In-App Video Calls",
+      description: "Private 1-on-1 WebRTC video meetings powered by ZEGOCLOUD with server-side token validation and meeting room security.",
+      icon: Video,
+      color: "from-rose-500 to-pink-600",
+      badge: "In-App Video"
+    }
+  ];
+
+  // 4 Cards for Tunisia Ecosystem Section
+  const ecosystemCards = [
+    {
+      title: "Startup Funding",
+      description: "Direct discovery between innovative Tunisian ventures seeking pre-seed, seed, or growth capital and investors deploying capital in Tunisian Dinars (TND).",
+      icon: Coins,
+      badge: "Capital Matching",
+      stat: "48M TND Seek Volume",
+      color: "from-blue-600 to-indigo-700"
+    },
+    {
+      title: "Investor Discovery",
+      description: "A centralized deal flow engine for business angels, institutional venture funds, corporate venture teams, and the Tunisian diaspora exploring high-potential startups.",
+      icon: TrendingUp,
+      badge: "Deal Flow",
+      stat: "85+ Registered Angels & Funds",
+      color: "from-violet-600 to-purple-700"
+    },
+    {
+      title: "Startup Guidance",
+      description: "Interactive AI assistants offering pre-investment due diligence checklists, pitch deck reviews, valuation multiple benchmarks, and legal structuring advice for Tunisia.",
+      icon: Sparkles,
+      badge: "AI Advisory",
+      stat: "24/7 AI Engine",
+      color: "from-emerald-600 to-teal-700"
+    },
+    {
+      title: "Tunisian Ecosystem",
+      description: "Collaborative linkages between university tech poles, regional business incubators, accelerators, and business-support organizations from Tunis to the interior regions.",
+      icon: Building2,
+      badge: "24 Governorates",
+      stat: "National Reach",
+      color: "from-amber-500 to-orange-600"
+    }
+  ];
 
   const steps = [
     {
@@ -60,42 +190,6 @@ export default function LandingPage({ onOpenAiGuide }) {
     { label: "Match Precision (Demo)", value: "93.4%", subtext: "High-conviction deal fit" }
   ];
 
-  // Required "Tunisia Ecosystem" Section Cards
-  const ecosystemCards = [
-    {
-      title: "Startup Funding",
-      description: "Direct discovery between innovative Tunisian ventures seeking pre-seed, seed, or growth capital and investors deploying capital in Tunisian Dinars (TND).",
-      icon: Coins,
-      badge: "Capital Matching",
-      stat: "48M TND Seek Volume",
-      color: "from-blue-600 to-indigo-700"
-    },
-    {
-      title: "Investor Discovery",
-      description: "A centralized deal flow engine for business angels, institutional venture funds, corporate venture teams, and the Tunisian diaspora exploring high-potential startups.",
-      icon: TrendingUp,
-      badge: "Deal Flow",
-      stat: "85+ Registered Angels & Funds",
-      color: "from-violet-600 to-purple-700"
-    },
-    {
-      title: "Startup Guidance",
-      description: "Interactive AI assistants offering pre-investment due diligence checklists, pitch deck reviews, valuation multiple benchmarks, and legal structuring advice for Tunisia.",
-      icon: Sparkles,
-      badge: "AI Advisory",
-      stat: "24/7 AI Engine",
-      color: "from-emerald-600 to-teal-700"
-    },
-    {
-      title: "Tunisian Ecosystem",
-      description: "Collaborative linkages between university tech poles, regional business incubators, accelerators, and business-support organizations from Tunis to the interior regions.",
-      icon: Building2,
-      badge: "24 Governorates",
-      stat: "National Reach",
-      color: "from-amber-500 to-orange-600"
-    }
-  ];
-
   return (
     <div className="relative overflow-hidden">
       
@@ -106,14 +200,14 @@ export default function LandingPage({ onOpenAiGuide }) {
       </div>
 
       {/* Hero Section */}
-      <section className="relative pt-20 pb-20 md:pt-28 md:pb-28 text-center px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+      <section className="relative pt-20 pb-16 md:pt-24 md:pb-24 text-center px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
         
         {/* Top Tag */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/90 border border-slate-700/80 text-xs font-semibold text-blue-300 shadow-inner mb-8">
           <span className="flex h-2 w-2 rounded-full bg-red-500"></span>
           <span>Tunisia Entrepreneurial Ecosystem Platform</span>
           <span className="text-slate-500">•</span>
-          <span className="text-slate-400">Demo platform data</span>
+          <span className="text-slate-400">Bidaya Tunisia</span>
         </div>
 
         {/* Required Hero Title */}
@@ -125,27 +219,38 @@ export default function LandingPage({ onOpenAiGuide }) {
         </h1>
 
         {/* Short Description */}
-        <p className="max-w-2xl mx-auto text-lg sm:text-xl text-slate-300 font-normal leading-relaxed mb-10">
-          StartupBridge AI connects Tunisian founders with business angels, local venture funds, incubators, and the diaspora, empowering both sides to make smarter investment decisions with objective match scoring.
+        <p className="max-w-3xl mx-auto text-lg sm:text-xl text-slate-300 font-normal leading-relaxed mb-10">
+          Bidaya Tunisia is a secure, public-first platform powering the Tunisian innovation ecosystem. We guide founders through structured roadmaps, connect accredited investors with verified deal flow, and provide AI-driven insights in Tunisian Dinars.
         </p>
 
-        {/* Two Required CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
-          <Link
-            to="/explore"
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl text-base font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 shadow-xl shadow-blue-600/30 hover:shadow-blue-600/45 transition-all transform hover:-translate-y-0.5"
+        {/* Three Required CTA Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-xl mx-auto">
+          <button
+            onClick={handleStartStartupJourney}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 shadow-xl shadow-blue-600/30 hover:shadow-blue-600/45 transition-all transform hover:-translate-y-0.5 cursor-pointer"
           >
-            <Compass className="w-5 h-5" />
-            <span>Explore Startups</span>
+            <Rocket className="w-4 h-4" />
+            <span>Start Your Startup Journey</span>
             <ArrowRight className="w-4 h-4 ml-0.5" />
-          </Link>
+          </button>
 
-          <Link
-            to="/auth"
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl text-base font-bold text-slate-200 bg-slate-800/90 hover:bg-slate-700/90 hover:text-white border border-slate-700/90 shadow-lg transition-all"
+          <button
+            onClick={handleInvestorJourney}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-slate-200 bg-slate-800/90 hover:bg-slate-700/90 hover:text-white border border-slate-700/90 shadow-lg transition-all cursor-pointer"
           >
-            <span>Join as Startup</span>
-          </Link>
+            <TrendingUp className="w-4 h-4 text-violet-400" />
+            <span>I’m an Investor</span>
+          </button>
+
+          {!user && (
+            <button
+              onClick={handleSignInClick}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-sm font-bold text-blue-300 bg-blue-950/60 hover:bg-blue-900/60 border border-blue-800/60 transition-all cursor-pointer"
+            >
+              <Lock className="w-4 h-4 text-blue-400" />
+              <span>Sign In</span>
+            </button>
+          )}
         </div>
 
         {/* Micro Credibility */}
@@ -163,13 +268,63 @@ export default function LandingPage({ onOpenAiGuide }) {
             Startup Tunisia AI Guide
           </span>
           <span className="flex items-center gap-1.5">
-            <BookOpen className="w-4 h-4 text-amber-400" />
-            <Link to="/resources" className="underline hover:text-white">Official Resources</Link>
+            <CheckCircle2 className="w-4 h-4 text-amber-400" />
+            In-App Bidaya Meetings
           </span>
         </div>
 
-        {/* Demo Scenario Highlight Card */}
-        <div className="mt-10 max-w-3xl mx-auto p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-emerald-950/60 via-slate-900/90 to-blue-950/60 border border-emerald-500/40 shadow-xl shadow-emerald-500/10 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      </section>
+
+      {/* Platform Core Features Showcase Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/60">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <span className="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-950/60 px-3 py-1 rounded-full border border-blue-800/60">
+            Platform Capabilities
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-3 mb-3">
+            Built Exclusively for Tunisian Innovation
+          </h2>
+          <p className="text-sm sm:text-base text-slate-300">
+            Bidaya Tunisia combines structured founder acceleration, verified investor accreditation, and algorithmic matching into one seamless ecosystem.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {pillarFeatures.map((feat, idx) => {
+            const Icon = feat.icon;
+            return (
+              <div 
+                key={idx}
+                className="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between group"
+              >
+                <div className="space-y-3">
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${feat.color} text-white flex items-center justify-center shadow-md`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">
+                      {feat.badge}
+                    </span>
+                    <h3 className="text-base font-bold text-white mt-2">
+                      {feat.title}
+                    </h3>
+                    <p className="text-xs text-slate-400 font-medium mt-0.5">
+                      {feat.subtitle}
+                    </p>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    {feat.description}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Demo Scenario Highlight Card */}
+      <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-emerald-950/60 via-slate-900/90 to-blue-950/60 border border-emerald-500/40 shadow-xl shadow-emerald-500/10 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
               <Sparkles className="w-3.5 h-3.5" />
@@ -182,15 +337,14 @@ export default function LandingPage({ onOpenAiGuide }) {
               Deterministic 6-criteria scoring engine with full explainability, strengths, gaps, and recommendations.
             </p>
           </div>
-          <Link
-            to="/startup/agrismart-tunisia"
-            className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-emerald-600/30 transition-all hover:scale-105"
+          <button
+            onClick={() => handleFeatureAccess('/startup/agrismart-tunisia')}
+            className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-emerald-600/30 transition-all hover:scale-105 cursor-pointer"
           >
             <span>Inspect AgriSmart Match</span>
             <ArrowRight className="w-4 h-4" />
-          </Link>
+          </button>
         </div>
-
       </section>
 
       {/* Platform Stats Strip (Clearly Marked as Demo Platform Data) */}

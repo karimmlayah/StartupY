@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   TrendingUp, 
   Sparkles, 
@@ -17,7 +17,8 @@ import {
   CheckCircle2, 
   Check, 
   SlidersHorizontal,
-  Flame
+  Flame,
+  AlertCircle
 } from 'lucide-react';
 import { 
   getCurrentInvestor, 
@@ -34,6 +35,7 @@ import InvestorVerificationFlow from '../components/InvestorVerificationFlow';
 
 export default function InvestorDashboardPage({ onOpenAiGuide }) {
   const navigate = useNavigate();
+  const location = useLocation();
   // Synchronously initialize from storage so initial render has data immediately
   const [investor, setInvestor] = useState(() => getCurrentInvestor());
   const [allStartups, setAllStartups] = useState(() => getAllStartups());
@@ -98,6 +100,14 @@ export default function InvestorDashboardPage({ onOpenAiGuide }) {
 
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
+      
+      {/* Access Denied Warning Banner */}
+      {location.state?.accessDenied && (
+        <div className="p-4 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-200 text-sm font-semibold flex items-center gap-3 animate-in fade-in">
+          <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
+          <span>{location.state.message || "Access denied. You do not have permission to view this page."}</span>
+        </div>
+      )}
       
       {/* Prominent Demo Scenario Card (Requirement 6) */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-900/60 via-indigo-900/60 to-violet-900/60 border border-blue-500/50 p-6 sm:p-7 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">

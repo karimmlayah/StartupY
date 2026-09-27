@@ -76,6 +76,13 @@ export default function LoginPage() {
           </p>
         </div>
 
+        {location.state?.message && (
+          <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <span>{location.state.message}</span>
+          </div>
+        )}
+
         {error && (
           <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />

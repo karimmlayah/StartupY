@@ -14,7 +14,8 @@ import {
   LogOut,
   ShieldCheck,
   User,
-  KeyRound
+  KeyRound,
+  Video
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -30,17 +31,47 @@ export default function Navbar({ onOpenAiGuide }) {
     return false;
   };
 
-  const navLinks = [
-    { name: 'Explore Startups', path: '/explore', icon: Compass },
-    { name: 'Official Resources', path: '/resources', icon: BookOpen },
-    { name: 'Startup Dashboard', path: '/dashboard/startup', icon: LayoutDashboard },
-    { name: 'Investor Dashboard', path: '/dashboard/investor', icon: TrendingUp },
-  ];
+  const getRoleNavLinks = () => {
+    if (!user) {
+      return [
+        { name: 'Home', path: '/', icon: Globe },
+        { name: 'Sign In', path: '/login', icon: User },
+        { name: 'Create Account', path: '/register', icon: UserCheck }
+      ];
+    }
 
-  // If user is admin or in demo mode, add Admin link
-  if (role === 'admin' || isDemoMode) {
-    navLinks.push({ name: 'Admin', path: '/admin', icon: ShieldCheck });
-  }
+    if (role === 'startup') {
+      return [
+        { name: 'Dashboard', path: '/dashboard/startup', icon: LayoutDashboard },
+        { name: 'Roadmap', path: '/roadmap', icon: Compass },
+        { name: 'AI Guide', isAction: true, action: () => onOpenAiGuide('startup'), icon: Sparkles },
+        { name: 'My Profile', path: '/startup-profile', icon: User },
+        { name: 'Meetings', path: '/startup-meetings', icon: Video }
+      ];
+    }
+
+    if (role === 'investor') {
+      return [
+        { name: 'Dashboard', path: '/dashboard/investor', icon: TrendingUp },
+        { name: 'Verification', path: '/investor-verification', icon: ShieldCheck },
+        { name: 'Deal Flow', path: '/deal-flow', icon: Compass },
+        { name: 'AI Guide', isAction: true, action: () => onOpenAiGuide('investor'), icon: Sparkles },
+        { name: 'Meetings', path: '/investor-meetings', icon: Video }
+      ];
+    }
+
+    if (role === 'admin') {
+      return [
+        { name: 'Admin Console', path: '/admin', icon: ShieldCheck }
+      ];
+    }
+
+    return [
+      { name: 'Choose Role', path: '/choose-role', icon: UserCheck }
+    ];
+  };
+
+  const navLinks = getRoleNavLinks();
 
   const handleLogout = async () => {
     await signOut();
@@ -81,6 +112,18 @@ export default function Navbar({ onOpenAiGuide }) {
           <nav className="hidden md:flex items-center gap-1 lg:gap-2">
             {navLinks.map((link) => {
               const Icon = link.icon;
+              if (link.isAction) {
+                return (
+                  <button
+                    key={link.name}
+                    onClick={link.action}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-violet-300 bg-violet-950/40 hover:bg-violet-900/50 border border-violet-700/40 transition-all cursor-pointer"
+                  >
+                    <Icon className="w-4 h-4 text-violet-400" />
+                    <span>{link.name}</span>
+                  </button>
+                );
+              }
               const active = isActive(link.path);
               return (
                 <Link
@@ -101,20 +144,8 @@ export default function Navbar({ onOpenAiGuide }) {
 
           {/* Action CTAs */}
           <div className="hidden lg:flex items-center gap-3">
-            
-            {/* AI Guide Trigger */}
-            <button
-              onClick={() => onOpenAiGuide('startup')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-violet-300 bg-violet-950/40 border border-violet-700/40 hover:bg-violet-900/50 shadow-sm transition-all cursor-pointer"
-              title="Open Startup Tunisia AI Guide"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-violet-400 animate-pulse" />
-              <span>Tunisia AI Guide</span>
-            </button>
-
-            {/* Authenticated User / Role Badge / Logout */}
             {user ? (
-              <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+              <div className="flex items-center gap-3 pl-2 border-l border-slate-800">
                 <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs">
                   <span className={`w-2 h-2 rounded-full ${
                     role === 'admin' ? 'bg-amber-400' : role === 'investor' ? 'bg-violet-400' : 'bg-blue-400'
@@ -124,10 +155,10 @@ export default function Navbar({ onOpenAiGuide }) {
 
                 <button
                   onClick={handleLogout}
-                  className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-slate-800/80 transition-colors cursor-pointer"
-                  title="Sign Out"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-950/30 border border-rose-900/40 transition-colors cursor-pointer"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Logout</span>
                 </button>
               </div>
             ) : (
@@ -143,11 +174,10 @@ export default function Navbar({ onOpenAiGuide }) {
                   className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 shadow-md shadow-blue-600/20 transition-all"
                 >
                   <UserCheck className="w-3.5 h-3.5" />
-                  <span>Register</span>
+                  <span>Create Account</span>
                 </Link>
               </div>
             )}
-
           </div>
 
           {/* Mobile menu button */}

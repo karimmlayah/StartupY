@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Building2, 
   Sparkles, 
@@ -19,7 +19,8 @@ import {
   ShieldCheck,
   AlertTriangle,
   Lightbulb,
-  Info
+  Info,
+  AlertCircle
 } from 'lucide-react';
 import { getCurrentStartup } from '../utils/storage';
 import { INITIAL_INVESTORS, MOCK_INTERESTED_REQUESTS } from '../data/mockInvestors';
@@ -28,6 +29,7 @@ import MeetingCenter from '../components/MeetingCenter';
 import StartupRoadmap from '../components/StartupRoadmap';
 
 export default function StartupDashboardPage({ onOpenAiGuide }) {
+  const location = useLocation();
   const [profile, setProfile] = useState(() => getCurrentStartup());
   const [investorRequests, setInvestorRequests] = useState(MOCK_INTERESTED_REQUESTS);
   const [requestedIntros, setRequestedIntros] = useState({});
@@ -86,6 +88,14 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
       
+      {/* Access Denied Warning Banner */}
+      {location.state?.accessDenied && (
+        <div className="p-4 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-200 text-sm font-semibold flex items-center gap-3 animate-in fade-in">
+          <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
+          <span>{location.state.message || "Access denied. You do not have permission to view this page."}</span>
+        </div>
+      )}
+
       {/* Top Banner / Notification */}
       {notification && (
         <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-sm font-semibold flex items-center justify-between animate-in fade-in">

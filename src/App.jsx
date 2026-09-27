@@ -57,19 +57,13 @@ export default function App() {
           {/* Page Content */}
           <main className="flex-1">
             <Routes>
-              {/* Public Routes */}
+              {/* Public Routes Only */}
               <Route path="/" element={<LandingPage onOpenAiGuide={handleOpenAiGuide} />} />
-              <Route path="/auth" element={<AuthChoicePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/explore" element={<ExplorePage />} />
-              <Route path="/resources" element={<OfficialResourcesPage onOpenAiGuide={handleOpenAiGuide} />} />
-              <Route path="/startup/:id" element={<StartupDetailsPage onOpenAiGuide={handleOpenAiGuide} />} />
-              <Route path="/onboarding/startup" element={<StartupOnboardingPage />} />
-              <Route path="/onboarding/investor" element={<InvestorOnboardingPage />} />
 
-              {/* Protected Role-Based Routes */}
+              {/* Authentication & Role Assignment */}
               <Route 
                 path="/choose-role" 
                 element={
@@ -78,7 +72,16 @@ export default function App() {
                   </ProtectedRoute>
                 } 
               />
+              <Route 
+                path="/auth" 
+                element={
+                  <ProtectedRoute>
+                    <ChooseRolePage />
+                  </ProtectedRoute>
+                } 
+              />
 
+              {/* Startup-Only Experience */}
               <Route 
                 path="/dashboard/startup" 
                 element={
@@ -88,7 +91,31 @@ export default function App() {
                 } 
               />
               <Route 
-                path="/startup-dashboard" 
+                path="/roadmap" 
+                element={
+                  <ProtectedRoute allowedRoles={['startup', 'admin']}>
+                    <StartupDashboardPage onOpenAiGuide={handleOpenAiGuide} />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/startup-profile" 
+                element={
+                  <ProtectedRoute allowedRoles={['startup', 'admin']}>
+                    <StartupOnboardingPage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/startup-documents" 
+                element={
+                  <ProtectedRoute allowedRoles={['startup', 'admin']}>
+                    <StartupDashboardPage onOpenAiGuide={handleOpenAiGuide} />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/startup-meetings" 
                 element={
                   <ProtectedRoute allowedRoles={['startup', 'admin']}>
                     <StartupDashboardPage onOpenAiGuide={handleOpenAiGuide} />
@@ -96,6 +123,7 @@ export default function App() {
                 } 
               />
 
+              {/* Investor-Only Experience */}
               <Route 
                 path="/dashboard/investor" 
                 element={
@@ -105,7 +133,39 @@ export default function App() {
                 } 
               />
               <Route 
-                path="/investor-dashboard" 
+                path="/investor-verification" 
+                element={
+                  <ProtectedRoute allowedRoles={['investor', 'admin']}>
+                    <InvestorDashboardPage onOpenAiGuide={handleOpenAiGuide} />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/deal-flow" 
+                element={
+                  <ProtectedRoute allowedRoles={['investor', 'admin']}>
+                    <ExplorePage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/explore" 
+                element={
+                  <ProtectedRoute allowedRoles={['investor', 'admin']}>
+                    <ExplorePage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/startup/:id" 
+                element={
+                  <ProtectedRoute allowedRoles={['investor', 'admin']}>
+                    <StartupDetailsPage onOpenAiGuide={handleOpenAiGuide} />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/investor-meetings" 
                 element={
                   <ProtectedRoute allowedRoles={['investor', 'admin']}>
                     <InvestorDashboardPage onOpenAiGuide={handleOpenAiGuide} />
@@ -113,6 +173,7 @@ export default function App() {
                 } 
               />
 
+              {/* Admin-Only Experience */}
               <Route 
                 path="/admin" 
                 element={
@@ -122,11 +183,19 @@ export default function App() {
                 } 
               />
 
-              {/* Video Meeting Room */}
+              {/* General Protected Features */}
+              <Route 
+                path="/resources" 
+                element={
+                  <ProtectedRoute allowedRoles={['startup', 'investor', 'admin']}>
+                    <OfficialResourcesPage onOpenAiGuide={handleOpenAiGuide} />
+                  </ProtectedRoute>
+                } 
+              />
               <Route 
                 path="/meeting/:meetingId" 
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute allowedRoles={['startup', 'investor', 'admin']}>
                     <MeetingRoomPage />
                   </ProtectedRoute>
                 } 

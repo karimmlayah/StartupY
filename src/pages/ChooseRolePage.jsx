@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Navigate, useSearchParams } from 'react-router-dom';
 import { 
   Rocket, 
   TrendingUp, 
@@ -14,9 +14,13 @@ import { useAuth } from '../context/AuthContext';
 
 export default function ChooseRolePage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, role, chooseRole, loading: authLoading } = useAuth();
   
-  const [selectedRole, setSelectedRole] = useState(null);
+  const intent = searchParams.get('intent');
+  const initialRole = intent === 'investor' ? 'investor' : intent === 'startup' ? 'startup' : null;
+
+  const [selectedRole, setSelectedRole] = useState(initialRole);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
