@@ -177,7 +177,7 @@ export const ROADMAP_STEPS = [
   }
 ];
 
-export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChange }) {
+export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChange, initialProgress = [] }) {
   const [stepsData, setStepsData] = useState(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -198,6 +198,21 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
   const [expandedStep, setExpandedStep] = useState(4); // Open current in-progress step
   const [submissionStatus, setSubmissionStatus] = useState('draft'); // 'draft' | 'under_review' | 'approved'
   const [submissionFeedback, setSubmissionFeedback] = useState('');
+
+  useEffect(() => {
+    if (!initialProgress.length) return;
+    setStepsData(ROADMAP_STEPS.map((step) => {
+      const saved = initialProgress.find((item) => item.roadmap_step === step.step);
+      return {
+        step: step.step,
+        status: saved?.status || 'locked',
+        checklist: step.checklist.map(() => saved?.status === 'completed'),
+        evidenceText: saved?.evidence_json?.text || '',
+        evidenceUrl: saved?.evidence_json?.url || '',
+        completedAt: saved?.completed_at || null,
+      };
+    }));
+  }, [initialProgress]);
 
   // Persist roadmap steps data
   useEffect(() => {
@@ -275,34 +290,34 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
   };
 
   return (
-    <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
+    <div className="bg-surface-elevated rounded-xl p-6 sm:p-8 border border-sand shadow-md space-y-6">
       
       {/* Top Banner: Readiness Score & Investor Readiness */}
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-blue-950/70 via-indigo-950/60 to-violet-950/70 border border-blue-500/30 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-lg">
+      <div className="p-6 rounded-lg bg-coral border border-coral/40 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-900/60 text-blue-300 text-xs font-bold border border-blue-700/60">
-            <Zap className="w-3.5 h-3.5 text-blue-400" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-coral/10 text-coral text-xs font-bold border border-coral/40">
+            <Zap className="w-3.5 h-3.5 text-coral" />
             <span>Tunisia Startup Roadmap Engine</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-white">
-            Readiness Score: <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-violet-400">{readinessScore}%</span>
+          <h2 className="text-xl sm:text-2xl font-semibold text-ink">
+            Readiness Score: <span className="text-bronze">{readinessScore}%</span>
           </h2>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
+          <p className="text-xs sm:text-sm text-brown-mid max-w-xl">
             Complete the 11 milestone roadmap to earn verified publication status, unlock investor diligence data rooms, and maximize your Smart Match compatibility.
           </p>
         </div>
 
         {/* Progress Circular / Bar Indicator */}
-        <div className="flex-shrink-0 flex items-center gap-4 bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 flex flex-col items-center justify-center text-white shadow-lg">
-            <span className="text-lg font-black">{completedCount}/11</span>
-            <span className="text-[9px] uppercase font-bold text-blue-200">Steps</span>
+        <div className="flex-shrink-0 flex items-center gap-4 bg-surface-elevated p-4 rounded-lg border border-sand">
+          <div className="w-16 h-16 rounded-lg bg-coral flex flex-col items-center justify-center text-white shadow-sm">
+            <span className="text-lg font-semibold">{completedCount}/11</span>
+            <span className="text-[9px] uppercase font-bold text-coral">Steps</span>
           </div>
           <div>
             <div className="text-xs font-bold text-white">
               {mandatoryCompleted ? 'Ready for Publication' : 'In Progress (Milestone 4)'}
             </div>
-            <div className="text-[11px] text-slate-400 mt-0.5">
+            <div className="text-[11px] text-muted mt-0.5">
               {mandatoryCompleted 
                 ? 'All mandatory MVP steps satisfied' 
                 : `${10 - completedCount} mandatory steps remaining`}
@@ -312,8 +327,8 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
       </div>
 
       {submissionFeedback && (
-        <div className="p-4 rounded-2xl bg-blue-950/80 border border-blue-500/40 text-xs text-blue-200 flex items-center gap-3">
-          <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+        <div className="p-4 rounded-lg bg-coral/10 border border-coral/40 text-xs text-coral flex items-center gap-3">
+          <ShieldCheck className="w-5 h-5 text-success flex-shrink-0" />
           <span>{submissionFeedback}</span>
         </div>
       )}
@@ -334,14 +349,14 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
           return (
             <div
               key={st.step}
-              className={`rounded-2xl border transition-all ${
+              className={`rounded-lg border transition-all ${
                 isCompleted
-                  ? 'bg-slate-900/60 border-emerald-500/30'
+                  ? 'bg-surface border-success/30'
                   : isExpanded
-                  ? 'bg-slate-800/90 border-blue-500/60 shadow-lg shadow-blue-500/10'
+                  ? 'bg-surface border-coral/40 shadow-sm'
                   : isLocked
-                  ? 'bg-slate-900/30 border-slate-800/60 opacity-60'
-                  : 'bg-slate-800/50 border-slate-700/60'
+                  ? 'bg-surface-elevated/30 border-sand opacity-60'
+                  : 'bg-surface/50 border-sand'
               }`}
             >
               {/* Step Header */}
@@ -350,12 +365,12 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
                 className={`p-4 sm:p-5 flex items-center justify-between gap-4 cursor-pointer select-none`}
               >
                 <div className="flex items-center gap-3.5">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs shadow-md ${
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-semibold text-xs shadow-md ${
                     isCompleted
-                      ? 'bg-emerald-500 text-white'
+                      ? 'bg-success-bg text-white'
                       : isLocked
-                      ? 'bg-slate-800 text-slate-500'
-                      : 'bg-blue-600 text-white'
+                      ? 'bg-surface text-taupe'
+                      : 'bg-coral/10 text-white'
                   }`}>
                     {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : st.step}
                   </div>
@@ -365,16 +380,16 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
                       <h4 className="text-sm sm:text-base font-bold text-white">
                         {st.title}
                       </h4>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface text-brown-mid border border-sand">
                         {st.tag}
                       </span>
                       {st.mandatoryForMvp && (
-                        <span className="text-[9px] font-bold uppercase tracking-wider text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-800/60 hidden sm:inline">
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-warning bg-warning-bg px-2 py-0.5 rounded-full border border-warning/30 hidden sm:inline">
                           Mandatory
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">
+                    <p className="text-xs text-muted mt-0.5 line-clamp-1">
                       {st.summary}
                     </p>
                   </div>
@@ -383,16 +398,16 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
                 <div className="flex items-center gap-3">
                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
                     isCompleted
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                      ? 'bg-success-bg/20 text-success border-success/30'
                       : isLocked
-                      ? 'bg-slate-800 text-slate-500 border-slate-700'
-                      : 'bg-blue-500/20 text-blue-300 border-blue-500/30'
+                      ? 'bg-surface text-taupe border-sand'
+                      : 'bg-coral-dark/20 text-coral border-coral/40'
                   }`}>
                     {state.status.replace('_', ' ')}
                   </span>
 
                   {!isLocked && (
-                    <button className="text-slate-400 hover:text-white">
+                    <button className="text-muted hover:text-white">
                       {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                     </button>
                   )}
@@ -401,26 +416,26 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
 
               {/* Step Expanded Details */}
               {isExpanded && !isLocked && (
-                <div className="p-4 sm:p-6 pt-0 border-t border-slate-700/60 mt-2 space-y-5 text-xs text-slate-300">
+                <div className="p-4 sm:p-6 pt-0 border-t border-sand mt-2 space-y-5 text-xs text-brown-mid">
                   
                   {/* Checklist */}
                   <div className="space-y-2">
-                    <span className="font-bold text-slate-200 text-xs block">
+                    <span className="font-bold text-brown-mid text-xs block">
                       Milestone Checklist:
                     </span>
                     <div className="space-y-1.5">
                       {st.checklist.map((item, cIdx) => (
                         <label 
                           key={cIdx} 
-                          className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-900/60 hover:bg-slate-900 transition-colors cursor-pointer"
+                          className="flex items-start gap-2.5 p-2 rounded-xl bg-surface hover:bg-surface-elevated transition-colors cursor-pointer"
                         >
                           <input
                             type="checkbox"
                             checked={Boolean(state.checklist[cIdx])}
                             onChange={() => toggleChecklistItem(st.step, cIdx)}
-                            className="mt-0.5 rounded bg-slate-800 border-slate-700 text-blue-600 focus:ring-blue-500"
+                            className="mt-0.5 rounded bg-surface border-sand text-coral focus:ring-coral/30"
                           />
-                          <span className={state.checklist[cIdx] ? 'line-through text-slate-400' : 'text-slate-200'}>
+                          <span className={state.checklist[cIdx] ? 'line-through text-muted' : 'text-brown-mid'}>
                             {item}
                           </span>
                         </label>
@@ -430,13 +445,13 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
 
                   {/* Concrete Deliverables */}
                   <div className="space-y-1.5">
-                    <span className="font-bold text-slate-200 text-xs block">
+                    <span className="font-bold text-brown-mid text-xs block">
                       Required Concrete Deliverables:
                     </span>
                     <div className="flex flex-wrap gap-2">
                       {st.deliverables.map((deliv, dIdx) => (
-                        <span key={dIdx} className="px-2.5 py-1 rounded-lg bg-blue-950/60 text-blue-300 border border-blue-800/60 font-medium text-[11px] flex items-center gap-1.5">
-                          <FileText className="w-3 h-3 text-blue-400" />
+                        <span key={dIdx} className="px-2.5 py-1 rounded-lg bg-coral/10 text-coral border border-coral/40 font-medium text-[11px] flex items-center gap-1.5">
+                          <FileText className="w-3 h-3 text-coral" />
                           <span>{deliv}</span>
                         </span>
                       ))}
@@ -445,7 +460,7 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
 
                   {/* Evidence Input (Upload/Notes) */}
                   <div className="space-y-1.5">
-                    <label className="font-bold text-slate-200 text-xs block">
+                    <label className="font-bold text-brown-mid text-xs block">
                       Evidence & Deliverable Notes:
                     </label>
                     <textarea
@@ -453,7 +468,7 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
                       value={state.evidenceText || ''}
                       onChange={(e) => handleEvidenceChange(st.step, e.target.value)}
                       placeholder="Paste link to Google Drive / Notion / RNE certificate or summarize completion..."
-                      className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-slate-500"
+                      className="w-full px-3.5 py-2 rounded-xl bg-surface-elevated border border-sand text-xs text-white focus:outline-none focus:ring-2 focus:ring-coral/30 placeholder:text-taupe"
                     />
                   </div>
 
@@ -462,9 +477,9 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
                     <button
                       type="button"
                       onClick={() => onOpenAiGuide('startup', st.aiPrompt)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs text-violet-300 bg-violet-950/80 hover:bg-violet-900 border border-violet-700/60 transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs text-coral bg-coral/10 hover:bg-coral/10 border border-coral/40 transition-colors cursor-pointer"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+                      <Sparkles className="w-3.5 h-3.5 text-coral" />
                       <span>Ask AI for Guidance on this Step</span>
                     </button>
 
@@ -475,8 +490,8 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
                         disabled={!mandatoryCompleted || submissionStatus === 'under_review'}
                         className={`px-5 py-2 rounded-xl font-bold text-xs flex items-center gap-2 transition-all cursor-pointer ${
                           mandatoryCompleted && submissionStatus !== 'under_review'
-                            ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-600/30'
-                            : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed opacity-60'
+                            ? 'bg-success text-white shadow-sm'
+                            : 'bg-surface text-taupe border border-sand cursor-not-allowed opacity-60'
                         }`}
                       >
                         <Send className="w-3.5 h-3.5" />
@@ -486,7 +501,7 @@ export default function StartupRoadmap({ onOpenAiGuide, onPublicationStatusChang
                       <button
                         type="button"
                         onClick={() => handleCompleteStep(st.step)}
-                        className="px-4 py-2 rounded-xl font-bold text-xs text-white bg-blue-600 hover:bg-blue-500 shadow-md shadow-blue-600/30 transition-all flex items-center gap-1.5 cursor-pointer"
+                        className="px-4 py-2 rounded-xl font-bold text-xs text-white bg-coral/10 hover:bg-coral-dark shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>Complete Milestone & Unlock Next</span>

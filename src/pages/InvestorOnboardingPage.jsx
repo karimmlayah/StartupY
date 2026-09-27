@@ -13,11 +13,14 @@ import {
   MapPin
 } from 'lucide-react';
 import { saveCurrentInvestor } from '../utils/storage';
+import { useAuth } from '../context/AuthContext';
+import { saveInvestorProfile } from '../lib/supabaseData';
 import { ALL_SECTORS, TUNISIAN_GOVERNORATES } from '../data/mockStartups';
 import { INVESTOR_TYPES, INVESTMENT_TYPES } from '../data/mockInvestors';
 
 export default function InvestorOnboardingPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -83,7 +86,7 @@ export default function InvestorOnboardingPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim()) {
       setError('Please provide your Investor or Firm Name');
@@ -93,7 +96,7 @@ export default function InvestorOnboardingPage() {
     setIsSubmitting(true);
     setError('');
 
-    saveCurrentInvestor({
+    const payload = {
       name: formData.name.trim(),
       firm: formData.firm.trim() || `${formData.name.trim()} Capital`,
       type: formData.investorType,
@@ -104,14 +107,15 @@ export default function InvestorOnboardingPage() {
       investmentType: formData.investmentType,
       linkedIn: formData.portfolioLink.trim(),
       bio: formData.bio || 'Active investor deploying smart capital in Tunisian Dinars (TND) across Tunisian startups.',
-      totalInvested: '1,800,000 TND (Demo)',
-      activeInvestments: 6
-    });
-
-    setTimeout(() => {
+    };
+    try {
+      await saveInvestorProfile(user?.id, payload);
       setIsSubmitting(false);
       navigate('/dashboard/investor');
-    }, 600);
+    } catch (submitError) {
+      setError(submitError.message || 'Unable to save the investor profile.');
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -119,18 +123,18 @@ export default function InvestorOnboardingPage() {
       
       {/* Breadcrumb / Top Info */}
       <div className="mb-8">
-        <Link to="/auth" className="text-xs font-semibold text-violet-400 hover:text-violet-300 flex items-center gap-1 mb-2">
+        <Link to="/auth" className="text-xs font-semibold text-coral hover:text-coral flex items-center gap-1 mb-2">
           ← Back to role selection
         </Link>
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-violet-600/20 text-violet-400 border border-violet-500/30 flex items-center justify-center font-bold">
+          <div className="w-12 h-12 rounded-lg bg-coral/10 text-coral border border-coral/40 flex items-center justify-center font-bold">
             <TrendingUp className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
               Create Your Investor Profile (Tunisia)
             </h1>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-muted">
               Set your mandate in TND and connect with deal flow matching your sector and governorate focus.
             </p>
           </div>
@@ -138,10 +142,10 @@ export default function InvestorOnboardingPage() {
       </div>
 
       {/* Main Form (Crisp White Card on Dark Navy Background) */}
-      <div className="bg-white text-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-2xl shadow-slate-950/40">
+      <div className="bg-surface-elevated text-ink rounded-xl p-6 sm:p-10 border border-sand shadow-sm">
         
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium">
+          <div className="mb-6 p-4 rounded-xl bg-danger-bg border border-danger/30 text-danger text-sm font-medium">
             {error}
           </div>
         )}
@@ -150,14 +154,14 @@ export default function InvestorOnboardingPage() {
           
           {/* Section 1: Investor Entity & Type */}
           <div className="space-y-5">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-muted border-b border-sand pb-2">
               1. Investor Entity & Investor Type
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label htmlFor="investor-name" className="block text-sm font-bold text-slate-800 mb-1.5">
-                  Investor or Firm Name <span className="text-violet-600">*</span>
+                <label htmlFor="investor-name" className="block text-sm font-bold text-ink mb-1.5">
+                  Investor or Firm Name <span className="text-coral">*</span>
                 </label>
                 <input
                   id="investor-name"
@@ -166,13 +170,13 @@ export default function InvestorOnboardingPage() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="e.g. Slimane Ben Youssef or Carthage Angels"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-sand text-ink placeholder-taupe focus:outline-none focus:ring-2 focus:ring-coral/30 focus:border-transparent text-sm transition-all"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="firm-name" className="block text-sm font-bold text-slate-800 mb-1.5">
+                <label htmlFor="firm-name" className="block text-sm font-bold text-ink mb-1.5">
                   Firm / Legal Structure
                 </label>
                 <input
@@ -181,22 +185,22 @@ export default function InvestorOnboardingPage() {
                   name="firm"
                   value={formData.firm}
                   onChange={handleChange}
-                  placeholder="e.g. Carthage Ventures (Demo)"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all"
+                  placeholder="Nom de votre organisation"
+                  className="w-full px-4 py-3 rounded-xl border border-sand text-ink placeholder-taupe focus:outline-none focus:ring-2 focus:ring-coral/30 focus:border-transparent text-sm transition-all"
                 />
               </div>
 
               {/* Investor Type */}
               <div>
-                <label htmlFor="investor-type" className="block text-sm font-bold text-slate-800 mb-1.5">
-                  Investor Type <span className="text-violet-600">*</span>
+                <label htmlFor="investor-type" className="block text-sm font-bold text-ink mb-1.5">
+                  Investor Type <span className="text-coral">*</span>
                 </label>
                 <select
                   id="investor-type"
                   name="investorType"
                   value={formData.investorType}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all cursor-pointer"
+                  className="w-full px-4 py-3 rounded-xl border border-sand text-ink bg-surface-elevated focus:outline-none focus:ring-2 focus:ring-coral/30 focus:border-transparent text-sm transition-all cursor-pointer"
                 >
                   {INVESTOR_TYPES.map((type) => (
                     <option key={type} value={type}>
@@ -210,11 +214,11 @@ export default function InvestorOnboardingPage() {
 
           {/* Section 2: Investment Focus / Sectors */}
           <div className="space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400">
-                2. Investment Sectors in Tunisia <span className="text-violet-600">*</span>
+            <div className="flex items-center justify-between border-b border-sand pb-2">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-muted">
+                2. Investment Sectors in Tunisia <span className="text-coral">*</span>
               </h2>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-taupe">
                 Select your target categories
               </span>
             </div>
@@ -229,8 +233,8 @@ export default function InvestorOnboardingPage() {
                     onClick={() => toggleSector(sector)}
                     className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                       isSelected
-                        ? 'bg-violet-600 text-white shadow-md shadow-violet-600/25 ring-2 ring-violet-600/30'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        ? 'bg-coral/10 text-white shadow-md ring-2'
+                        : 'bg-sand/60 text-brown-mid hover:bg-sand'
                     }`}
                   >
                     {isSelected && <CheckCircle2 className="w-3.5 h-3.5" />}
@@ -243,7 +247,7 @@ export default function InvestorOnboardingPage() {
 
           {/* Section 3: Ticket Size in TND, Investment Type & Preferred Governorates */}
           <div className="space-y-5">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-2">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-muted border-b border-sand pb-2">
               3. Ticket Size in TND, Stage & Governorates
             </h2>
 
@@ -251,15 +255,15 @@ export default function InvestorOnboardingPage() {
               
               {/* Ticket Size in TND */}
               <div>
-                <label htmlFor="ticket-size" className="block text-sm font-bold text-slate-800 mb-1.5">
-                  Ticket Size in TND <span className="text-violet-600">*</span>
+                <label htmlFor="ticket-size" className="block text-sm font-bold text-ink mb-1.5">
+                  Ticket Size in TND <span className="text-coral">*</span>
                 </label>
                 <select
                   id="ticket-size"
                   name="ticketSize"
                   value={formData.ticketSize}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all cursor-pointer font-bold text-violet-700"
+                  className="w-full px-4 py-3 rounded-xl border border-sand text-ink bg-surface-elevated focus:outline-none focus:ring-2 focus:ring-coral/30 focus:border-transparent text-sm transition-all cursor-pointer font-bold text-coral"
                 >
                   {ticketOptions.map((b) => (
                     <option key={b} value={b}>
@@ -271,15 +275,15 @@ export default function InvestorOnboardingPage() {
 
               {/* Preferred Stage */}
               <div>
-                <label htmlFor="preferred-stage" className="block text-sm font-bold text-slate-800 mb-1.5">
-                  Preferred Startup Stage <span className="text-violet-600">*</span>
+                <label htmlFor="preferred-stage" className="block text-sm font-bold text-ink mb-1.5">
+                  Preferred Startup Stage <span className="text-coral">*</span>
                 </label>
                 <select
                   id="preferred-stage"
                   name="preferredStage"
                   value={formData.preferredStage}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all cursor-pointer"
+                  className="w-full px-4 py-3 rounded-xl border border-sand text-ink bg-surface-elevated focus:outline-none focus:ring-2 focus:ring-coral/30 focus:border-transparent text-sm transition-all cursor-pointer"
                 >
                   {stageOptions.map((st) => (
                     <option key={st} value={st}>
@@ -291,15 +295,15 @@ export default function InvestorOnboardingPage() {
 
               {/* Investment Type */}
               <div>
-                <label htmlFor="investment-type" className="block text-sm font-bold text-slate-800 mb-1.5">
-                  Investment Type <span className="text-violet-600">*</span>
+                <label htmlFor="investment-type" className="block text-sm font-bold text-ink mb-1.5">
+                  Investment Type <span className="text-coral">*</span>
                 </label>
                 <select
                   id="investment-type"
                   name="investmentType"
                   value={formData.investmentType}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all cursor-pointer"
+                  className="w-full px-4 py-3 rounded-xl border border-sand text-ink bg-surface-elevated focus:outline-none focus:ring-2 focus:ring-coral/30 focus:border-transparent text-sm transition-all cursor-pointer"
                 >
                   {INVESTMENT_TYPES.map((type) => (
                     <option key={type} value={type}>
@@ -313,8 +317,8 @@ export default function InvestorOnboardingPage() {
 
             {/* Preferred Tunisian Governorates (Multi-select) */}
             <div className="pt-2">
-              <label className="block text-sm font-bold text-slate-800 mb-2">
-                Preferred Tunisian Governorates <span className="text-violet-600">*</span>
+              <label className="block text-sm font-bold text-ink mb-2">
+                Preferred Tunisian Governorates <span className="text-coral">*</span>
               </label>
               <div className="flex flex-wrap gap-2">
                 {majorGovernorates.map((gov) => {
@@ -326,8 +330,8 @@ export default function InvestorOnboardingPage() {
                       onClick={() => toggleGovernorate(gov)}
                       className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-blue-600 text-white shadow-sm'
-                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                          ? 'bg-coral/10 text-white shadow-sm'
+                          : 'bg-sand/60 text-brown-mid hover:bg-sand'
                       }`}
                     >
                       {gov}
@@ -339,8 +343,8 @@ export default function InvestorOnboardingPage() {
 
             {/* Portfolio or LinkedIn Link (Optional) */}
             <div className="pt-2">
-              <label htmlFor="portfolio-link" className="block text-sm font-bold text-slate-800 mb-1.5">
-                Portfolio or LinkedIn Link <span className="text-slate-400 font-normal">(Optional)</span>
+              <label htmlFor="portfolio-link" className="block text-sm font-bold text-ink mb-1.5">
+                Portfolio or LinkedIn Link <span className="text-muted font-normal">(Optional)</span>
               </label>
               <input
                 id="portfolio-link"
@@ -349,23 +353,23 @@ export default function InvestorOnboardingPage() {
                 value={formData.portfolioLink}
                 onChange={handleChange}
                 placeholder="https://linkedin.com/in/... or website"
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-transparent text-sm transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-sand text-ink placeholder-taupe focus:outline-none focus:ring-2 focus:ring-coral/30 focus:border-transparent text-sm transition-all"
               />
             </div>
 
           </div>
 
           {/* Submission CTA */}
-          <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-xs text-slate-500 flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-violet-600" />
+          <div className="pt-6 border-t border-sand flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-xs text-taupe flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-coral" />
               <span>Tunisia AI matchmaking will score deals based on TND ticket size, stage, and governorate.</span>
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl text-base font-bold text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 hover:from-violet-500 hover:to-blue-500 shadow-xl shadow-violet-600/30 transition-all cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl text-base font-bold text-white bg-coral shadow-md transition-all cursor-pointer disabled:opacity-50"
             >
               <span>{isSubmitting ? 'Creating Profile...' : 'Create Investor Profile'}</span>
               <ArrowRight className="w-5 h-5" />

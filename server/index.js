@@ -5,6 +5,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { generateRAGResponse } from './ragService.js';
 import { issueMeetingToken } from './zegoTokenService.js';
+import { assertAdminToken, clearDemoData, seedDemoData } from './demoSeedService.js';
+import { ensureAuthenticatedProfile } from './profileService.js';
 
 // Load environment variables from .env
 dotenv.config();
@@ -16,6 +18,39 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+const requireDevelopmentAdmin = async (req, res, next) => {
+  if (process.env.NODE_ENV === 'production') return res.status(404).json({ error: 'Not found' });
+  try {
+    const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
+    if (!token) return res.status(401).json({ error: 'Authentication required.' });
+    await assertAdminToken(token);
+    next();
+  } catch (error) {
+    return res.status(403).json({ error: error.message });
+  }
+};
+
+app.post('/api/dev/seed-demo', requireDevelopmentAdmin, async (_req, res) => {
+  try { return res.json(await seedDemoData()); }
+  catch (error) { return res.status(500).json({ error: error.message }); }
+});
+
+app.delete('/api/dev/seed-demo', requireDevelopmentAdmin, async (_req, res) => {
+  try { return res.json(await clearDemoData()); }
+  catch (error) { return res.status(500).json({ error: error.message }); }
+});
+
+app.post('/api/auth/ensure-profile', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
+    const profile = await ensureAuthenticatedProfile(token);
+    return res.json({ profile });
+  } catch (error) {
+    const status = /Authentication|token/i.test(error.message) ? 401 : 500;
+    return res.status(status).json({ error: error.message });
+  }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({
@@ -23,6 +58,8 @@ app.get('/api/health', (req, res) => {
     service: 'StartupBridge AI Tunisia RAG & Video Meeting Server',
     geminiConfigured: Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here'),
     groqConfigured: Boolean(process.env.GROQ_API_KEY && process.env.GROQ_API_KEY !== 'your_groq_api_key_here'),
+    nvidiaConfigured: Boolean(process.env.NVIDIA_API_KEY && !process.env.NVIDIA_API_KEY.startsWith('your_')),
+    nvidiaModel: process.env.NVIDIA_MODEL || 'moonshotai/kimi-k3',
     zegoConfigured: Boolean(process.env.ZEGO_APP_ID && process.env.ZEGO_SERVER_SECRET && process.env.ZEGO_APP_ID !== 'your_zego_app_id'),
   });
 });
@@ -112,7 +149,9 @@ app.post('/api/meetings/:meetingId/join-token', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 StartupBridge AI / Bidaya Tunisia server running on port ${PORT}`);
   console.log(`📡 Endpoints: POST /api/ai/guide, POST /api/meetings/:meetingId/join-token`);
-  if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') {
+  if (process.env.NVIDIA_API_KEY && !process.env.NVIDIA_API_KEY.startsWith('your_')) {
+    console.log(`🔑 NVIDIA NIM active: ${process.env.NVIDIA_MODEL || 'moonshotai/kimi-k3'}.`);
+  } else if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') {
     console.log('🔑 Gemini API Key detected: Live AI generation active.');
   } else if (process.env.GROQ_API_KEY && process.env.GROQ_API_KEY !== 'your_groq_api_key_here') {
     console.log('🔑 Groq API Key detected: Live AI generation active.');

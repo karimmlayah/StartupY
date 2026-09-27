@@ -4,11 +4,8 @@ import {
   User, 
   Mail, 
   Lock, 
-  ShieldCheck, 
   ArrowRight, 
-  CheckCircle2, 
   AlertCircle,
-  Building2,
   Sparkles
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -16,7 +13,7 @@ import { useAuth } from '../context/AuthContext';
 export default function RegisterPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { signUp, isDemoMode } = useAuth();
+  const { signUp } = useAuth();
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -32,28 +29,27 @@ export default function RegisterPage() {
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError('Les mots de passe ne correspondent pas.');
       return;
     }
 
     if (password.length < 6) {
-      setError('Password must contain at least 6 characters.');
+      setError('Le mot de passe doit contenir au moins 6 caractères.');
       return;
     }
 
     if (!acceptTerms) {
-      setError('You must accept the terms of service and privacy policy.');
+      setError('Vous devez accepter les conditions d’utilisation et la politique de confidentialité.');
       return;
     }
 
     try {
       setLoading(true);
       await signUp({ fullName, email, password });
-      // Redirect to /choose-role with intent query preserved
-      navigate('/choose-role' + (location.search || ''));
+      navigate('/choose-role' + (location.search || ''), { replace: true });
     } catch (err) {
       console.error('Registration failed:', err);
-      setError(err.message || 'Failed to create your account.');
+      setError(err.message || 'Impossible de créer votre compte pour le moment. Vérifiez les informations puis réessayez.');
     } finally {
       setLoading(false);
     }
@@ -61,24 +57,24 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-slate-900/90 p-8 sm:p-10 rounded-3xl border border-slate-800 shadow-2xl relative">
+      <div className="max-w-md w-full space-y-8 bg-surface-elevated p-8 sm:p-10 rounded-xl border border-sand shadow-sm relative">
         
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/70 border border-blue-800/60 text-xs font-semibold text-blue-400">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-coral/10 border border-coral/40 text-xs font-semibold text-coral">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Tunisia Innovation Portal</span>
+            <span>StartupY</span>
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight">
-            Create an Account
+          <h1 className="text-3xl font-semibold text-ink tracking-tight">
+            Créer un compte
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400">
-            Join Bidaya Tunisia to connect with smart capital or evaluate high-potential Tunisian founders.
+          <p className="text-xs sm:text-sm text-muted">
+            Rejoignez la plateforme et choisissez ensuite l’espace adapté à votre activité.
           </p>
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+          <div className="p-3.5 rounded-lg bg-danger-bg border border-danger/30 text-danger text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             <span>{error}</span>
           </div>
@@ -87,64 +83,64 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Full Name */}
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-300">Full Name</label>
+            <label className="text-xs font-bold text-brown-mid">Nom complet</label>
             <div className="relative">
-              <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+              <User className="w-4 h-4 text-taupe absolute left-3.5 top-3" />
               <input
                 type="text"
                 required
-                placeholder="Yassine Karray"
+                placeholder="Votre nom complet"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface border border-sand text-sm text-ink focus:outline-none focus:ring-2 focus:ring-coral/30"
               />
             </div>
           </div>
 
           {/* Email */}
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-300">Email Address</label>
+            <label className="text-xs font-bold text-brown-mid">Adresse e-mail</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+              <Mail className="w-4 h-4 text-taupe absolute left-3.5 top-3" />
               <input
                 type="email"
                 required
-                placeholder="founder@agrismart.tn"
+                placeholder="vous@exemple.tn"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface border border-sand text-sm text-ink focus:outline-none focus:ring-2 focus:ring-coral/30"
               />
             </div>
           </div>
 
           {/* Password */}
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-300">Password</label>
+            <label className="text-xs font-bold text-brown-mid">Mot de passe</label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+              <Lock className="w-4 h-4 text-taupe absolute left-3.5 top-3" />
               <input
                 type="password"
                 required
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface border border-sand text-sm text-ink focus:outline-none focus:ring-2 focus:ring-coral/30"
               />
             </div>
           </div>
 
           {/* Confirm Password */}
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-300">Confirm Password</label>
+            <label className="text-xs font-bold text-brown-mid">Confirmer le mot de passe</label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+              <Lock className="w-4 h-4 text-taupe absolute left-3.5 top-3" />
               <input
                 type="password"
                 required
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface border border-sand text-sm text-ink focus:outline-none focus:ring-2 focus:ring-coral/30"
               />
             </div>
           </div>
@@ -156,10 +152,10 @@ export default function RegisterPage() {
               id="terms"
               checked={acceptTerms}
               onChange={(e) => setAcceptTerms(e.target.checked)}
-              className="mt-0.5 rounded bg-slate-800 border-slate-700 text-blue-600 focus:ring-blue-500"
+              className="mt-0.5 rounded bg-surface border-sand text-coral focus:ring-coral/30"
             />
-            <label htmlFor="terms" className="text-xs text-slate-400">
-              I agree to the <Link to="/resources" className="text-blue-400 hover:underline">Terms of Service</Link> and acknowledge the <span className="text-slate-300">Bidaya Tunisia Privacy Protocol</span>.
+            <label htmlFor="terms" className="text-xs text-muted">
+              J’accepte les <Link to="/resources" className="text-coral hover:underline">conditions d’utilisation</Link> et la <span className="text-brown-mid">politique de confidentialité de StartupY</span>.
             </label>
           </div>
 
@@ -167,18 +163,18 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-4 py-3 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="w-full mt-4 py-3 rounded-xl font-bold text-sm text-white bg-coral transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
-            <span>{loading ? 'Creating Account...' : 'Continue to Role Selection'}</span>
+            <span>{loading ? 'Création du compte…' : 'Créer mon compte'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 
         {/* Existing account link */}
-        <div className="text-center pt-2 text-xs text-slate-400">
-          Already have an account?{' '}
-          <Link to="/login" className="font-bold text-blue-400 hover:text-blue-300">
-            Sign In here
+        <div className="text-center pt-2 text-xs text-muted">
+          Vous avez déjà un compte ?{' '}
+          <Link to="/login" className="font-bold text-coral hover:text-coral">
+            Se connecter
           </Link>
         </div>
 

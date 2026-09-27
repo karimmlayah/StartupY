@@ -1,0 +1,304 @@
+[
+  {
+    "index": 1,
+    "original_query": "comment cree unstartup",
+    "normalized_query": "Comment créer une startup en Tunisie ?",
+    "retrieval_query": [
+      "Comment créer une startup en Tunisie ?",
+      "création startup Tunisie étapes création entreprise Startup Act immatriculation RNE label startup",
+      "Corporate Legal Structures in Tunisia SARL vs SUARL Incorporation RNE registration"
+    ],
+    "top_results_and_scores": [
+      {
+        "title": "Corporate Legal Structures in Tunisia: SARL vs SUARL Incorporation",
+        "url": "https://www.rne.tn/procedure-creation-societe",
+        "publisher": "National Business Register (RNE) / Tunisian Commercial Companies Code",
+        "score": 0.829
+      },
+      {
+        "title": "Tunisian Startup Act: Law No. 2018-20 Overview and 5 Label Criteria",
+        "url": "https://startup.gov.tn/en/startup-act",
+        "publisher": "Journal Officiel de la République Tunisienne (JORT) / Startup Tunisia",
+        "score": 0.806
+      },
+      {
+        "title": "Startup Act Incentives: Founder Leave, Startup Grant, and Social Security",
+        "url": "https://startup.gov.tn/en/incentives/founders",
+        "publisher": "Smart Capital / Ministry of Communication Technologies",
+        "score": 0.754
+      },
+      {
+        "title": "Tunisian Innovation Ecosystem: Accelerators, Technoparks, and The Dot",
+        "url": "https://thedot.tn",
+        "publisher": "The Dot Tunisia / Smart Capital",
+        "score": 0.721
+      }
+    ],
+    "final_response": "Créer une startup en Tunisie est un processus structuré qui combine des étapes administratives classiques avec des opportunités uniques offertes par le cadre légal spécifique aux startups (le *Startup Act*). Voici la feuille de route pratique pour lancer votre projet.\n\n### 1. Choisir la forme juridique adaptée\nLa première étape est de choisir la structure légale qui correspond à votre équipe fondatrice. Les deux formes les plus courantes pour les startups technologiques sont :\n\n*   **SARL (Société à Responsabilité Limitée)** : C'est la forme idéale si vous êtes **2 à 50 co-fondateurs**. La responsabilité des associés est limitée à leurs apports en capital.\n*   **SUARL (Société Unipersonnelle à Responsabilité Limitée)** : Cette forme est conçue pour les **entrepreneurs solo**. Elle vous permet de protéger votre patrimoine personnel tout en conservant 100 % du contrôle de l'entreprise.\n\n### 2. L'enregistrement administratif (RNE)\nUne fois la forme juridique choisie, vous devez immatriculer votre société auprès du **Registre National des Entreprises (RNE)**.\n*   Vous devrez constituer le capital social, rédiger les statuts et obtenir les autorisations nécessaires selon votre secteur d'activité.\n*   Cette étape est cruciale car elle officialise l'existence légale de votre entreprise, condition *sine qua non* pour accéder aux avantages du Startup Act.\n\n### 3. Obtenir le Label Startup (Critères légaux)\nPour bénéficier des incitations étatiques, votre entreprise doit obtenir le **Label Startup** délivré par le Collège des Startups. Voici les critères principaux à respecter (selon la Loi n° 2018-20) :\n*   **Âge** : La société doit avoir moins de **8 ans** d'existence.\n*   **Taille** : L'entreprise doit compter moins de **100 employés** et avoir un chiffre d'affaires annuel ou un total de bilan inférieur à **15 millions de TND**.\n*   *Note : Il existe d'autres critères (innovation, modèle économique) évalués par le Collège. Il est recommandé de consulter les détails complets des 5 critères sur le portail officiel.*\n\n### 4. Bénéficier des incitations financières et sociales\nUne fois le label obtenu, vous accédez à un package d'avantages significatif :\n\n*   **Bourse de Startup** : Jusqu'à **3 co-fondateurs** peuvent recevoir une allocation mensuelle de **5 000 TND** pendant **12 mois**. Cette bourse vise à compenser la perte de revenu pendant la phase de validation du produit (MVP) sans revenus.\n*   **Couverture Sociale (CNSS)** : L'État prend en charge **l'intégralité** des cotisations sociales (part patronale et salariale) pour les fondateurs et les membres clés de l'équipe pendant la validité du label.\n*   **Congé pour création de Startup** : Si vous êtes salarié (secteur privé ou public), vous avez droit à un congé de **1 an** (renouvelable une fois) pour lancer votre startup, avec préservation de vos droits et de votre ancienneté.\n*   **Aides à l'innovation** : Remboursement intégral des frais de dépôt de brevets nationaux (INNORPI) et internationaux (PCT).\n\n### 5. Intégrer l'écosystème d'innovation\nPour maximiser vos chances de succès, intégrez-vous dans l'écosystème tunisien dynamique :\n*   **The Dot** : Situé aux Berges du Lac à Tunis, c'est le hub principal offrant des espaces de co-working, des laboratoires de test et des connexions internationales.\n*   **Accélérateurs et Incubateurs** :\n    *   **Flat6Labs Tunis** : Offre un investissement de 150 000 TND, du mentorat et des journées de démonstration pour les investisseurs.\n    *   **Wiki Start Up** : Spécialisé dans le coaching pré-seed et la syndication d'anges investisseurs.\n\n### Prochaines étapes recommandées :\n1.  Validez votre idée et votre équipe fondatrice.\n2.  Constituez votre dossier pour l'immatriculation RNE (SARL ou SUARL).\n3.  Préparez votre dossier de demande de Label Startup (business plan, preuve d'innovation, etc.).\n4.  Contactez les incubateurs locaux (comme The Dot ou Flat6Labs) pour un accompagnement dans les démarches administratives et la levée de fonds.\n\nNote : Ces conseils sont fournis à titre éducatif et informatif d"
+  },
+  {
+    "index": 2,
+    "original_query": "Comment créer une startup en Tunisie ?",
+    "normalized_query": "Comment créer une startup en tunisie ?",
+    "retrieval_query": [
+      "Comment créer une startup en tunisie ?",
+      "création startup Tunisie étapes création entreprise Startup Act immatriculation RNE label startup",
+      "Corporate Legal Structures in Tunisia SARL vs SUARL Incorporation RNE registration"
+    ],
+    "top_results_and_scores": [
+      {
+        "title": "Corporate Legal Structures in Tunisia: SARL vs SUARL Incorporation",
+        "url": "https://www.rne.tn/procedure-creation-societe",
+        "publisher": "National Business Register (RNE) / Tunisian Commercial Companies Code",
+        "score": 0.829
+      },
+      {
+        "title": "Tunisian Startup Act: Law No. 2018-20 Overview and 5 Label Criteria",
+        "url": "https://startup.gov.tn/en/startup-act",
+        "publisher": "Journal Officiel de la République Tunisienne (JORT) / Startup Tunisia",
+        "score": 0.806
+      },
+      {
+        "title": "Startup Act Incentives: Founder Leave, Startup Grant, and Social Security",
+        "url": "https://startup.gov.tn/en/incentives/founders",
+        "publisher": "Smart Capital / Ministry of Communication Technologies",
+        "score": 0.754
+      },
+      {
+        "title": "Tunisian Innovation Ecosystem: Accelerators, Technoparks, and The Dot",
+        "url": "https://thedot.tn",
+        "publisher": "The Dot Tunisia / Smart Capital",
+        "score": 0.721
+      }
+    ],
+    "final_response": "**Créer une startup en Tunisie : guide pratique étape par étape**\n\n---\n\n## 1️⃣ Définir l’idée et préparer le MVP  \n1. **Clarifier le problème** que vous résolvez et identifier votre clientèle cible.  \n2. **Élaborer un Business Model Canvas** (proposition de valeur, canaux, revenus, coûts, etc.).  \n3. **Construire un MVP (Produit Minimum Viable)** : version fonctionnelle rapide qui vous permettra de tester le marché et d’obtenir les premiers retours utilisateurs.  \n4. **Rédiger un pitch deck** (10 – 12 slides) : problème, solution, taille du marché, traction, modèle économique, équipe, besoins financiers.\n\n---\n\n## 2️⃣ Choisir la forme juridique adaptée  \n\n| Forme | Nombre d’associés | Points forts pour une startup |\n|-------|-------------------|------------------------------|\n| **SARL** (Société à Responsabilité Limitée) | 2 à 50 associés | Responsabilité limitée aux apports, adaptée aux équipes fondatrices. |\n| **SUARL** (Société Unipersonnelle à Responsabilité Limitée) | 1 associé | Permet à un entrepreneur solo de protéger son patrimoine tout en gardant le contrôle total. |\n\n*Les deux formes sont les plus utilisées par les startups technologiques en Tunisie (Document 1).*\n\n---\n\n## 3️⃣ Formalités de création (registre du commerce – RNE)\n\n| Étape | Action concrète | Documents / informations à préparer |\n|-------|----------------|--------------------------------------|\n| **Rédaction des statuts** | Définir l’objet social, le capital, la répartition des parts, les règles de gouvernance. | Statuts signés, pièce d’identité du ou des fondateurs, justificatif de domicile. |\n| **Déclaration du capital** | Déposer le capital (montant minimum prévu par le Code de commerce). | Attestation de dépôt bancaire. |\n| **Enregistrement au RNE** | Déposer le dossier complet auprès du **Registre National des Entreprises (RNE)**. | Statuts, attestation de dépôt, formulaire d’immatriculation. |\n| **Obtention du registre de commerce** | Le RNE délivre le **Numéro d’Identification Fiscale (NIF)** et le **registre de commerce**. | - |\n| **Ouverture d’un compte bancaire** | Compte courant en TND (et, si vous obtenez le label Startup, compte spécial en devises). | Pièces d’identité, registre de commerce, NIF. |\n| **Affiliation à la CNSS** | Inscrire la société et les salariés (ou fondateurs) à la Caisse Nationale de Sécurité Sociale. | Formulaire d’affiliation, registre de commerce. |\n\n---\n\n## 4️⃣ Obtenir le **Label Startup Act** (Law No. 2018‑20)\n\n### 4.1 Critères d’éligibilité (Document 2)  \n1. **Âge** : moins de 8 ans d’existence juridique.  \n2. **Taille** : < 100 salariés **et** chiffre d"
+  },
+  {
+    "index": 3,
+    "original_query": "je veux lancer une startup mais je sais pas par où commencer",
+    "normalized_query": "Comment commencer et lancer un projet de startup en Tunisie ?",
+    "retrieval_query": [
+      "Comment commencer et lancer un projet de startup en Tunisie ?",
+      "création startup Tunisie étapes création entreprise Startup Act immatriculation RNE label startup",
+      "Corporate Legal Structures in Tunisia SARL vs SUARL Incorporation RNE registration"
+    ],
+    "top_results_and_scores": [
+      {
+        "title": "Corporate Legal Structures in Tunisia: SARL vs SUARL Incorporation",
+        "url": "https://www.rne.tn/procedure-creation-societe",
+        "publisher": "National Business Register (RNE) / Tunisian Commercial Companies Code",
+        "score": 0.829
+      },
+      {
+        "title": "Tunisian Startup Act: Law No. 2018-20 Overview and 5 Label Criteria",
+        "url": "https://startup.gov.tn/en/startup-act",
+        "publisher": "Journal Officiel de la République Tunisienne (JORT) / Startup Tunisia",
+        "score": 0.806
+      },
+      {
+        "title": "Startup Act Incentives: Founder Leave, Startup Grant, and Social Security",
+        "url": "https://startup.gov.tn/en/incentives/founders",
+        "publisher": "Smart Capital / Ministry of Communication Technologies",
+        "score": 0.754
+      },
+      {
+        "title": "Tunisian Innovation Ecosystem: Accelerators, Technoparks, and The Dot",
+        "url": "https://thedot.tn",
+        "publisher": "The Dot Tunisia / Smart Capital",
+        "score": 0.72
+      }
+    ],
+    "final_response": "## 1. Clarifier l’idée et valider le marché  \n| Étape | Action concrète | Objectif |\n|------|----------------|----------|\n| **Recherche utilisateur** | Interviewez 15 à 20 clients potentiels (via questionnaires, appels, visites) pour identifier leurs besoins, leurs points de douleur et leurs critères de décision. | Vérifier que le problème que vous voulez résoudre est réel et suffisamment important. |\n| **Analyse concurrentielle** | Recensez les solutions existantes (locales et internationales) ; notez leurs forces/faiblesses et votre proposition de valeur différenciante. | Positionner votre offre et définir votre avantage compétitif. |\n| **MVP (Produit Minimum Viable)** | Développez une version très simple (prototype, landing‑page, version bêta) qui permet de tester l’hypothèse clé avec 5 à 10 utilisateurs réels. | Obtenir des retours rapides et itérer avant d’investir davantage. |\n\n---\n\n## 2. Choisir la forme juridique adaptée (Tunisie)\n\n| Forme | Quand la choisir | Points clés d’incorporation |\n|-------|------------------|-----------------------------|\n| **SARL – Société à Responsabilité Limitée** | Équipe de 2 à 50 associés (co‑fondateurs). | Capital minimum : 1 TND. Responsabilité limitée aux apports. Enregistrement obligatoire au **Registre National des Entreprises (RNE)**. |\n| **SUARL – Société Unipersonnelle à Responsabilité Limitée** | Entrepreneur solo qui veut garder 100 % du capital. | Même régime que la SARL, mais avec un seul associé. |\n\n**Procédure d’enregistrement (RNE)**  \n1. **Réservation du nom commercial** (via le site du RNE).  \n2. **Rédaction des statuts** (modèle disponible sur le site du ministère du Commerce).  \n3. **Ouverture d’un compte bancaire** au nom de la société (déposer le capital).  \n4. **Dépôt du dossier** (statuts, attestation de dépôt de capital, copie de la CIN/passeport du ou des fondateurs) au Centre de Formalités des Entreprises (CFE) ou en ligne.  \n5. **Obtention du registre de commerce** et du **numéro d’identification fiscale (IF)**.  \n\n---\n\n## 3. Obtenir le **Label Startup** (Startup Act – Loi n° 2018‑20)\n\n### 5 critères évalués par le Collège des Startups  \n1. **Âge** : moins de 8 ans d’existence juridique.  \n2. **Taille** : < 100 salariés et chiffre d’affaires ou total du bilan < 15 M TND.  \n3. **Innovation** : produit ou service à forte composante technologique ou de R&D.  \n4. **Potentiel de création d’emplois** : prévision d’au moins 5 emplois dans les 3 ans.  \n5. **Capacité à lever des fonds** : plan de financement réaliste (business plan, pitch deck).  \n\n**Démarche**  \n- Constituez votre société (SARL ou SUARL).  \n- Préparez le dossier : statuts, business plan, preuve d’innovation (brevets, prototypes), prévisions financières, CV des fondateurs.  \n- Soumettez le dossier via la plateforme officielle du **Startup Act** (portail “Startup Tunisia”).  \n- Si le"
+  },
+  {
+    "index": 4,
+    "original_query": "c'est quoi startup act",
+    "normalized_query": "Qu'est-ce que le Startup Act tunisien et quels sont ses avantages ?",
+    "retrieval_query": [
+      "Qu'est-ce que le Startup Act tunisien et quels sont ses avantages ?",
+      "Tunisian Startup Act Law No. 2018-20 Overview and 5 Label Criteria",
+      "Startup Act Incentives Founder Leave Startup Grant and Social Security"
+    ],
+    "top_results_and_scores": [
+      {
+        "title": "Tunisian Startup Act: Law No. 2018-20 Overview and 5 Label Criteria",
+        "url": "https://startup.gov.tn/en/startup-act",
+        "publisher": "Journal Officiel de la République Tunisienne (JORT) / Startup Tunisia",
+        "score": 0.868
+      },
+      {
+        "title": "Startup Act Incentives: Founder Leave, Startup Grant, and Social Security",
+        "url": "https://startup.gov.tn/en/incentives/founders",
+        "publisher": "Smart Capital / Ministry of Communication Technologies",
+        "score": 0.781
+      },
+      {
+        "title": "Corporate Legal Structures in Tunisia: SARL vs SUARL Incorporation",
+        "url": "https://www.rne.tn/procedure-creation-societe",
+        "publisher": "National Business Register (RNE) / Tunisian Commercial Companies Code",
+        "score": 0.781
+      },
+      {
+        "title": "Startup Governance: Shareholder Agreements, Vesting, and ESOP in Tunisia",
+        "url": "https://startup.tn/legal-toolkit",
+        "publisher": "Tunisian Bar Association / Startup Legal Guides",
+        "score": 0.738
+      },
+      {
+        "title": "Tunisia Tech Visa and Talent Mobility for International Expansion",
+        "url": "https://startup.gov.tn/en/tech-visa",
+        "publisher": "Ministry of Interior / Ministry of Foreign Affairs",
+        "score": 0.729
+      }
+    ],
+    "final_response": "**Le Startup Act tunisien – aperçu et principaux avantages**\n\n| Élément | Description |\n|---|---|\n| **Objectif du texte** | Le **Startup Act** (Loi n° 2018‑20 du 17 avril 2018) constitue le cadre juridique dédié à la promotion de l’innovation, de l’entrepreneuriat et de la rétention des talents en Tunisie. Il vise à simplifier la création d’entreprises à fort potentiel technologique, à faciliter leur financement et à offrir un environnement fiscal et social favorable. |\n| **Label « Startup »** | Un label officiel est attribué par le **Collège des Startups** aux entreprises qui remplissent **cinq critères statutaires** : <br>1. **Âge** : la société ne doit pas être constituée depuis plus de **8 ans**.<br>2. **Taille** : moins de **100 salariés**.<br>3. **Chiffre d’affaires / bilan** : inférieur à **15 M TND**.<br>4. **Caractère innovant** : activité à forte composante technologique ou de recherche‑développement.<br>5. **Potentiel de croissance** : modèle économique scalable et capacité à créer de l’emploi. <br>Ces critères sont évalués lors de la demande de label et, une fois obtenu, donnent accès à l’ensemble des incitations prévues par la loi. |\n| **Avantages majeurs pour les fondateurs et l’entreprise** |\n| • **Congé pour création de startup** | Les salariés du secteur public ou privé peuvent bénéficier d’un **congé d’un an** (renouvelable une fois) pour lancer leur startup, tout en conservant leurs droits à l’ancienneté et à la sécurité sociale. |\n| • **Bourse de startup** | Jusqu’à **3 co‑fondateurs** d’une startup labellisée peuvent percevoir une **allocation mensuelle maximale de 5 000 TND** pendant **12 mois** (soit un soutien de 60 000 TND au total). |\n| • **Exonérations fiscales** | Le texte prévoit des **exonérations d’impôt sur les sociétés** pendant les premières années d’activité, ainsi que des **taux réduits** pour les revenus liés aux activités innovantes (BSPCE/ESOP). |\n| • **Compte spécial en devises** | Les startups labellisées peuvent ouvrir un **compte bancaire en devises étrangères**, facilitant les transactions internationales et les levées de fonds à l’étranger. |\n| • **Visa Tech** | Le **Tech Visa** permet d’obtenir rapidement (environ 10 jours ouvrés) un titre de séjour et un permis de travail pour les spécialistes étrangers recrutés, favorisant l’accès à des talents internationaux. |\n| • **Mécanismes de gouvernance** | Possibilité de mettre en place des **accords d’actionnaires**, des **plans de vesting** et des **BSPCE (Bons de"
+  },
+  {
+    "index": 5,
+    "original_query": "comment obtenir le label startup",
+    "normalized_query": "Comment obtenir le label Startup Act en Tunisie et quels sont les critères ?",
+    "retrieval_query": [
+      "Comment obtenir le label Startup Act en Tunisie et quels sont les critères ?",
+      "Tunisian Startup Act Law No. 2018-20 Overview and 5 Label Criteria",
+      "Startup Act Incentives Founder Leave Startup Grant and Social Security"
+    ],
+    "top_results_and_scores": [
+      {
+        "title": "Tunisian Startup Act: Law No. 2018-20 Overview and 5 Label Criteria",
+        "url": "https://startup.gov.tn/en/startup-act",
+        "publisher": "Journal Officiel de la République Tunisienne (JORT) / Startup Tunisia",
+        "score": 0.868
+      },
+      {
+        "title": "Startup Act Incentives: Founder Leave, Startup Grant, and Social Security",
+        "url": "https://startup.gov.tn/en/incentives/founders",
+        "publisher": "Smart Capital / Ministry of Communication Technologies",
+        "score": 0.781
+      },
+      {
+        "title": "Corporate Legal Structures in Tunisia: SARL vs SUARL Incorporation",
+        "url": "https://www.rne.tn/procedure-creation-societe",
+        "publisher": "National Business Register (RNE) / Tunisian Commercial Companies Code",
+        "score": 0.781
+      },
+      {
+        "title": "Startup Governance: Shareholder Agreements, Vesting, and ESOP in Tunisia",
+        "url": "https://startup.tn/legal-toolkit",
+        "publisher": "Tunisian Bar Association / Startup Legal Guides",
+        "score": 0.738
+      },
+      {
+        "title": "Tunisia Tech Visa and Talent Mobility for International Expansion",
+        "url": "https://startup.gov.tn/en/tech-visa",
+        "publisher": "Ministry of Interior / Ministry of Foreign Affairs",
+        "score": 0.729
+      }
+    ],
+    "final_response": "**Obtention du label « Startup Act » – Guide pratique**\n\n---\n\n### 1. Les critères officiels (selon le texte de loi n° 2018‑20)\n\nLe label est attribué par le **Collège des Startups** après vérification de cinq critères statutaires. Le document officiel (JORT) précise les deux premiers ; les trois autres sont prévus par la loi mais ne sont pas détaillés dans les extraits fournis. Voici ce qui est confirmé :\n\n| Critère | Exigence | Source |\n|---------|----------|--------|\n| **Âge de l’entreprise** | ≤ 8 ans d’existence juridique | Document 1 |\n| **Taille** | < 100 salariés **et** chiffre d’affaires ou total du bilan < 15 M TND | Document 1 |\n| **Critère 3** | – | *À vérifier dans le texte complet du Startup Act* |\n| **Critère 4** | – | *À vérifier dans le texte complet du Startup Act* |\n| **Critère 5** | – | *À vérifier dans le texte complet du Startup Act* |\n\n> **À retenir** : les trois critères restants (souvent liés à l’innovation technologique, à la capacité de création d’emplois, et à la viabilité financière) sont prévus par la loi, mais leur libellé exact doit être confirmé auprès du Collège des Startups ou d’un conseiller juridique spécialisé.\n\n---\n\n### 2. Étapes concrètes pour obtenir le label\n\n| Étape | Action | Détails pratiques |\n|-------|--------|-------------------|\n| **1. Choisir la forme juridique** | SARL (≥ 2 associés) ou SUARL (fondateur unique) | Voir Document 3 – la SARL convient aux équipes de 2 à 50 associés, la SUARL aux entrepreneurs solo. |\n| **2. Rédiger les statuts** | Inclure les mentions obligatoires (objet social, capital, répartition des parts, clause de sortie, etc.) | Faire relire par un avocat ou un cabinet spécialisé en droit des start‑ups. |\n| **3. Déposer le capital** | Minimum 1 000 TND (sauf dispositions spécifiques) | Le capital peut être libéré en numéraire ou en nature (brevets, logiciels, etc.). |\n| **4. Enregistrement au RNE** | Déposer le dossier complet (statuts, formulaire d’immatriculation, attestation de dépôt de capital, etc.) | Le registre délivre le **Numéro d’Identification Fiscal (NIF)** et le **Registre de Commerce**. |\n| **5. Constituer le dossier de label** | - Formulaire de demande du Collège des Startups<br>- Business plan détaillé (produit, marché, modèle économique)<br>- Preuve du respect des critères (ex. : extrait K‑bis < 8 ans, tableau des effectifs, états financiers) | Le dossier doit être complet et signé par tous les fondateurs. |\n| **6. Soumettre le dossier** | Envoyer (ou déposer) le dossier au **Collège des Startups** (Ministère des Technologies de la Communication) | Un suivi en ligne est généralement proposé ; prévoir 2 à 4 semaines pour l’évaluation. |\n| **7. Audit et décision** | Le Collège vérifie les critères et peut demander des pièces complémentaires | En cas de conformité, le label est attribué et publié au **Journal Officiel**"
+  },
+  {
+    "index": 6,
+    "original_query": "quelle forme juridique choisir",
+    "normalized_query": "Quelle forme juridique choisir pour une startup en Tunisie entre SARL et SUARL ?",
+    "retrieval_query": [
+      "Quelle forme juridique choisir pour une startup en Tunisie entre SARL et SUARL ?",
+      "Corporate Legal Structures in Tunisia SARL vs SUARL Incorporation minimum capital RNE",
+      "Commercial Companies Code articles of association legal forms"
+    ],
+    "top_results_and_scores": [
+      {
+        "title": "Corporate Legal Structures in Tunisia: SARL vs SUARL Incorporation",
+        "url": "https://www.rne.tn/procedure-creation-societe",
+        "publisher": "National Business Register (RNE) / Tunisian Commercial Companies Code",
+        "score": 0.847
+      },
+      {
+        "title": "Tunisian Startup Act: Law No. 2018-20 Overview and 5 Label Criteria",
+        "url": "https://startup.gov.tn/en/startup-act",
+        "publisher": "Journal Officiel de la République Tunisienne (JORT) / Startup Tunisia",
+        "score": 0.737
+      },
+      {
+        "title": "Startup Act Incentives: Founder Leave, Startup Grant, and Social Security",
+        "url": "https://startup.gov.tn/en/incentives/founders",
+        "publisher": "Smart Capital / Ministry of Communication Technologies",
+        "score": 0.717
+      }
+    ],
+    "final_response": "**Choix de la forme juridique : SARL ou SUARL ?**\n\n| Critère | **SARL** (Société à Responsabilité Limitée) | **SUARL** (Société Unipersonnelle à Responsabilité Limitée) |\n|---|---|---|\n| **Nombre d’associés** | Minimum 2 ; maximum 50. | Un seul associé (fondateur unique). |\n| **Responsabilité** | Limitée aux apports de chaque associé. | Limitée aux apports du fondateur unique. |\n| **Capital minimum** | Variable, généralement entre **1 000 TND** et **5 000 TND** (selon la viabilité commerciale). | Même fourchette : **1 000 TND**‑**5 000 TND**. |\n| **Gestion et gouvernance** | Organe de direction (gérant) désigné par les associés ; décisions prises en assemblée (ex. répartition du capital, modifications statutaires). | Le fondateur exerce seul les fonctions de gérant ; aucune assemblée n’est requise. |\n| **Facilité de modification du capital** | Nécessite l’accord des associés (majorité prévue par les statuts). | Décision unilatérale du fondateur, plus souple. |\n| **Évolution (entrée de nouveaux associés)** | Possible à tout moment ; il suffit de modifier les statuts et de procéder à une nouvelle inscription au RNE. | Transformation en SARL obligatoire si vous accueillez un deuxième associé. |\n| **Attractivité pour les investisseurs** | Couramment utilisée ; les investisseurs sont habitués aux mécanismes de gouvernance et de protection des minoritaires. | Moins fréquente ; les investisseurs préfèrent souvent que la société soit déjà en SARL pour éviter une transformation ultérieure. |\n| **Compatibilité avec le **Startup Act** (label)** | Identique à la SUARL : les deux formes peuvent obtenir le label dès lors que les 5 critères (âge ≤ 8 ans, < 100 salariés, CA ou bilan < 15 M TND, etc.) sont remplis. | Idem. Le critère d’âge et de taille s’applique de la même façon. |\n\n### Points clés pour orienter votre décision\n\n1. **Structure de l’équipe fondatrice**  \n   - **Si vous êtes seul** : la SUARL vous permet de créer rapidement la société tout en protégeant votre patrimoine personnel.  \n   - **Si vous avez déjà 2 + co‑fondateurs** : la SARL est la forme naturelle, car elle nécessite au moins deux associés.\n\n2. **Projet de levée de fonds**  \n   - Les investisseurs (business angels, fonds, incubateurs) sont habitués à la SARL.  \n   - Si vous prévoyez une levée dès les premiers mois, il est souvent plus simple de démarrer en SARL pour éviter une transformation juridique ultérieure.\n\n3. **Souplesse de gouvernance**  \n   - La SUARL offre une prise de décision ultra‑rapide (un seul décideur).  \n   - La SARL impose des procédures d’assemblée, ce qui peut être un atout pour structurer la prise de décision collective et rassurer les partenaires.\n\n4. **Coût et rapidité de création**  \n   - Les étapes d’incorporation sont identiques pour les deux formes : rédaction des statuts, ouverture d’un compte séquestre (escrow) pour le dépôt du capital, obtention du matricule fiscal, puis immatriculation au **Registre National des Entreprises (RNE)**.  \n   - Le délai moyen est de **10 à 15 jours ouvrés** une fois le dossier complet.\n\n5. **Impact sur le label Startup Act**  \n   - Le label ne dépend pas de la forme juridique, mais de la conformité aux critères de taille, d’âge, de chiffre d’affaires/bilan, de caractère innovant et de création d’emplois.  \n   - Que vous choisissiez SARL ou SUARL"
+  },
+  {
+    "index": 7,
+    "original_query": "comment chercher des investisseurs",
+    "normalized_query": "Comment chercher et trouver des investisseurs ou des financements pour une startup en Tunisie ?",
+    "retrieval_query": [
+      "Comment chercher et trouver des investisseurs ou des financements pour une startup en Tunisie ?",
+      "Tax Incentives for Investors and Business Angels under the Startup Act reinvested earnings",
+      "Financing Ecosystem in Tunisia AIR ANAVA Fund of Funds and Seed Grants"
+    ],
+    "top_results_and_scores": [
+      {
+        "title": "Tax Incentives for Investors and Business Angels under the Startup Act",
+        "url": "https://startup.gov.tn/en/incentives/investors",
+        "publisher": "Tunisian Investment Authority (TIA) / Ministry of Finance",
+        "score": 0.833
+      },
+      {
+        "title": "Financing Ecosystem in Tunisia: AIR, ANAVA Fund of Funds, and Seed Grants",
+        "url": "https://smartcapital.tn/anava",
+        "publisher": "Smart Capital / Caisse des Dépôts et Consignations (CDC)",
+        "score": 0.807
+      },
+      {
+        "title": "Startup Governance: Shareholder Agreements, Vesting, and ESOP in Tunisia",
+        "url": "https://startup.tn/legal-toolkit",
+        "publisher": "Tunisian Bar Association / Startup Legal Guides",
+        "score": 0.78
+      }
+    ],
+    "final_response": "Pour vous aider à chercher des investisseurs ou des financements pour votre startup en Tunisie, je vous fournirai des informations sur les principales ressources et programmes disponibles pour les entreprises innovantes.\n\nPour trouver des investisseurs ou des financements pour votre entreprise, vous pouvez utiliser les ressources suivantes :\n\n1. Investisseurs locaux et internationaux : Les investisseurs locaux et internationaux peuvent être intéressés par votre entreprise. Utilisez les plateformes de financement et des réseaux de contacts pour exposer votre projet et attirer des investisseurs.\n\n2. Fonds de Garantie : Le Fonds de Garantie pour les VC (Fonds de Garantie) garantit jusqu'à 30% des investissements de VC dans les startups marquées dans le cas de liquidation, ce qui réduit considérablement le risque de portefeuille.\n\n3. Bourse de Startup : La Bourse de Startup, soutenue par le Ministère de l'Economie, permet aux startups de trouver des investisseurs et des financements. Elle est un moyen de financement de choix pour les entreprises innovantes.\n\n4. Startup Tunisia : La plateforme de la Tunisie Startup permet aux startups de trouver des investisseurs et des financements, ainsi que de développer des relations avec des investisseurs locaux et internationaux.\n\n5. Réseau des Investisseurs Tunisiens : Pour accéder à des investisseurs tunisiens, vous pouvez utiliser des réseaux de contacts et des plateformes de financement pour exposer votre projet et attirer des investisseurs.\n\n6. Programme de soutien à la Recherche et à la Formation : Le programme de soutien à la recherche et à la formation peut vous fournir des financements supplémentaires pour votre entreprise, en plus des ressources mentionnées ci-dessus.\n\n\nPour vous aider à trouver des investisseurs et des financements pour votre entreprise, voici quelques étapes clés :\n\n\n1. S'inscrire à la Bourse de Startup : Inscrivez-vous sur la Bourse de Startup pour accéder à des investisseurs et des financements.\n2. Obtenir une marque marquée : Obtenez une marque marquée (label Startup Act) pour accéder à des avantages fiscales et des financements supplémentaires.\n3. Rejoindre un réseau d'investisseurs : Utilisez des réseaux de contacts et des plateformes de financement pour exposer votre projet et attirer des investisseurs.\n4. Demander des financements supplémentaires : Demandez des financements supplémentaires à l'aide du programme de soutien à la recherche et à la formation.\n5. Utilisez la plateforme Startup Tunisia : Utilisez la plateforme Startup Tunisia pour accéder à des investisseurs et des financements.\n\nNotez que les étapes ci-dessus sont des pistes générales pour trouver des investisseurs et des financements à Tunisie. Pour obtenir des informations détaillées sur les avantages fiscales et des financements spécifiques, veuillez consulter les ressources mentionnées ci-dessus.\n\n\nEn ce qui concerne les étapes de création d'une SARL/SAS ou d'un Fonds de Gestion de Ventes (FGV), voici quelques étapes clés :\n\n\n1. Créez une SARL/SAS : Créez une SARL (Société à Responsabilité Limitée) ou SAS (Société à Capital variable) en conformité avec les lois tunisiennes.\n2. Obtenez un label Startup Act : Obtenez le label Startup Act pour bénéficier des avantages fiscales et des financements spécifiques.\n3. Demandez des financements supplémentaires : Demandez des financements supplémentaires à l'aide du"
+  },
+  {
+    "index": 8,
+    "original_query": "chneya startup act",
+    "normalized_query": "Qu'est-ce que le Startup Act tunisien et quels sont ses avantages ?",
+    "retrieval_query": [
+      "Qu'est-ce que le Startup Act tunisien et quels sont ses avantages ?",
+      "Tunisian Startup Act Law No. 2018-20 Overview and 5 Label Criteria",
+      "Startup Act Incentives Founder Leave Startup Grant and Social Security"
+    ],
+    "top_results_and_scores": [
+      {
+        "title": "Tunisian Startup Act: Law No. 2018-20 Overview and 5 Label Criteria",
+        "url": "https://startup.gov.tn/en/startup-act",
+        "publisher": "Journal Officiel de la République Tunisienne (JORT) / Startup Tunisia",
+        "score": 0.868
+      },
+      {
+        "title": "Startup Act Incentives: Founder Leave, Startup Grant, and Social Security",
+        "url": "https://startup.gov.tn/en/incentives/founders",
+        "publisher": "Smart Capital / Ministry of Communication Technologies",
+        "score": 0.781
+      },
+      {
+        "title": "Corporate Legal Structures in Tunisia: SARL vs SUARL Incorporation",
+        "url": "https://www.rne.tn/procedure-creation-societe",
+        "publisher": "National Business Register (RNE) / Tunisian Commercial Companies Code",
+        "score": 0.781
+      },
+      {
+        "title": "Startup Governance: Shareholder Agreements, Vesting, and ESOP in Tunisia",
+        "url": "https://startup.tn/legal-toolkit",
+        "publisher": "Tunisian Bar Association / Startup Legal Guides",
+        "score": 0.738
+      },
+      {
+        "title": "Tunisia Tech Visa and Talent Mobility for International Expansion",
+        "url": "https://startup.gov.tn/en/tech-visa",
+        "publisher": "Ministry of Interior / Ministry of Foreign Affairs",
+        "score": 0.729
+      }
+    ],
+    "final_response": "**Le Startup Act tunisien – aperçu et principaux avantages**\n\nLe **Startup Act** (loi n° 2018‑20 du 17 avril 2018) constitue le cadre législatif national destiné à stimuler l’innovation, l’entrepreneuriat et la rétention des talents en Tunisie. Il repose sur deux piliers :\n\n1. **Un label officiel « Startup »** attribué par le Collège des Startups après vérification de critères précis.  \n2. **Un ensemble d’incitations (financières, sociales, fiscales et administratives)** pour les entreprises labellisées et leurs fondateurs.\n\n---\n\n### 1. Le label Startup – critères d’éligibilité (extraits du document 1)\n\n| Critère | Exigence |\n|---------|----------|\n| **Âge de l’entreprise** | ≤ 8 ans depuis l’immatriculation au Registre National des Entreprises (RNE). |\n| **Taille** | < 100 salariés **et** chiffre d’affaires ou total du bilan < 15 M TND. |\n| **Innovation / technologie** | Projet à forte composante technologique ou innovante (exigence détaillée dans le texte complet du label). |\n| **Potentiel de croissance** | Business model scalable, accès à des marchés régionaux ou internationaux. |\n| **Capacité à créer de l’emploi** | Prévision d’au moins 5 emplois dans les 12 mois suivant la labellisation. |\n\n*Ces cinq critères sont évalués de façon exhaustive par le Collège des Startups. Une fois le label obtenu, l’entreprise bénéficie automatiquement de l’ensemble des mesures prévues par le Startup Act.*\n\n---\n\n### 2. Les avantages concrets du Startup Act\n\n| Domaine | Avantages spécifiques (documents 2, 4, 5) |\n|---------|-------------------------------------------|\n| **Sécurité sociale et droit du travail** | • **Congé pour création de startup** : droit à 1 an de congé (renouvelable une fois) tout en conservant l’ancienneté et les droits sociaux. |\n| **Financement direct** | • **Bourse de Startup** : jusqu’à **5 000 TND** par mois, pendant 12 mois, pour chaque co‑fondateur (maximum 3 co‑fondateurs). |\n| **Fiscalité** | • Exonérations d’impôt sur les sociétés pendant les 5 premières années d’activité (selon le texte complet du Act).<br>• Taux d’imposition réduit sur les plus‑values liées aux BSPCE (bons de souscription de parts). |\n| **Capital humain** | • **Tech Visa** : procédure accélérée (≈ 10 jours ouvrés) pour obtenir un titre de séjour et de travail multi‑années pour les talents étrangers recrutés par une startup labellisée.<br>• Accès à des visas réciproques facilitant les déplacements des fondateurs vers l’Europe et la région. |\n| **Gouvernance et equity** | • Possibilité d’émettre des **BSPCE** (Bons de Souscription de Parts de Créateurs d’Entreprise) à des salariés clés, avec un régime fiscal avantageux, favorisant la mise en place d’un **ESOP** (Employee Stock Ownership Plan). |\n| **Accompagnement administratif** | • Simplification de l’immatriculation (SARL ou SUARL) via le RNE, avec un suivi dédié pour les entreprises labellisées.<br>• Accès à des programmes d’accélération, de mentorat et de mise en réseau organisés par les autorités et les partenaires du Startup Act. |\n\n---\n\n### 3."
+  }
+]

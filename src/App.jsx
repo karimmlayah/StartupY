@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Navigate, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AiGuideModal from './components/AiGuideModal';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
+import { useAuth } from './context/AuthContext';
 
 // Pages
 import LandingPage from './pages/LandingPage';
-import AuthChoicePage from './pages/AuthChoicePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ChooseRolePage from './pages/ChooseRolePage';
@@ -34,10 +34,14 @@ function ScrollToTop() {
 }
 
 export default function App() {
+  return <AuthProvider><AppContent /></AuthProvider>;
+}
+
+function AppContent() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [aiModalRole, setAiModalRole] = useState('startup');
 
-  const handleOpenAiGuide = (role = 'startup', defaultPrompt = '') => {
+  const handleOpenAiGuide = (role = 'startup') => {
     setAiModalRole(role);
     setAiModalOpen(true);
   };
@@ -46,14 +50,20 @@ export default function App() {
     setAiModalOpen(false);
   };
 
+  const handleAssistantToggle = (action) => {
+    if (action === 'open') setAiModalOpen(true);
+    else handleCloseAiGuide();
+  };
+
+  const { user, role } = useAuth();
+
   return (
-    <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
-        <div className="min-h-screen flex flex-col bg-[#0A0F1D] text-slate-100 selection:bg-blue-600 selection:text-white">
+        <div className="bidaya-app min-h-screen flex flex-col atmosphere text-ink selection:bg-coral/20 selection:text-ink">
           
           {/* Navigation */}
-          <Navbar onOpenAiGuide={handleOpenAiGuide} />
+          <Navbar />
 
           {/* Page Content */}
           <main className="flex-1">
@@ -75,11 +85,7 @@ export default function App() {
               />
               <Route 
                 path="/auth" 
-                element={
-                  <ProtectedRoute>
-                    <ChooseRolePage />
-                  </ProtectedRoute>
-                } 
+                element={<Navigate to="/choose-role" replace />}
               />
 
               {/* Startup-Only Experience */}
@@ -92,13 +98,14 @@ export default function App() {
                 } 
               />
               <Route 
-                path="/dashboard/startup" 
+                path="/startup" 
                 element={
-                  <ProtectedRoute allowedRoles={['startup', 'admin']}>
+                  <ProtectedRoute allowedRoles={['startup']}>
                     <StartupDashboardPage onOpenAiGuide={handleOpenAiGuide} />
                   </ProtectedRoute>
                 } 
               />
+              <Route path="/dashboard/startup" element={<Navigate to="/startup" replace />} />
               <Route 
                 path="/roadmap" 
                 element={
@@ -114,6 +121,14 @@ export default function App() {
                     <StartupOnboardingPage />
                   </ProtectedRoute>
                 } 
+              />
+              <Route
+                path="/onboarding/startup"
+                element={
+                  <ProtectedRoute allowedRoles={['startup', 'admin']}>
+                    <StartupOnboardingPage />
+                  </ProtectedRoute>
+                }
               />
               <Route 
                 path="/startup-documents" 
@@ -134,13 +149,14 @@ export default function App() {
 
               {/* Investor-Only Experience */}
               <Route 
-                path="/dashboard/investor" 
+                path="/investor" 
                 element={
-                  <ProtectedRoute allowedRoles={['investor', 'admin']}>
+                  <ProtectedRoute allowedRoles={['investor']}>
                     <InvestorDashboardPage onOpenAiGuide={handleOpenAiGuide} />
                   </ProtectedRoute>
                 } 
               />
+              <Route path="/dashboard/investor" element={<Navigate to="/investor" replace />} />
               <Route 
                 path="/investor-verification" 
                 element={
@@ -149,10 +165,18 @@ export default function App() {
                   </ProtectedRoute>
                 } 
               />
+              <Route
+                path="/onboarding/investor"
+                element={
+                  <ProtectedRoute allowedRoles={['investor', 'admin']}>
+                    <InvestorOnboardingPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route 
                 path="/deal-flow" 
                 element={
-                  <ProtectedRoute allowedRoles={['investor', 'admin']}>
+                  <ProtectedRoute allowedRoles={['investor', 'admin']} requireInvestorVerified>
                     <ExplorePage />
                   </ProtectedRoute>
                 } 
@@ -160,7 +184,7 @@ export default function App() {
               <Route 
                 path="/explore" 
                 element={
-                  <ProtectedRoute allowedRoles={['investor', 'admin']}>
+                  <ProtectedRoute allowedRoles={['investor', 'admin']} requireInvestorVerified>
                     <ExplorePage />
                   </ProtectedRoute>
                 } 
@@ -168,7 +192,7 @@ export default function App() {
               <Route 
                 path="/startup/:id" 
                 element={
-                  <ProtectedRoute allowedRoles={['startup', 'investor', 'admin']}>
+                  <ProtectedRoute allowedRoles={['startup', 'investor', 'admin']} requireInvestorVerified>
                     <StartupDetailsPage onOpenAiGuide={handleOpenAiGuide} />
                   </ProtectedRoute>
                 } 
@@ -176,7 +200,7 @@ export default function App() {
               <Route 
                 path="/investor-meetings" 
                 element={
-                  <ProtectedRoute allowedRoles={['investor', 'admin']}>
+                  <ProtectedRoute allowedRoles={['investor', 'admin']} requireInvestorVerified>
                     <InvestorDashboardPage onOpenAiGuide={handleOpenAiGuide} />
                   </ProtectedRoute>
                 } 
@@ -204,7 +228,7 @@ export default function App() {
               <Route 
                 path="/meeting/:meetingId" 
                 element={
-                  <ProtectedRoute allowedRoles={['startup', 'investor', 'admin']}>
+                  <ProtectedRoute allowedRoles={['startup', 'investor', 'admin']} requireInvestorVerified>
                     <MeetingRoomPage />
                   </ProtectedRoute>
                 } 
@@ -216,17 +240,18 @@ export default function App() {
           </main>
 
           {/* Footer */}
-          <Footer onOpenAiGuide={handleOpenAiGuide} />
+          <Footer />
 
           {/* AI Guide Modal (Startup Tunisia Guide / Investor Tunisia Guide) */}
-          <AiGuideModal
-            isOpen={aiModalOpen}
-            onClose={handleCloseAiGuide}
-            initialRole={aiModalRole}
-          />
+          {user && (
+            <AiGuideModal
+              isOpen={aiModalOpen}
+              onClose={handleAssistantToggle}
+              initialRole={role === 'investor' ? 'investor' : aiModalRole}
+            />
+          )}
 
         </div>
       </BrowserRouter>
-    </AuthProvider>
   );
 }

@@ -91,24 +91,24 @@ export default function StartupActModule() {
   const completedSteps = Object.values(checkedSteps).filter(Boolean).length;
 
   return (
-    <div className="bg-slate-900/90 rounded-3xl border border-slate-800 shadow-xl overflow-hidden">
+    <div className="bg-surface-elevated rounded-xl border border-sand shadow-md overflow-hidden">
       {/* Header */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full p-6 flex items-center justify-between cursor-pointer hover:bg-slate-800/30 transition-colors"
+        className="w-full p-6 flex items-center justify-between cursor-pointer hover:bg-surface/30 transition-colors"
       >
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30 flex items-center justify-center">
-            <Award className="w-6 h-6 text-amber-400" />
+          <div className="w-12 h-12 rounded-lg bg-coral border border-warning/30 flex items-center justify-center">
+            <Award className="w-6 h-6 text-warning" />
           </div>
           <div className="text-left">
             <div className="flex items-center gap-2">
               <h3 className="text-lg font-bold text-white">Startup Act Label</h3>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/30">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-warning bg-warning-bg/10 px-2 py-0.5 rounded-full border border-warning/30">
                 Optional Module
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-muted mt-0.5">
               Track your progress toward the Tunisian Startup Act label and its benefits.
             </p>
           </div>
@@ -119,9 +119,9 @@ export default function StartupActModule() {
             {STARTUP_ACT_LABELS[status]}
           </span>
           {expanded ? (
-            <ChevronUp className="w-5 h-5 text-slate-400" />
+            <ChevronUp className="w-5 h-5 text-muted" />
           ) : (
-            <ChevronDown className="w-5 h-5 text-slate-400" />
+            <ChevronDown className="w-5 h-5 text-muted" />
           )}
         </div>
       </button>
@@ -131,16 +131,16 @@ export default function StartupActModule() {
         <div className="px-6 pb-6 space-y-5">
           
           {/* Disclaimer */}
-          <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-2.5">
-            <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-amber-200 leading-relaxed">
+          <div className="p-3.5 rounded-xl bg-warning-bg/10 border border-warning/30 flex items-start gap-2.5">
+            <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-warning leading-relaxed">
               <strong>Bidaya provides indicative guidance only.</strong> Official decisions regarding the Startup Act label belong to the relevant authority (Ministry of Communication Technologies and Digital Economy). Never claim official label status unless verified.
             </p>
           </div>
 
           {/* Status Selector */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            <label className="text-xs font-bold text-brown-mid uppercase tracking-wider">
               Your Startup Act Status
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -153,8 +153,8 @@ export default function StartupActModule() {
                     onClick={() => handleStatusChange(value)}
                     className={`p-3 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                       isActive
-                        ? `${s.bg} ${s.text} ${s.border} ring-2 ring-offset-1 ring-offset-slate-900 ${s.border}`
-                        : 'bg-slate-800/60 text-slate-400 border-slate-700 hover:border-slate-600'
+                        ? `${s.bg} ${s.text} ${s.border} ring-2 ring-offset-1 ring-offset-surface-elevated ${s.border}`
+                        : 'bg-surface text-muted border-sand hover:border-sand'
                     }`}
                   >
                     {STARTUP_ACT_LABELS[value]}
@@ -167,10 +167,10 @@ export default function StartupActModule() {
           {/* Step Checklist */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+              <label className="text-xs font-bold text-brown-mid uppercase tracking-wider">
                 Application Checklist
               </label>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-taupe">
                 {completedSteps} / {STARTUP_ACT_STEPS.length} steps
               </span>
             </div>
@@ -181,21 +181,21 @@ export default function StartupActModule() {
                 onClick={() => handleToggleStep(step.id)}
                 className={`p-4 rounded-xl border cursor-pointer transition-all ${
                   checkedSteps[step.id]
-                    ? 'bg-emerald-500/10 border-emerald-500/30'
-                    : 'bg-slate-800/60 border-slate-700 hover:border-slate-600'
+                    ? 'bg-success-bg/10 border-success/30'
+                    : 'bg-surface border-sand hover:border-sand'
                 }`}
               >
                 <div className="flex items-start gap-3">
                   {checkedSteps[step.id] ? (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
                   ) : (
-                    <Circle className="w-5 h-5 text-slate-500 flex-shrink-0 mt-0.5" />
+                    <Circle className="w-5 h-5 text-taupe flex-shrink-0 mt-0.5" />
                   )}
                   <div>
-                    <p className={`text-sm font-semibold ${checkedSteps[step.id] ? 'text-emerald-300' : 'text-white'}`}>
+                    <p className={`text-sm font-semibold ${checkedSteps[step.id] ? 'text-success' : 'text-white'}`}>
                       {step.title}
                     </p>
-                    <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
+                    <p className="text-xs text-muted mt-0.5 leading-relaxed">
                       {step.description}
                     </p>
                   </div>
@@ -206,15 +206,15 @@ export default function StartupActModule() {
 
           {/* Evidence Upload Notice */}
           {status === STARTUP_ACT_STATUSES.LABEL_OBTAINED && (
-            <div className="p-4 rounded-xl bg-blue-950/60 border border-blue-800/40 space-y-2">
+            <div className="p-4 rounded-xl bg-coral/10 border border-coral/40 space-y-2">
               <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-blue-400" />
-                <span className="text-xs font-bold text-blue-300">Verification Required</span>
+                <Shield className="w-4 h-4 text-coral" />
+                <span className="text-xs font-bold text-coral">Verification Required</span>
               </div>
-              <p className="text-xs text-blue-200 leading-relaxed">
+              <p className="text-xs text-coral leading-relaxed">
                 To display the Startup Act label on your profile, please submit proof of labeling. An admin will verify before the badge is shown publicly.
               </p>
-              <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-blue-600/20 text-blue-300 border border-blue-500/30 hover:bg-blue-600/30 transition-colors cursor-pointer">
+              <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-coral/10 text-coral border border-coral/40 hover:bg-coral/10 transition-colors cursor-pointer">
                 <Upload className="w-3.5 h-3.5" />
                 <span>Upload Label Certificate</span>
               </button>
@@ -222,7 +222,7 @@ export default function StartupActModule() {
           )}
 
           {/* Info Link */}
-          <div className="flex items-center gap-2 text-xs text-slate-500">
+          <div className="flex items-center gap-2 text-xs text-taupe">
             <Info className="w-3.5 h-3.5" />
             <span>The Startup Act does not affect investor visibility on Bidaya. You can request investor access independently.</span>
           </div>

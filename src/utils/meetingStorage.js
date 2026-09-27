@@ -113,7 +113,7 @@ export function createMeeting({
   requestedBy = 'investor',
   scheduledAt,
   durationMinutes = 45,
-  agenda = 'Bidaya Meeting intro and due diligence discussion.'
+  agenda = 'StartupY Meeting intro and due diligence discussion.'
 }) {
   const meetings = getAllMeetings();
   const rawId = `meeting_${Date.now().toString().slice(-6)}_${Math.random().toString(36).substring(2, 6)}`;
@@ -131,7 +131,7 @@ export function createMeeting({
     durationMinutes: Number(durationMinutes) || 45,
     status: 'requested', // "requested" | "accepted" | "declined" | "completed" | "cancelled"
     roomId,
-    agenda: agenda.trim() || 'Bidaya Meeting discussion.',
+    agenda: agenda.trim() || 'StartupY Meeting discussion.',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     outcomeStatus: null

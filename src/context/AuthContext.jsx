@@ -1,327 +1,189 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { api, getAccessToken, getRefreshToken, setTokens, clearTokens } from '../services/api';
 
 const AuthContext = createContext(null);
 
-const DEMO_USERS = {
-  admin: {
-    id: 'usr_admin_demo',
-    email: 'admin@bidaya.tn',
-    full_name: 'Bidaya Platform Administrator',
-    role: 'admin',
-    avatar_url: ''
-  },
-  startup: {
-    id: 'usr_founder_demo',
-    email: 'founder@agrismart.tn',
-    full_name: 'Yassine Karray (Founder)',
-    role: 'startup',
-    avatar_url: ''
-  },
-  investor: {
-    id: 'usr_investor_demo',
-    email: 'investor@carthageangels.tn',
-    full_name: 'Sami Ben Amor (Carthage Angels)',
-    role: 'investor',
-    avatar_url: ''
-  },
-  new_unassigned: {
-    id: 'usr_unassigned_demo',
-    email: 'newuser@bidaya.tn',
-    full_name: 'Nouveau Membre Tunisie',
-    role: null, // Requires /choose-role
-    avatar_url: ''
-  }
-};
-
-const STORAGE_KEYS = {
-  DEMO_AUTH_USER: 'bidaya_demo_auth_user',
-  DEMO_ROLE: 'bidaya_demo_user_role'
-};
-
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [session, setSession] = useState(null);
-  const [profile, setProfile] = useState(null);
+  const [investorProfile, setInvestorProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isDemoMode, setIsDemoMode] = useState(!isSupabaseConfigured);
+  const [profileLoading, setProfileLoading] = useState(false);
 
-  // Initialize Auth state
-  useEffect(() => {
-    let mounted = true;
+  const getCurrentUser = useCallback(async () => {
+    const token = getAccessToken();
+    if (!token) {
+      setUser(null);
+      setInvestorProfile(null);
+      setLoading(false);
+      return null;
+    }
 
-    async function initializeAuth() {
-      if (isSupabaseConfigured && supabase) {
+    try {
+      setProfileLoading(true);
+      const userData = await api.auth.getMe();
+      setUser(userData);
+
+      // If user is investor, fetch investor profile for verification status
+      if (userData.role === 'investor') {
         try {
-          const { data: { session: currentSession } } = await supabase.auth.getSession();
-          if (mounted && currentSession) {
-            setSession(currentSession);
-            setUser(currentSession.user);
-            await fetchProfile(currentSession.user.id);
-          } else if (mounted) {
-            // Check if demo user saved in storage
-            loadDemoSession();
-          }
-        } catch (err) {
-          console.warn('Error fetching Supabase session, using fallback demo mode:', err);
-          if (mounted) loadDemoSession();
+          const invData = await api.investors.getProfile();
+          setInvestorProfile(invData);
+        } catch (invErr) {
+          console.warn('Could not load investor profile:', invErr);
         }
       } else {
-        // Fallback demo mode
-        loadDemoSession();
+        setInvestorProfile(null);
       }
 
-      if (mounted) setLoading(false);
+      return userData;
+    } catch (err) {
+      console.warn('Failed to retrieve current user with token:', err.message);
+      // If unauthorized, clear tokens
+      if (err.status === 401 || !getRefreshToken()) {
+        clearTokens();
+        setUser(null);
+        setInvestorProfile(null);
+      }
+      return null;
+    } finally {
+      setProfileLoading(false);
+      setLoading(false);
     }
-
-    initializeAuth();
-
-    // Listen to Supabase auth events if configured
-    let subscription = null;
-    if (isSupabaseConfigured && supabase) {
-      const { data: authListener } = supabase.auth.onAuthStateChange(async (event, newSession) => {
-        if (!mounted) return;
-        setSession(newSession);
-        if (newSession?.user) {
-          setUser(newSession.user);
-          await fetchProfile(newSession.user.id);
-        } else {
-          setUser(null);
-          setProfile(null);
-        }
-        setLoading(false);
-      });
-      subscription = authListener?.subscription;
-    }
-
-    return () => {
-      mounted = false;
-      if (subscription) subscription.unsubscribe();
-    };
   }, []);
 
-  const loadDemoSession = () => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEYS.DEMO_AUTH_USER);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        setUser(parsed);
-        setProfile(parsed);
-        setIsDemoMode(true);
-        return;
-      }
-    } catch (e) {
-      // ignore
-    }
-    // Default to startup demo user
-    const defaultUser = DEMO_USERS.startup;
-    setUser(defaultUser);
-    setProfile(defaultUser);
-    setIsDemoMode(true);
-  };
+  // Initialize auth on load
+  useEffect(() => {
+    getCurrentUser();
 
-  const fetchProfile = async (userId) => {
-    if (!isSupabaseConfigured || !supabase) return;
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+    const handleExpired = () => {
+      clearTokens();
+      setUser(null);
+      setInvestorProfile(null);
+    };
 
-      if (error) {
-        console.warn('Could not fetch profile from Supabase:', error.message);
-      } else if (data) {
-        setProfile(data);
-      }
-    } catch (err) {
-      console.warn('Profile fetch exception:', err);
-    }
-  };
+    window.addEventListener('auth:expired', handleExpired);
+    return () => window.removeEventListener('auth:expired', handleExpired);
+  }, [getCurrentUser]);
 
   /**
-   * Register new user
+   * Register a new user in Django
    */
-  const signUp = async ({ fullName, email, password }) => {
+  const register = async ({ email, password, fullName, role, firstName, lastName }) => {
     setLoading(true);
-    if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.auth.signUp({
-        email,
+    try {
+      let fName = firstName || '';
+      let lName = lastName || '';
+      if (fullName && !fName) {
+        const parts = fullName.trim().split(/\s+/);
+        fName = parts[0] || '';
+        lName = parts.slice(1).join(' ') || '';
+      }
+
+      const res = await api.auth.register({
+        email: email.trim().lower ? email.trim().toLowerCase() : email.trim(),
         password,
-        options: {
-          data: {
-            full_name: fullName
-          }
-        }
+        first_name: fName,
+        last_name: lName,
+        role: role || 'startup',
       });
+
+      if (res.access && res.refresh) {
+        setTokens({ access: res.access, refresh: res.refresh });
+      }
+
+      setUser(res.user);
+      return res;
+    } finally {
       setLoading(false);
-      if (error) throw error;
-      // Newly created user has role: null, redirect to /choose-role
-      return data;
-    } else {
-      // Demo Mode Registration
-      const newDemoUser = {
-        id: `demo_${Date.now()}`,
-        email,
-        full_name: fullName,
-        role: null, // must go through /choose-role
-        avatar_url: ''
-      };
-      localStorage.setItem(STORAGE_KEYS.DEMO_AUTH_USER, JSON.stringify(newDemoUser));
-      setUser(newDemoUser);
-      setProfile(newDemoUser);
-      setLoading(false);
-      return { user: newDemoUser };
     }
   };
 
   /**
-   * Log in user
+   * Log in user with Django SimpleJWT
    */
-  const signIn = async ({ email, password }) => {
+  const login = async ({ email, password }) => {
     setLoading(true);
-    if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
+    try {
+      const res = await api.auth.login({
+        email: email.trim().toLowerCase(),
+        password,
       });
-      setLoading(false);
-      if (error) throw error;
-      return data;
-    } else {
-      // Demo Mode login check
-      let matchingUser = Object.values(DEMO_USERS).find(u => u.email.toLowerCase() === email.toLowerCase());
-      if (!matchingUser) {
-        // Fallback for newly registered demo user
+
+      setTokens({ access: res.access, refresh: res.refresh });
+      setUser(res.user);
+
+      if (res.user?.role === 'investor') {
         try {
-          const stored = localStorage.getItem(STORAGE_KEYS.DEMO_AUTH_USER);
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            if (parsed.email.toLowerCase() === email.toLowerCase()) {
-              matchingUser = parsed;
-            }
-          }
-        } catch (e) {}
+          const inv = await api.investors.getProfile();
+          setInvestorProfile(inv);
+        } catch {
+          // ignore
+        }
       }
 
-      if (!matchingUser) {
-        // Default to a startup user with this email
-        matchingUser = {
-          id: `demo_${Date.now()}`,
-          email,
-          full_name: email.split('@')[0],
-          role: 'startup',
-          avatar_url: ''
-        };
-      }
-
-      localStorage.setItem(STORAGE_KEYS.DEMO_AUTH_USER, JSON.stringify(matchingUser));
-      setUser(matchingUser);
-      setProfile(matchingUser);
+      return { user: res.user, profile: res.user, access: res.access, refresh: res.refresh };
+    } finally {
       setLoading(false);
-      return { user: matchingUser };
     }
   };
 
   /**
-   * One-time role selection (startup | investor).
-   * User cannot select 'admin' here and cannot change role once selected.
+   * Refresh JWT token
+   */
+  const refreshToken = async () => {
+    const rf = getRefreshToken();
+    if (!rf) throw new Error('No refresh token available');
+    const res = await api.auth.refresh(rf);
+    setTokens({ access: res.access, refresh: res.refresh });
+    return res;
+  };
+
+  /**
+   * Log out user
+   */
+  const logout = async () => {
+    try {
+      await api.auth.logout();
+    } catch {
+      // ignore
+    } finally {
+      clearTokens();
+      setUser(null);
+      setInvestorProfile(null);
+    }
+  };
+
+  /**
+   * One-time role assignment
    */
   const chooseRole = async (selectedRole) => {
-    if (!['startup', 'investor'].includes(selectedRole)) {
-      throw new Error('Invalid role selected. Allowed roles are: startup, investor.');
-    }
-
-    // Role cannot be changed once assigned
-    if (profile?.role) {
-      throw new Error('Your account role has already been assigned and cannot be changed.');
-    }
-
-    setLoading(true);
-
-    if (isSupabaseConfigured && supabase && user?.id) {
-      const { data, error } = await supabase
-        .from('profiles')
-        .update({
-          role: selectedRole,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', user.id)
-        .select()
-        .single();
-
-      setLoading(false);
-      if (error) throw error;
-      setProfile(data);
-      return data;
-    } else {
-      // Demo mode role save
-      const updatedUser = {
-        ...(user || DEMO_USERS.new_unassigned),
-        role: selectedRole
-      };
-      localStorage.setItem(STORAGE_KEYS.DEMO_AUTH_USER, JSON.stringify(updatedUser));
-      setUser(updatedUser);
-      setProfile(updatedUser);
-      setLoading(false);
-      return updatedUser;
-    }
+    const res = await api.auth.chooseRole(selectedRole);
+    setUser(res.user);
+    return res.user;
   };
 
-  /**
-   * Reset Password
-   */
-  const resetPassword = async (email) => {
-    if (isSupabaseConfigured && supabase) {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/login`
-      });
-      if (error) throw error;
-      return true;
-    } else {
-      // Demo feedback
-      return true;
-    }
-  };
-
-  /**
-   * Sign out
-   */
-  const signOut = async () => {
-    if (isSupabaseConfigured && supabase) {
-      await supabase.auth.signOut();
-    }
-    localStorage.removeItem(STORAGE_KEYS.DEMO_AUTH_USER);
-    setUser(null);
-    setProfile(null);
-    setSession(null);
-  };
-
-  /**
-   * Development demo role switcher for quick evaluator testing
-   */
-  const switchDemoRole = (targetRole) => {
-    const demoUser = DEMO_USERS[targetRole] || DEMO_USERS.startup;
-    localStorage.setItem(STORAGE_KEYS.DEMO_AUTH_USER, JSON.stringify(demoUser));
-    setUser(demoUser);
-    setProfile(demoUser);
-    setIsDemoMode(true);
-  };
+  const role = user?.role || null;
+  const isAuthenticated = Boolean(user && getAccessToken());
+  const isInvestorApproved = role === 'admin' || investorProfile?.verification_status === 'approved';
 
   const value = {
     user,
-    session,
-    profile,
-    role: profile?.role || user?.role || null,
+    profile: user,
+    role,
+    investorProfile,
+    isAuthenticated,
+    isInvestorApproved,
     loading,
-    isDemoMode,
-    isSupabaseConfigured,
-    signUp,
-    signIn,
-    signOut,
+    profileLoading,
+    register,
+    signUp: register,
+    login,
+    signIn: login,
+    logout,
+    signOut: logout,
+    refreshToken,
+    getCurrentUser,
     chooseRole,
-    resetPassword,
-    switchDemoRole
   };
 
   return (
@@ -338,3 +200,5 @@ export function useAuth() {
   }
   return context;
 }
+
+export default AuthContext;

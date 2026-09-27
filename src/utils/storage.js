@@ -68,7 +68,7 @@ export function saveNewStartup(startupData) {
         "Product launched and active in Tunisian market",
         `Seeking ${startupData.fundingNeeded} (${startupData.fundingTypeSought}) to accelerate team hiring and expansion`,
         `Registered legal entity: ${startupData.legalStatus} based in ${startupData.governorate}`,
-        "Verified profile on StartupBridge AI Tunisia",
+        "Verified profile on StartupY Tunisia",
       ],
       highlights: [startupData.sector, startupData.stage, startupData.governorate, startupData.fundingTypeSought],
       team: [

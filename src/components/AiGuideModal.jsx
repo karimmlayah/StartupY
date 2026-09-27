@@ -7,95 +7,114 @@ import {
   User, 
   HelpCircle, 
   RefreshCw, 
-  Lightbulb,
-  Building2,
-  TrendingUp,
-  Check,
-  Copy,
-  AlertCircle,
-  BookOpen,
-  Loader2,
-  AlertTriangle,
-  RotateCcw
+  Building2, 
+  TrendingUp, 
+  ShieldCheck,
+  Check, 
+  Copy, 
+  BookOpen, 
+  Loader2, 
+  AlertTriangle, 
+  RotateCcw,
+  ExternalLink,
+  MessageSquare
 } from 'lucide-react';
-import { AI_SUGGESTED_QUESTIONS, generateCustomAiResponse, AI_DISCLAIMER } from '../data/aiResponses';
+import { AI_SUGGESTED_QUESTIONS, AI_DISCLAIMER } from '../data/aiResponses';
+import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 
 export default function AiGuideModal({ 
   isOpen, 
   onClose, 
   initialRole = 'startup' 
 }) {
-  const [activeTab, setActiveTab] = useState(initialRole);
+  const { user } = useAuth();
+  const effectiveRole = user?.role || initialRole || 'startup';
+  
+  const [activeTab, setActiveTab] = useState(effectiveRole);
   const [inputQuery, setInputQuery] = useState('');
   const [copiedId, setCopiedId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [lastFailedQuery, setLastFailedQuery] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  // Message histories for Startup Tunisia Guide & Investor Tunisia Guide
+  // Message histories for Startup, Investor, and Admin roles
   const [messages, setMessages] = useState({
     startup: [
       {
         id: 'welcome-startup',
         sender: 'ai',
-        title: 'Startup Tunisia Guide',
-        content: `Marhaban! Welcome to the **Startup Tunisia Guide**. 
+        title: 'Guide Startup Tunisie (Qdrant RAG)',
+        content: `Marhaban ! Bienvenue sur le **Guide Startup Tunisie**. 
 
-I provide verified RAG assistance for Tunisian entrepreneurs on legal structures (SARL/SUARL), RNE registration, pitch decks in TND for local angels & VCs, and financing options. 
+Je réponds avec précision sur le **Startup Act (Loi 2018-20)**, les critères d'éligibilité au label, la **Bourse de Startup** (jusqu'à 5 000 TND/mois), les formes juridiques (SARL/SUARL), l'immatriculation au RNE et les comptes spéciaux en devises.
 
-Select one of the 5 suggested questions below or ask your own question!`,
-        mode: 'demo',
+Posez une question ou sélectionnez l'une des suggestions ci-dessous !`,
         sources: [
           {
-            title: "Common Corporate Legal Forms for Startups in Tunisia",
-            category: "Business creation and registration",
-            sourceLabel: "Educational draft — official verification required",
-            verified: false
+            title: "Tunisian Startup Act: Law No. 2018-20 Overview and 5 Label Criteria",
+            source: "Journal Officiel de la République Tunisienne / Startup Tunisia",
+            url: "https://startup.gov.tn/en/startup-act"
           },
           {
-            title: "Overview of Early-Stage Funding Pathways in Tunisia",
-            category: "Funding options",
-            sourceLabel: "Educational draft — official verification required",
-            verified: false
+            title: "Startup Act Incentives: Founder Leave, Startup Grant, and Social Security",
+            source: "Smart Capital / Ministère des Technologies de la Communication",
+            url: "https://startup.gov.tn/en/incentives/founders"
           }
         ],
-        timestamp: 'Just now'
+        timestamp: 'À l\'instant'
       }
     ],
     investor: [
       {
         id: 'welcome-investor',
         sender: 'ai',
-        title: 'Investor Tunisia Guide',
-        content: `Welcome to the **Investor Tunisia Guide**. 
+        title: 'Guide Investisseur Tunisie (Qdrant RAG)',
+        content: `Bienvenue sur le **Guide Investisseur Tunisie**. 
 
-I assist local angels, venture capital funds, corporate investors, and the Tunisian diaspora in evaluating deal flow, analyzing pitch decks in TND, evaluating founder traction, and mitigating regulatory and currency risks. 
+Je vous assiste dans votre due diligence : avantages fiscaux sur les bénéfices réinvestis (dégrèvement total), exonération sur les plus-values de cession, tickets moyens en TND et mécanismes de protection des devises via la Banque Centrale de Tunisie (BCT).
 
-Select a question below or enter your diligence query!`,
-        mode: 'demo',
+Posez une question ou choisissez un sujet ci-dessous !`,
         sources: [
           {
-            title: "Evaluating Team Independence and Technical Defensibility",
-            category: "Investor due diligence",
-            sourceLabel: "Educational draft — official verification required",
-            verified: false
+            title: "Tax Incentives for Investors and Business Angels under the Startup Act",
+            source: "Tunisian Investment Authority (TIA) / Ministère des Finances",
+            url: "https://startup.gov.tn/en/incentives/investors"
           },
           {
-            title: "Core Documents for Pre-Investment Due Diligence",
-            category: "Investor due diligence",
-            sourceLabel: "Educational draft — official verification required",
-            verified: false
+            title: "Financing Ecosystem in Tunisia: AIR, ANAVA Fund of Funds, and Seed Grants",
+            source: "Smart Capital / Caisse des Dépôts et Consignations (CDC)",
+            url: "https://smartcapital.tn/anava"
           }
         ],
-        timestamp: 'Just now'
+        timestamp: 'À l\'instant'
+      }
+    ],
+    admin: [
+      {
+        id: 'welcome-admin',
+        sender: 'ai',
+        title: 'Guide Administratif & Écosystème (Qdrant RAG)',
+        content: `Bienvenue sur le **Guide Réglementaire & Écosystème**. 
+
+Accédez à l'ensemble des textes officiels indexés dans Qdrant : procédures INNORPI, facilités douanières, fonds ANAVA et conformité légale.`,
+        sources: [
+          {
+            title: "Tunisian Innovation Ecosystem: Accelerators, Technoparks, and The Dot",
+            source: "The Dot Tunisia / Smart Capital",
+            url: "https://thedot.tn"
+          }
+        ],
+        timestamp: 'À l\'instant'
       }
     ]
   });
 
   const chatEndRef = useRef(null);
 
-  // Sync initial tab when reopened with a specific target role
+  // Sync tab with user role if initialRole changes
   useEffect(() => {
-    if (initialRole) {
+    if (initialRole && ['startup', 'investor', 'admin'].includes(initialRole)) {
       setActiveTab(initialRole);
     }
   }, [initialRole, isOpen]);
@@ -108,14 +127,25 @@ Select a question below or enter your diligence query!`,
     }
   }, [messages, activeTab, isOpen, isLoading]);
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return (
+      <button
+        type="button"
+        onClick={() => onClose?.('open')}
+        className="fixed bottom-5 right-5 z-[80] flex size-14 items-center justify-center rounded-full bg-coral text-white shadow-xl transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral sm:bottom-7 sm:right-7 cursor-pointer"
+        aria-label="Ouvrir l'assistant IA RAG Bidaya"
+      >
+        <Bot className="size-6" />
+      </button>
+    );
+  }
 
-  const currentQuestions = AI_SUGGESTED_QUESTIONS[activeTab] || [];
+  const currentQuestions = AI_SUGGESTED_QUESTIONS[activeTab] || AI_SUGGESTED_QUESTIONS.startup || [];
   const currentMessages = messages[activeTab] || [];
 
   /**
-   * Send question to backend RAG API (POST /api/ai/guide)
-   * Falls back gracefully to local answers if backend is unavailable
+   * Send question to backend RAG API (POST /api/chat)
+   * Connects to Qdrant vector retrieval + LLM synthesis
    */
   const executeQuery = async (queryText) => {
     const trimmed = queryText.trim();
@@ -125,78 +155,56 @@ Select a question below or enter your diligence query!`,
       id: `user-${Date.now()}`,
       sender: 'user',
       content: trimmed,
-      timestamp: 'Just now'
+      timestamp: 'À l\'instant'
     };
 
     setMessages(prev => ({
       ...prev,
-      [activeTab]: [...prev[activeTab], userMsg]
+      [activeTab]: [...(prev[activeTab] || []), userMsg]
     }));
 
     setIsLoading(true);
     setLastFailedQuery(null);
+    setErrorMessage(null);
 
     try {
-      // Call backend RAG API
-      const response = await fetch('/api/ai/guide', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          role: activeTab,
-          question: trimmed
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`API returned HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
+      // Call backend RAG pipeline POST /api/chat
+      const data = await api.chat.sendMessage(trimmed, activeTab);
 
       const aiMsg = {
         id: `ai-${Date.now()}`,
         sender: 'ai',
-        title: activeTab === 'startup' ? 'Startup Tunisia Guide' : 'Investor Tunisia Guide',
-        content: data.answer,
-        sources: data.sources || [],
-        mode: data.mode || 'demo',
-        timestamp: 'Just now'
+        title: activeTab === 'investor' 
+          ? 'Guide Investisseur Tunisie' 
+          : (activeTab === 'admin' ? 'Guide Plateforme & Écosystème' : 'Guide Startup Tunisie'),
+        content: data.answer || "Aucune réponse générée.",
+        sources: Array.isArray(data.sources) ? data.sources : [],
+        timestamp: 'À l\'instant'
       };
 
       setMessages(prev => ({
         ...prev,
-        [activeTab]: [...prev[activeTab], aiMsg]
+        [activeTab]: [...(prev[activeTab] || []), aiMsg]
       }));
     } catch (err) {
-      console.warn("Backend RAG fetch failed; activating client-side fallback:", err.message);
-      
-      // Client-side fallback to ensure zero downtime
-      const fallbackResult = generateCustomAiResponse(activeTab, trimmed);
-      
-      const aiMsg = {
-        id: `ai-${Date.now()}`,
+      console.error("RAG Chat API error:", err);
+      setErrorMessage(err.message || "Erreur de communication avec le serveur RAG.");
+      setLastFailedQuery(trimmed);
+
+      const errorAiMsg = {
+        id: `ai-err-${Date.now()}`,
         sender: 'ai',
-        title: fallbackResult.title || (activeTab === 'startup' ? 'Startup Tunisia Guide' : 'Investor Tunisia Guide'),
-        content: fallbackResult.body,
-        sources: [
-          {
-            title: "Tunisia Ecosystem Guidance Knowledge Repository",
-            category: activeTab === 'startup' ? "Business creation and registration" : "Investor due diligence",
-            sourceLabel: "Educational draft — official verification required",
-            verified: false
-          }
-        ],
-        mode: 'demo',
-        isErrorFallback: true,
-        timestamp: 'Just now'
+        title: 'Erreur de connexion',
+        content: "Désolé, impossible d'interroger la base de connaissances Qdrant pour le moment. Veuillez vérifier votre connexion ou réessayer.",
+        sources: [],
+        isError: true,
+        timestamp: 'À l\'instant'
       };
 
       setMessages(prev => ({
         ...prev,
-        [activeTab]: [...prev[activeTab], aiMsg]
+        [activeTab]: [...(prev[activeTab] || []), errorAiMsg]
       }));
-
-      setLastFailedQuery(trimmed);
     } finally {
       setIsLoading(false);
     }
@@ -227,17 +235,19 @@ Select a question below or enter your diligence query!`,
         {
           id: `welcome-${activeTab}-${Date.now()}`,
           sender: 'ai',
-          title: activeTab === 'startup' ? 'Startup Tunisia Guide' : 'Investor Tunisia Guide',
+          title: activeTab === 'investor' 
+            ? 'Guide Investisseur Tunisie' 
+            : (activeTab === 'admin' ? 'Guide Administratif' : 'Guide Startup Tunisie'),
           content: activeTab === 'startup'
-            ? 'Conversation reset. What Tunisian startup creation or fundraising question can I help you with?'
-            : 'Conversation reset. What investment diligence or market evaluation question can I assist you with?',
-          mode: 'demo',
+            ? 'Conversation réinitialisée. Quelle question sur le Startup Act, le RNE ou les financements puis-je vous éclairer ?'
+            : 'Conversation réinitialisée. Quelle question de due diligence ou de réglementation souhaitez-vous explorer ?',
           sources: [],
-          timestamp: 'Just now'
+          timestamp: 'À l\'instant'
         }
       ]
     }));
     setLastFailedQuery(null);
+    setErrorMessage(null);
   };
 
   const copyToClipboard = (text, id) => {
@@ -247,45 +257,46 @@ Select a question below or enter your diligence query!`,
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="pointer-events-none fixed bottom-5 right-5 z-[80] flex items-end justify-end sm:bottom-7 sm:right-7">
       <div 
-        className="relative w-full max-w-3xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl shadow-violet-900/30 flex flex-col max-h-[92vh] overflow-hidden"
-        role="dialog"
-        aria-modal="true"
+        className="pointer-events-auto flex h-[min(650px,82vh)] w-[min(460px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-sand bg-surface-elevated shadow-2xl transition-all"
+        role="complementary"
+        aria-label="Assistant RAG StartupY"
       >
         {/* Modal Header */}
-        <div className="px-6 py-5 border-b border-slate-800 bg-[#0C1322] flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-sand px-4 py-3 bg-surface">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-violet-600/30">
-              <Sparkles className="w-5 h-5 animate-pulse" />
+            <div className="relative flex size-9 items-center justify-center rounded-xl bg-coral text-white shadow-md">
+              <Bot className="size-5" />
+              <span className="absolute -top-0.5 -right-0.5 size-2.5 rounded-full bg-emerald-500 ring-2 ring-surface"></span>
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-lg font-bold text-white tracking-tight">
-                  StartupBridge AI Tunisia RAG
+              <div className="flex items-center gap-1.5">
+                <h3 className="text-sm font-semibold text-ink">
+                  Assistant IA StartupY
                 </h3>
-                <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-blue-950 text-blue-300 border border-blue-700/50">
-                  Tunisia Knowledge Base
+                <span className="rounded bg-coral/10 px-1.5 py-0.5 text-[10px] font-bold text-coral uppercase tracking-wide">
+                  Guide Officiel
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
-                Grounding answers exclusively in Tunisian startup ecosystem sources.
+              <p className="text-[0.6875rem] text-taupe">
+                Connaissances vérifiées · Écosystème Tunisie
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <button
               onClick={handleResetChat}
-              className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
-              title="Reset conversation"
+              className="p-1.5 text-muted hover:text-ink hover:bg-sand/30 rounded-lg transition-colors cursor-pointer"
+              title="Réinitialiser la conversation"
             >
               <RefreshCw className="w-4 h-4" />
             </button>
             <button
               onClick={onClose}
-              className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
-              aria-label="Close AI Guide"
+              className="p-1.5 text-muted hover:text-ink hover:bg-sand/30 rounded-lg transition-colors cursor-pointer"
+              aria-label="Fermer le guide IA"
             >
               <X className="w-5 h-5" />
             </button>
@@ -293,53 +304,60 @@ Select a question below or enter your diligence query!`,
         </div>
 
         {/* Role Tabs */}
-        <div className="px-6 pt-3 pb-2 bg-[#0A0F1D] border-b border-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
+        <div className="flex items-center justify-between border-b border-sand px-3 py-2 bg-surface/50">
+          <div className="flex items-center gap-1 rounded-lg bg-surface border border-sand/40 p-0.5 w-full">
             <button
               onClick={() => setActiveTab('startup')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+              className={`flex-1 flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all ${
                 activeTab === 'startup'
-                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-coral text-white shadow-sm'
+                  : 'text-muted hover:text-ink'
               }`}
             >
-              <Building2 className="w-4 h-4" />
-              <span>Startup Tunisia Guide</span>
+              <Building2 className="w-3.5 h-3.5" />
+              <span>Startup</span>
             </button>
             
             <button
               onClick={() => setActiveTab('investor')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+              className={`flex-1 flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all ${
                 activeTab === 'investor'
-                  ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-coral text-white shadow-sm'
+                  : 'text-muted hover:text-ink'
               }`}
             >
-              <TrendingUp className="w-4 h-4" />
-              <span>Investor Tunisia Guide</span>
+              <TrendingUp className="w-3.5 h-3.5" />
+              <span>Investisseur</span>
             </button>
-          </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400 font-medium">
-            <BookOpen className="w-3.5 h-3.5 text-blue-400" />
-            <span>RAG Verified Knowledge Base</span>
+            <button
+              onClick={() => setActiveTab('admin')}
+              className={`flex-1 flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all ${
+                activeTab === 'admin'
+                  ? 'bg-coral text-white shadow-sm'
+                  : 'text-muted hover:text-ink'
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Général</span>
+            </button>
           </div>
         </div>
 
-        {/* Suggested Questions Pill Carousel (5 questions per role) */}
-        <div className="px-6 py-3 bg-[#0A0F1D]/60 border-b border-slate-800/70 overflow-x-auto">
+        {/* Suggested Questions Carousel */}
+        <div className="overflow-x-auto border-b border-sand px-3 py-2 bg-sand/10">
           <div className="flex items-center gap-2 text-xs">
-            <span className="text-slate-400 flex items-center gap-1 font-semibold flex-shrink-0">
-              <HelpCircle className="w-3.5 h-3.5 text-blue-400" />
-              Suggested:
+            <span className="text-muted flex items-center gap-1 font-semibold flex-shrink-0 text-[11px]">
+              <HelpCircle className="w-3.5 h-3.5 text-coral" />
+              Suggestions :
             </span>
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
               {currentQuestions.map((q) => (
                 <button
                   key={q.id}
                   onClick={() => handleSelectSuggestedQuestion(q)}
                   disabled={isLoading}
-                  className="whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 bg-slate-800 hover:bg-slate-700/80 hover:text-white border border-slate-700/60 hover:border-blue-500/50 transition-all cursor-pointer flex-shrink-0 disabled:opacity-50"
+                  className="whitespace-nowrap rounded-md border border-sand bg-surface px-2.5 py-1 text-[0.6875rem] text-ink transition hover:border-coral/40 hover:bg-coral/10 hover:text-coral disabled:opacity-50 cursor-pointer"
                 >
                   {q.question}
                 </button>
@@ -349,129 +367,129 @@ Select a question below or enter your diligence query!`,
         </div>
 
         {/* Chat Messages Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 bg-[#080D18]">
+        <div className="flex-1 space-y-4 overflow-y-auto p-3.5">
+          {/* Empty State Banner if messages empty */}
+          {currentMessages.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-10 text-center px-4">
+              <div className="size-12 rounded-2xl bg-coral/10 text-coral flex items-center justify-center mb-3">
+                <MessageSquare className="size-6" />
+              </div>
+              <h4 className="text-sm font-semibold text-ink">Aucun message pour le moment</h4>
+              <p className="text-xs text-taupe mt-1 max-w-xs">
+                Posez une question sur le cadre légal ou cliquez sur l'une des suggestions ci-dessus.
+              </p>
+            </div>
+          )}
+
           {currentMessages.map((msg) => {
             const isAi = msg.sender === 'ai';
-            const isLive = msg.mode === 'live';
             const hasSources = isAi && msg.sources && msg.sources.length > 0;
-            const hasUnverifiedSources = hasSources && msg.sources.some(s => s.verified === false);
 
             return (
               <div
                 key={msg.id}
-                className={`flex gap-3.5 ${isAi ? 'items-start' : 'items-start flex-row-reverse'}`}
+                className={`flex gap-3 ${isAi ? 'items-start' : 'items-start flex-row-reverse'}`}
               >
                 {/* Avatar */}
                 <div
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md ${
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm ${
                     isAi
-                      ? 'bg-gradient-to-br from-violet-600 to-indigo-600 text-white'
-                      : 'bg-gradient-to-br from-blue-600 to-cyan-600 text-white'
+                      ? 'bg-coral text-white'
+                      : 'bg-sand text-ink'
                   }`}
                 >
-                  {isAi ? <Bot className="w-5 h-5" /> : <User className="w-5 h-5" />}
+                  {isAi ? <Bot className="w-4 h-4" /> : <User className="w-4 h-4" />}
                 </div>
 
                 {/* Message Bubble */}
-                <div className="max-w-[88%] sm:max-w-[82%] space-y-1.5">
-                  
+                <div className="max-w-[88%] sm:max-w-[84%] space-y-1.5">
                   {isAi && (
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-violet-400">
-                        {activeTab === 'startup' ? 'Startup Tunisia Guide' : 'Investor Tunisia Guide'}
+                      <span className="text-xs font-bold text-coral">
+                        {msg.title || 'Assistant StartupY'}
                       </span>
-                      
-                      {/* Live AI Guidance badge vs Demo Guidance badge (Requirement 4) */}
-                      {isLive ? (
-                        <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-700/60 flex items-center gap-1 shadow-sm shadow-emerald-500/20">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                          Live AI guidance
-                        </span>
-                      ) : (
-                        <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-violet-950 text-violet-300 border border-violet-800/60">
-                          Demo guidance
-                        </span>
-                      )}
-
-                      <span className="text-[10px] text-slate-400 ml-auto">
+                      <span className="text-[10px] text-muted ml-auto">
                         {msg.timestamp}
                       </span>
                     </div>
                   )}
 
                   <div
-                    className={`rounded-2xl p-4 sm:p-5 text-sm leading-relaxed ${
+                    className={`rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm leading-relaxed ${
                       isAi
-                        ? 'bg-slate-800/90 text-slate-100 border border-slate-700/70 shadow-lg'
-                        : 'bg-blue-600 text-white font-medium ml-auto shadow-md'
+                        ? msg.isError 
+                          ? 'bg-red-500/10 text-red-600 border border-red-500/20'
+                          : 'bg-surface text-ink border border-sand shadow-sm'
+                        : 'bg-coral text-white font-medium ml-auto shadow-md'
                     }`}
                   >
                     {isAi ? (
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {/* Answer Text */}
-                        <div className="whitespace-pre-line text-slate-200 text-sm leading-relaxed">
+                        <div className="whitespace-pre-line text-ink leading-relaxed">
                           {msg.content}
                         </div>
 
-                        {/* Visible Sources Consulted Section (Requirement 4 & 5) */}
+                        {/* Verified Sources Consulted Section */}
                         {hasSources && (
-                          <div className="pt-3 border-t border-slate-700/70 space-y-2">
-                            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-300 uppercase tracking-wider">
-                              <BookOpen className="w-3.5 h-3.5 text-blue-400" />
-                              <span>Sources Consulted ({msg.sources.length}):</span>
+                          <div className="pt-3 border-t border-sand space-y-2">
+                            <div className="flex items-center gap-1.5 text-[11px] font-bold text-ink uppercase tracking-wider">
+                              <BookOpen className="w-3.5 h-3.5 text-coral" />
+                              <span>Sources vérifiées ({msg.sources.length}) :</span>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div className="space-y-1.5">
                               {msg.sources.map((src, idx) => (
                                 <div 
                                   key={idx} 
-                                  className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/80 text-xs space-y-1"
+                                  className="p-2.5 rounded-lg bg-surface-elevated border border-sand/70 text-xs flex flex-col gap-1 transition-colors hover:border-coral/40"
                                 >
-                                  <div className="font-semibold text-white line-clamp-1">
-                                    {src.title}
+                                  <div className="flex items-start justify-between gap-2">
+                                    <span className="font-semibold text-ink line-clamp-1">
+                                      {src.title}
+                                    </span>
+                                    {src.url ? (
+                                      <a 
+                                        href={src.url} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-coral hover:text-coral-dark inline-flex items-center gap-1 text-[11px] font-medium flex-shrink-0"
+                                      >
+                                        <span>Consulter</span>
+                                        <ExternalLink className="size-3" />
+                                      </a>
+                                    ) : null}
                                   </div>
-                                  <div className="flex items-center justify-between text-[11px] text-slate-400">
-                                    <span className="text-blue-400">{src.category}</span>
-                                    {src.verified ? (
-                                      <span className="text-emerald-400 font-medium">✓ Verified</span>
-                                    ) : (
-                                      <span className="text-amber-400 font-medium">Draft</span>
-                                    )}
+                                  <div className="text-[10px] text-taupe flex items-center justify-between">
+                                    <span>{src.publisher || src.source}</span>
+                                    {src.score ? (
+                                      <span className="text-taupe font-medium">{Math.round(src.score * 100)}% pertinence</span>
+                                    ) : null}
                                   </div>
                                 </div>
                               ))}
                             </div>
-
-                            {/* Warning when no verified source is available (Requirement 4) */}
-                            {hasUnverifiedSources && (
-                              <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-800/40 text-amber-300 text-[11px] leading-tight flex items-start gap-2">
-                                <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-                                <div>
-                                  <strong>Notice:</strong> The sources consulted are educational drafts pending official verification. Do not rely on them as certified legal or investment advice.
-                                </div>
-                              </div>
-                            )}
                           </div>
                         )}
 
-                        {/* Actions Strip */}
-                        <div className="pt-2 border-t border-slate-700/50 flex items-center justify-between text-xs text-slate-400">
-                          <span className="text-[11px] italic text-slate-400">
-                            Tunisian Knowledge Base Retrieval.
+                        {/* Copy Action Strip */}
+                        <div className="pt-2 border-t border-sand/50 flex items-center justify-between text-xs text-muted">
+                          <span className="text-[10px] text-taupe italic">
+                            Réponses vérifiées · Startup Act Tunisie
                           </span>
                           <button
                             onClick={() => copyToClipboard(msg.content, msg.id)}
-                            className="flex items-center gap-1 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
+                            className="flex items-center gap-1 text-taupe hover:text-ink transition-colors cursor-pointer text-xs"
                           >
                             {copiedId === msg.id ? (
                               <>
-                                <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                <span className="text-emerald-400">Copied</span>
+                                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                <span className="text-emerald-600 font-medium">Copié</span>
                               </>
                             ) : (
                               <>
                                 <Copy className="w-3.5 h-3.5" />
-                                <span>Copy</span>
+                                <span>Copier</span>
                               </>
                             )}
                           </button>
@@ -486,29 +504,32 @@ Select a question below or enter your diligence query!`,
             );
           })}
 
-          {/* Loading State Spinner (Requirement 5) */}
+          {/* Loading State Spinner */}
           {isLoading && (
-            <div className="flex gap-3.5 items-start">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white flex items-center justify-center shadow-md">
-                <Bot className="w-5 h-5" />
+            <div className="flex gap-3 items-start">
+              <div className="w-8 h-8 rounded-xl bg-coral text-white flex items-center justify-center shadow-md">
+                <Bot className="w-4 h-4" />
               </div>
-              <div className="bg-slate-800/90 rounded-2xl p-4 border border-slate-700/70 text-slate-300 text-sm flex items-center gap-3">
-                <Loader2 className="w-4 h-4 animate-spin text-violet-400" />
-                <span>Searching Tunisia knowledge base & synthesizing guidance...</span>
+              <div className="bg-surface rounded-xl p-3.5 border border-sand text-ink text-xs sm:text-sm flex items-center gap-2.5 shadow-sm">
+                <Loader2 className="w-4 h-4 animate-spin text-coral flex-shrink-0" />
+                <span>Recherche dans la base de connaissances & synthèse en cours...</span>
               </div>
             </div>
           )}
 
-          {/* Retry Button Banner if Error/Fallback occurred (Requirement 5) */}
-          {lastFailedQuery && !isLoading && (
-            <div className="p-3 rounded-xl bg-blue-950/60 border border-blue-800/60 text-blue-300 text-xs flex items-center justify-between">
-              <span>Used local Tunisia knowledge fallback. Would you like to retry the server call?</span>
+          {/* Error Banner with Retry */}
+          {errorMessage && !isLoading && (
+            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 text-xs flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="size-4 flex-shrink-0 text-red-600" />
+                <span>{errorMessage}</span>
+              </div>
               <button
                 onClick={handleRetryLastQuery}
-                className="flex items-center gap-1 px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold cursor-pointer"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-coral text-white font-medium cursor-pointer hover:bg-coral-dark text-xs flex-shrink-0"
               >
-                <RotateCcw className="w-3 h-3" />
-                <span>Retry</span>
+                <RotateCcw className="size-3" />
+                <span>Réessayer</span>
               </button>
             </div>
           )}
@@ -517,7 +538,7 @@ Select a question below or enter your diligence query!`,
         </div>
 
         {/* Input Form */}
-        <div className="p-4 sm:p-5 bg-[#0C1322] border-t border-slate-800">
+        <div className="border-t border-sand p-3 bg-surface">
           <form onSubmit={handleSendCustomQuery} className="flex items-center gap-2">
             <input
               type="text"
@@ -526,30 +547,31 @@ Select a question below or enter your diligence query!`,
               disabled={isLoading}
               placeholder={
                 activeTab === 'startup'
-                  ? 'Ask about creating a SARL/SUARL, RNE registration, pitch decks, TND valuations...'
-                  : 'Ask about founder evaluation, due diligence in Tunisia, currency risk, ticket sizes in TND...'
+                  ? 'Posez votre question (ex: Bourse Startup Act, SARL, compte devises...)'
+                  : (activeTab === 'investor' 
+                      ? 'Diligence investisseur (ex: dégrèvement fiscal, ANAVA, SAFE en TND...)'
+                      : 'Recherche générale dans la base de connaissances...')
               }
-              className="flex-1 bg-slate-800/90 text-white placeholder-slate-400 text-sm rounded-xl px-4 py-3 border border-slate-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all disabled:opacity-50"
+              className="min-w-0 flex-1 rounded-xl border border-sand bg-surface-elevated px-3.5 py-2.5 text-xs sm:text-sm text-ink outline-none focus:border-coral focus:ring-2 focus:ring-coral/20 disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={!inputQuery.trim() || isLoading}
-              className="px-5 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 text-white font-semibold text-sm shadow-md shadow-violet-600/25 flex items-center gap-2 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 rounded-xl bg-coral px-4 py-2.5 text-xs font-semibold text-white shadow-md transition-colors hover:bg-coral-dark disabled:opacity-50 cursor-pointer flex-shrink-0"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <>
-                  <span>Ask AI</span>
-                  <Send className="w-4 h-4" />
+                  <span className="hidden sm:inline">Envoyer</span>
+                  <Send className="w-3.5 h-3.5" />
                 </>
               )}
             </button>
           </form>
-          <div className="flex items-center justify-between mt-2 px-1 text-[11px] text-slate-400">
-            <span>RAG Engine: answers grounded in local Tunisian sources with automatic demo fallback.</span>
-            <span className="hidden sm:inline">No API keys exposed in browser</span>
-          </div>
+          <p className="mt-2 px-1 text-[0.625rem] text-taupe leading-tight">
+            Les réponses proviennent de la documentation officielle de l'écosystème startup en Tunisie et sont fournies à titre indicatif.
+          </p>
         </div>
       </div>
     </div>

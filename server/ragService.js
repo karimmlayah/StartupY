@@ -77,7 +77,7 @@ ${MANDATORY_DISCLAIMER}`;
 }
 
 /**
- * Call LLM (Gemini or Groq) with retrieved chunks as context
+ * Call an LLM with retrieved chunks as context.
  */
 export async function generateRAGResponse(role, question) {
   const retrievedChunks = retrieveContextChunks(role, question);
@@ -90,6 +90,9 @@ export async function generateRAGResponse(role, question) {
 
   const geminiApiKey = process.env.GEMINI_API_KEY;
   const groqApiKey = process.env.GROQ_API_KEY;
+  const nvidiaApiKey = process.env.NVIDIA_API_KEY;
+  const nvidiaModel = process.env.NVIDIA_MODEL || 'moonshotai/kimi-k3';
+  const nvidiaBaseUrl = process.env.NVIDIA_BASE_URL || 'https://integrate.api.nvidia.com/v1';
 
   // Build the strict prompt context
   const contextString = retrievedChunks.map((c, i) => 
@@ -105,7 +108,46 @@ Strict Rules:
 - End your final output with exactly this sentence:
 "${MANDATORY_DISCLAIMER}"`;
 
-  // 1. Try Gemini if configured
+  // 1. NVIDIA NIM / Kimi-K3 is the primary live model.
+  if (nvidiaApiKey && !nvidiaApiKey.startsWith('your_')) {
+    try {
+      const response = await fetch(`${nvidiaBaseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${nvidiaApiKey}`,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          model: nvidiaModel,
+          messages: [
+            { role: 'system', content: systemInstructions },
+            { role: 'user', content: `=== CONTEXT CHUNKS ===\n${contextString}\n\n=== USER QUESTION (Role: ${role}) ===\n${question}` }
+          ],
+          temperature: 0.2,
+          max_tokens: 1200,
+          stream: false,
+          reasoning_effort: 'medium'
+        })
+      });
+
+      if (!response.ok) {
+        const details = await response.text();
+        throw new Error(`NVIDIA NIM returned ${response.status}: ${details.slice(0, 300)}`);
+      }
+
+      const data = await response.json();
+      let answerText = data.choices?.[0]?.message?.content;
+      if (answerText) {
+        if (!answerText.includes(MANDATORY_DISCLAIMER)) answerText += `\n\n${MANDATORY_DISCLAIMER}`;
+        return { answer: answerText.trim(), sources, mode: 'live', provider: 'nvidia', model: nvidiaModel };
+      }
+    } catch (error) {
+      console.error('NVIDIA NIM generation failed:', error.message);
+    }
+  }
+
+  // 2. Try Gemini if configured
   if (geminiApiKey && geminiApiKey !== 'your_gemini_api_key_here') {
     const geminiModels = ['gemini-2.5-flash-lite', 'gemini-flash-latest', 'gemini-3.8-flash', 'gemini-1.5-flash'];
     for (const model of geminiModels) {
@@ -150,7 +192,7 @@ Strict Rules:
     }
   }
 
-  // 2. Try Groq if configured
+  // 3. Try Groq if configured
   if (groqApiKey && groqApiKey !== 'your_groq_api_key_here') {
     const groqModels = ['qwen/qwen3.8-27b', 'openai/gpt-oss-20b', 'openai/gpt-oss-120b', 'llama-3.1-8b-instant'];
     for (const model of groqModels) {
@@ -192,7 +234,7 @@ Strict Rules:
     }
   }
 
-  // 3. Fallback: Local Structured RAG Answer (Demo Mode)
+  // 4. Fallback: Local Structured RAG Answer
   const localAnswer = generateLocalRAGAnswer(role, question, retrievedChunks);
   return {
     answer: localAnswer,

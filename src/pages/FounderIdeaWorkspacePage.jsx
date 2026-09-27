@@ -156,7 +156,7 @@ function generateRoadmapRecommendations(answers) {
   recommendations.push({
     priority: 'medium',
     title: 'Complete Founder Diagnostic',
-    description: 'Assess your founding team\'s skills, commitment, and equity structure using the Bidaya roadmap.',
+    description: 'Assess your founding team\'s skills, commitment, and equity structure using the StartupY roadmap.',
     roadmapStep: 1,
   });
 
@@ -359,15 +359,15 @@ export default function FounderIdeaWorkspacePage() {
   };
 
   const getReadinessColor = (pct) => {
-    if (pct >= 70) return 'text-emerald-400';
-    if (pct >= 40) return 'text-amber-400';
-    return 'text-rose-400';
+    if (pct >= 70) return 'text-success';
+    if (pct >= 40) return 'text-warning';
+    return 'text-danger';
   };
 
   const getPriorityColor = (priority) => {
-    if (priority === 'high') return 'border-rose-500/40 bg-rose-500/10';
-    if (priority === 'medium') return 'border-amber-500/40 bg-amber-500/10';
-    return 'border-blue-500/40 bg-blue-500/10';
+    if (priority === 'high') return 'border-danger/30 bg-danger-bg0/10';
+    if (priority === 'medium') return 'border-warning/30 bg-warning-bg/10';
+    return 'border-coral/40 bg-coral-dark/10';
   };
 
   const getPriorityLabel = (priority) => {
@@ -380,51 +380,51 @@ export default function FounderIdeaWorkspacePage() {
     <div className="min-h-[85vh] py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
       
       {/* Privacy Banner */}
-      <div className="mb-6 p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-violet-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
-          <Shield className="w-5 h-5 text-blue-400" />
+      <div className="mb-6 p-4 rounded-lg bg-surface-elevated border border-sand flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-coral border border-coral/40 flex items-center justify-center flex-shrink-0">
+          <Shield className="w-5 h-5 text-coral" />
         </div>
         <div>
           <p className="text-sm font-semibold text-white flex items-center gap-2">
-            <Lock className="w-3.5 h-3.5 text-slate-400" />
+            <Lock className="w-3.5 h-3.5 text-muted" />
             Private Founder Workspace
           </p>
-          <p className="text-xs text-slate-400">
-            Everything here is visible only to you. Your startup is in <span className="text-slate-300 font-semibold">Draft</span> status — invisible to all investors, other users and search.
+          <p className="text-xs text-muted">
+            Everything here is visible only to you. Your startup is in <span className="text-brown-mid font-semibold">Draft</span> status — invisible to all investors, other users and search.
           </p>
         </div>
       </div>
 
       {/* Workspace Header */}
       <div className="mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-950/70 border border-violet-800/60 text-xs font-semibold text-violet-300 mb-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-coral/10 border border-coral/40 text-xs font-semibold text-coral mb-3">
           <Brain className="w-3.5 h-3.5" />
           <span>AI-Guided Idea Diagnostic</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-semibold text-white tracking-tight">
           Tell us about your startup idea
         </h1>
-        <p className="text-sm text-slate-400 mt-2 max-w-2xl">
+        <p className="text-sm text-muted mt-2 max-w-2xl">
           Even if it's not fully formed yet. Our AI guide will help you structure your thinking and create a personalized roadmap for the Tunisian ecosystem.
         </p>
       </div>
 
       {/* Progress Bar */}
       <div className="mb-6">
-        <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+        <div className="flex items-center justify-between text-xs text-muted mb-2">
           <span>Question {Math.min(currentStep + 1, DIAGNOSTIC_QUESTIONS.length)} of {DIAGNOSTIC_QUESTIONS.length}</span>
           <span>{completed ? '✅ Complete' : `${Math.round((currentStep / DIAGNOSTIC_QUESTIONS.length) * 100)}%`}</span>
         </div>
-        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+        <div className="h-2 bg-surface rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-blue-500 via-violet-500 to-indigo-500 rounded-full transition-all duration-700 ease-out"
+            className="h-full bg-coral rounded-full transition-all duration-700 ease-out"
             style={{ width: `${completed ? 100 : (currentStep / DIAGNOSTIC_QUESTIONS.length) * 100}%` }}
           />
         </div>
       </div>
 
       {/* Chat Conversation */}
-      <div className="bg-slate-900/60 rounded-3xl border border-slate-800 overflow-hidden shadow-2xl">
+      <div className="bg-surface rounded-xl border border-sand overflow-hidden shadow-sm">
         
         {/* Chat Body */}
         <div className="p-4 sm:p-6 space-y-4 max-h-[60vh] overflow-y-auto">
@@ -432,11 +432,11 @@ export default function FounderIdeaWorkspacePage() {
             if (msg.type === 'ai') {
               return (
                 <div key={idx} className="flex gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/20">
+                  <div className="w-8 h-8 rounded-xl bg-coral flex items-center justify-center flex-shrink-0 shadow-sm">
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
-                  <div className="bg-slate-800/80 rounded-2xl rounded-tl-md p-4 max-w-[85%] border border-slate-700/50">
-                    <p className="text-sm text-slate-200 leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                  <div className="bg-surface rounded-lg rounded-tl-md p-4 max-w-[85%] border border-sand">
+                    <p className="text-sm text-brown-mid leading-relaxed whitespace-pre-wrap">{msg.text}</p>
                   </div>
                 </div>
               );
@@ -447,18 +447,18 @@ export default function FounderIdeaWorkspacePage() {
               const QIcon = q.icon;
               return (
                 <div key={idx} className="flex gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/20">
+                  <div className="w-8 h-8 rounded-xl bg-coral flex items-center justify-center flex-shrink-0 shadow-sm">
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
-                  <div className="bg-gradient-to-br from-blue-950/80 to-violet-950/80 rounded-2xl rounded-tl-md p-4 max-w-[85%] border border-blue-500/30 shadow-lg shadow-blue-500/10">
+                  <div className="bg-coral rounded-lg rounded-tl-md p-4 max-w-[85%] border border-coral/40 shadow-sm">
                     <div className="flex items-center gap-2 mb-2">
-                      <QIcon className="w-4 h-4 text-blue-400" />
-                      <span className="text-xs font-bold text-blue-300 uppercase tracking-wider">
+                      <QIcon className="w-4 h-4 text-coral" />
+                      <span className="text-xs font-bold text-coral uppercase tracking-wider">
                         Question {msg.questionIndex + 1}
                       </span>
                     </div>
                     <p className="text-sm font-semibold text-white">{q.question}</p>
-                    <p className="text-xs text-slate-400 mt-1.5">{q.hint}</p>
+                    <p className="text-xs text-muted mt-1.5">{q.hint}</p>
                   </div>
                 </div>
               );
@@ -467,10 +467,10 @@ export default function FounderIdeaWorkspacePage() {
             if (msg.type === 'user') {
               return (
                 <div key={idx} className="flex gap-3 justify-end">
-                  <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl rounded-tr-md p-4 max-w-[85%] shadow-lg shadow-blue-500/20">
+                  <div className="bg-coral rounded-lg rounded-tr-md p-4 max-w-[85%] shadow-sm">
                     <p className="text-sm text-white leading-relaxed whitespace-pre-wrap">{msg.text}</p>
                   </div>
-                  <div className="w-8 h-8 rounded-xl bg-slate-700 flex items-center justify-center flex-shrink-0 text-white font-bold text-xs">
+                  <div className="w-8 h-8 rounded-xl bg-sand flex items-center justify-center flex-shrink-0 text-white font-bold text-xs">
                     {profile?.full_name?.charAt(0) || 'F'}
                   </div>
                 </div>
@@ -484,21 +484,21 @@ export default function FounderIdeaWorkspacePage() {
                 <div key={idx} className="space-y-4">
                   {/* Readiness Score Card */}
                   <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-violet-500/20">
+                    <div className="w-8 h-8 rounded-xl bg-coral flex items-center justify-center flex-shrink-0 shadow-sm">
                       <Sparkles className="w-4 h-4 text-white" />
                     </div>
-                    <div className="flex-1 bg-slate-800/80 rounded-2xl rounded-tl-md p-5 border border-slate-700/50 space-y-4">
+                    <div className="flex-1 bg-surface rounded-lg rounded-tl-md p-5 border border-sand space-y-4">
                       <div className="text-center">
-                        <p className="text-xs font-bold text-violet-300 uppercase tracking-wider mb-2">
+                        <p className="text-xs font-bold text-coral uppercase tracking-wider mb-2">
                           Initial Readiness Score
                         </p>
-                        <div className={`text-5xl font-black ${getReadinessColor(result.percentage)}`}>
+                        <div className={`text-5xl font-semibold ${getReadinessColor(result.percentage)}`}>
                           {result.percentage}%
                         </div>
-                        <p className="text-xs text-slate-400 mt-1">
+                        <p className="text-xs text-muted mt-1">
                           {result.score} / {result.maxScore} points
                         </p>
-                        <p className="text-xs text-slate-300 mt-3 max-w-md mx-auto leading-relaxed">
+                        <p className="text-xs text-brown-mid mt-3 max-w-md mx-auto leading-relaxed">
                           {result.percentage >= 70
                             ? 'Strong foundation! You\'re well positioned to move forward quickly.'
                             : result.percentage >= 40
@@ -509,7 +509,7 @@ export default function FounderIdeaWorkspacePage() {
                       </div>
 
                       {/* Recommendations */}
-                      <div className="space-y-2 pt-3 border-t border-slate-700/50">
+                      <div className="space-y-2 pt-3 border-t border-sand">
                         <p className="text-xs font-bold text-white uppercase tracking-wider">
                           Your Personalized Roadmap:
                         </p>
@@ -517,21 +517,21 @@ export default function FounderIdeaWorkspacePage() {
                           <div key={i} className={`p-3 rounded-xl border ${getPriorityColor(rec.priority)}`}>
                             <div className="flex items-center gap-2 mb-1">
                               <span className={`text-[10px] font-bold uppercase tracking-wider ${
-                                rec.priority === 'high' ? 'text-rose-400' : rec.priority === 'medium' ? 'text-amber-400' : 'text-blue-400'
+                                rec.priority === 'high' ? 'text-danger' : rec.priority === 'medium' ? 'text-warning' : 'text-coral'
                               }`}>
                                 {getPriorityLabel(rec.priority)}
                               </span>
-                              <span className="text-[10px] text-slate-500">Step {rec.roadmapStep}</span>
+                              <span className="text-[10px] text-taupe">Step {rec.roadmapStep}</span>
                             </div>
                             <p className="text-xs font-semibold text-white">{rec.title}</p>
-                            <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">{rec.description}</p>
+                            <p className="text-[11px] text-muted mt-0.5 leading-relaxed">{rec.description}</p>
                           </div>
                         ))}
                       </div>
 
                       {/* Privacy reminder */}
-                      <div className="p-3 rounded-xl bg-blue-950/50 border border-blue-800/40 text-xs text-blue-200 flex items-start gap-2">
-                        <Lock className="w-3.5 h-3.5 text-blue-400 flex-shrink-0 mt-0.5" />
+                      <div className="p-3 rounded-xl bg-coral/10 border border-coral/40 text-xs text-coral flex items-start gap-2">
+                        <Lock className="w-3.5 h-3.5 text-coral flex-shrink-0 mt-0.5" />
                         <span>
                           Your startup remains completely private in <strong>Draft</strong> status. When you're ready, you can request investor visibility from your dashboard — but only after completing key roadmap items.
                         </span>
@@ -548,13 +548,13 @@ export default function FounderIdeaWorkspacePage() {
           {/* Typing indicator */}
           {isTyping && (
             <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-coral flex items-center justify-center flex-shrink-0">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
-              <div className="bg-slate-800/80 rounded-2xl rounded-tl-md p-4 border border-slate-700/50">
+              <div className="bg-surface rounded-lg rounded-tl-md p-4 border border-sand">
                 <div className="flex items-center gap-2">
-                  <Loader2 className="w-4 h-4 text-violet-400 animate-spin" />
-                  <span className="text-xs text-slate-400">Analyzing your response...</span>
+                  <Loader2 className="w-4 h-4 text-coral animate-spin" />
+                  <span className="text-xs text-muted">Analyzing your response...</span>
                 </div>
               </div>
             </div>
@@ -565,7 +565,7 @@ export default function FounderIdeaWorkspacePage() {
 
         {/* Input Area */}
         {!completed ? (
-          <div className="p-4 sm:p-6 border-t border-slate-800 bg-slate-900/80">
+          <div className="p-4 sm:p-6 border-t border-sand bg-surface-elevated">
             <div className="flex gap-3">
               <textarea
                 value={currentInput}
@@ -574,34 +574,34 @@ export default function FounderIdeaWorkspacePage() {
                 placeholder={DIAGNOSTIC_QUESTIONS[currentStep]?.placeholder || 'Type your answer...'}
                 rows={3}
                 disabled={isTyping}
-                className="flex-1 px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all resize-none disabled:opacity-50"
+                className="flex-1 px-4 py-3 rounded-xl bg-surface border border-sand text-white placeholder-taupe text-sm focus:outline-none focus:border-coral focus:ring-1 focus:ring-coral/30 transition-all resize-none disabled:opacity-50"
               />
               <button
                 onClick={handleSubmitAnswer}
                 disabled={!currentInput.trim() || isTyping}
                 className={`self-end px-4 py-3 rounded-xl font-bold text-sm transition-all cursor-pointer ${
                   currentInput.trim() && !isTyping
-                    ? 'bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-lg shadow-blue-500/30 hover:scale-105'
-                    : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                    ? 'bg-coral text-white shadow-sm hover:scale-105'
+                    : 'bg-surface text-taupe cursor-not-allowed'
                 }`}
               >
                 <Send className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-[11px] text-slate-500 mt-2">
+            <p className="text-[11px] text-taupe mt-2">
               Press Enter to send • Shift+Enter for new line
             </p>
           </div>
         ) : (
-          <div className="p-4 sm:p-6 border-t border-slate-800 bg-slate-900/80">
+          <div className="p-4 sm:p-6 border-t border-sand bg-surface-elevated">
             <button
               onClick={handleGoToDashboard}
-              className="w-full py-4 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 shadow-xl shadow-blue-600/30 transition-all cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.02]"
+              className="w-full py-4 rounded-lg font-bold text-sm text-white bg-coral shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.02]"
             >
               <span>Go to Your Startup Dashboard</span>
               <ArrowRight className="w-4 h-4" />
             </button>
-            <p className="text-center text-xs text-slate-500 mt-2">
+            <p className="text-center text-xs text-taupe mt-2">
               Your answers are saved. You can continue building from your dashboard.
             </p>
           </div>
@@ -638,7 +638,7 @@ function getAcknowledgment(questionId, answer) {
     case 'prototype':
       return answer.toLowerCase().includes('mvp') || answer.toLowerCase().includes('live')
         ? 'Having a working product is a significant advantage. This will help tremendously with validation and fundraising.'
-        : 'You\'re at a perfect stage to use the Bidaya roadmap. We\'ll guide you step by step.';
+        : 'You\'re at a perfect stage to use the StartupY roadmap. We\'ll guide you step by step.';
     case 'funding':
       return 'Understood. Your funding strategy should align with your stage and traction. We\'ll help you identify the right timing and sources in Tunisia.';
     default:

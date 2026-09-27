@@ -57,7 +57,7 @@ const INITIAL_ADMIN_STARTUPS = INITIAL_STARTUPS.map((s, idx) => ({
   publicationStatus: idx === 0 ? 'approved' : idx === 1 ? 'under_review' : idx === 2 ? 'approved' : 'draft',
   readinessScore: idx === 0 ? 92 : idx === 1 ? 78 : 65,
   reviewerNote: idx === 0 ? 'Verified RNE and IoT validation.' : idx === 1 ? 'Pending Startup Act Label validation.' : 'Drafting MVP roadmap.',
-  feedbackToFounder: idx === 0 ? 'Your profile is approved and visible to accredited Tunisian investors.' : 'Under administrative review by the Bidaya team.'
+  feedbackToFounder: idx === 0 ? 'Your profile is approved and visible to accredited Tunisian investors.' : 'Under administrative review by the StartupY team.'
 }));
 
 const INITIAL_ADMIN_INVESTORS = INITIAL_INVESTORS.map((inv, idx) => ({
@@ -193,6 +193,6 @@ export function getPlatformUsers() {
     { id: 'usr_04', name: 'Leila Trabelsi', email: 'leila@jasminecapital.tn', role: 'investor', org: 'Jasmine Capital', governorate: 'Tunis', joined: '2026-09-10' },
     { id: 'usr_05', name: 'Khadija Mansour', email: 'khadija@soukcraft.tn', role: 'startup', org: 'SoukCraft Tunisia', governorate: 'Nabeul', joined: '2026-09-20' },
     { id: 'usr_06', name: 'Mehdi Charfi', email: 'diaspora@venture.tn', role: 'investor', org: 'Tunisian Diaspora Syndicate', governorate: 'Tunis / Paris', joined: '2026-09-08' },
-    { id: 'usr_admin', name: 'Bidaya Platform Administrator', email: 'admin@bidaya.tn', role: 'admin', org: 'Direction Générale Bidaya', governorate: 'Tunis', joined: '2026-09-01' }
+    { id: 'usr_admin', name: 'StartupY Platform Administrator', email: 'admin@bidaya.tn', role: 'admin', org: 'Direction Générale StartupY', governorate: 'Tunis', joined: '2026-09-01' }
   ];
 }

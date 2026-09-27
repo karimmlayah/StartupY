@@ -1,202 +1,173 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Navigate, useSearchParams } from 'react-router-dom';
-import { 
-  Rocket, 
-  TrendingUp, 
-  ArrowRight, 
-  CheckCircle2, 
-  ShieldCheck, 
-  AlertCircle,
-  Sparkles,
-  Lock
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { AlertCircle, ArrowRight, LoaderCircle, Rocket, ShieldCheck, TrendingUp } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+
+const dashboardForRole = (role) => {
+  if (role === 'admin') return '/admin';
+  if (role === 'investor') return '/investor';
+  return '/startup';
+};
 
 export default function ChooseRolePage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const { user, role, chooseRole, loading: authLoading } = useAuth();
-  
-  const intent = searchParams.get('intent');
-  const initialRole = intent === 'investor' ? 'investor' : intent === 'startup' ? 'startup' : null;
+  const {
+    user,
+    profile,
+    role,
+    loading: authLoading,
+    profileLoading,
+    profileError,
+    retryProfile,
+    chooseRole,
+    signOut,
+  } = useAuth();
 
-  const [selectedRole, setSelectedRole] = useState(initialRole);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [submittingRole, setSubmittingRole] = useState(null);
+  const [actionError, setActionError] = useState('');
+  const [retrying, setRetrying] = useState(false);
 
-  // If the user already has a role, they cannot change it. Redirect to appropriate dashboard.
-  if (role) {
-    if (role === 'admin') return <Navigate to="/admin" replace />;
-    if (role === 'investor') return <Navigate to="/dashboard/investor" replace />;
-    return <Navigate to="/dashboard/startup" replace />;
-  }
+  const assignedRole = ['admin', 'investor', 'startup'].includes(role) ? role : null;
 
-  const handleConfirmRole = async () => {
-    if (!selectedRole) {
-      setError('Please select one of the two roles below.');
-      return;
-    }
+  if (assignedRole) return <Navigate to={dashboardForRole(assignedRole)} replace />;
 
+  const isLoading = authLoading || profileLoading || (user && !profile && !profileError);
+
+  const handleChooseRole = async (selectedRole) => {
+    if (submittingRole) return;
+    setSubmittingRole(selectedRole);
+    setActionError('');
     try {
-      setSubmitting(true);
-      setError('');
       await chooseRole(selectedRole);
-
-      if (selectedRole === 'investor') {
-        navigate('/dashboard/investor');
-      } else {
-        // Redirect startup founders to the private AI idea workspace
-        navigate('/founder-workspace');
-      }
-    } catch (err) {
-      console.error('Failed to assign role:', err);
-      setError(err.message || 'Failed to save role choice.');
-      setSubmitting(false);
+      navigate(dashboardForRole(selectedRole), { replace: true });
+    } catch (error) {
+      console.error('Role assignment failed:', error);
+      setActionError(
+        selectedRole === 'admin'
+          ? 'Ce compte n’est pas préautorisé comme administrateur. Connectez-vous avec un compte administrateur autorisé.'
+          : 'Impossible d’enregistrer ce rôle pour le moment. Réessayez.'
+      );
+      setSubmittingRole(null);
     }
   };
 
-  return (
-    <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl w-full space-y-8 text-center">
-        
-        {/* Header */}
-        <div className="space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-950/70 border border-violet-800/60 text-xs font-semibold text-violet-300">
-            <Lock className="w-3.5 h-3.5" />
-            <span>One-Time Role Assignment</span>
-          </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-            How will you participate on Bidaya?
-          </h1>
-          <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto">
-            Choose your account role carefully. To preserve institutional integrity, your role is permanent and cannot be changed once confirmed.
-          </p>
-        </div>
+  const handleRetry = async () => {
+    setRetrying(true);
+    setActionError('');
+    try {
+      await retryProfile();
+    } finally {
+      setRetrying(false);
+    }
+  };
 
-        {error && (
-          <div className="max-w-md mx-auto p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2 text-left">
-            <AlertCircle className="w-4 h-4 flex-shrink-0" />
-            <span>{error}</span>
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/login', { replace: true });
+  };
+
+  if (isLoading) {
+    return (
+      <section className="flex min-h-[calc(100vh-72px)] items-center justify-center bg-cream px-6" aria-live="polite">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <LoaderCircle className="size-10 animate-spin text-coral" aria-hidden="true" />
+          <p className="text-sm font-medium text-ink">Chargement de votre profil…</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (profileError) {
+    return (
+      <section className="flex min-h-[calc(100vh-72px)] items-center justify-center bg-cream px-6 py-16">
+        <div className="w-full max-w-lg rounded-xl border border-danger/30 bg-surface-elevated p-8 text-center shadow-sm">
+          <span className="mx-auto flex size-11 items-center justify-center rounded-full bg-danger-bg text-danger">
+            <AlertCircle className="size-5" aria-hidden="true" />
+          </span>
+          <h1 className="mt-4 text-2xl font-semibold text-ink">Votre profil n’a pas pu être chargé</h1>
+          <p className="mt-2 text-sm leading-6 text-muted">{profileError}</p>
+          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+            <button type="button" onClick={handleRetry} disabled={retrying} className="inline-flex items-center justify-center rounded-md bg-coral px-5 py-2.5 text-sm font-medium text-white hover:bg-coral-dark disabled:cursor-wait disabled:opacity-60">
+              {retrying && <LoaderCircle className="mr-2 size-4 animate-spin" />}
+              Réessayer
+            </button>
+            <button type="button" onClick={handleSignOut} className="rounded-md border border-sand bg-surface px-5 py-2.5 text-sm font-medium text-ink hover:border-coral/40">
+              Se déconnecter
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const cards = [
+    {
+      role: 'admin',
+      title: 'Administrateur',
+      description: 'Gérez les validations et le fonctionnement de la plateforme avec un compte préautorisé.',
+      action: 'Continue as Admin',
+      Icon: ShieldCheck,
+    },
+    {
+      role: 'investor',
+      title: 'Investisseur',
+      description: 'Découvrez des startups tunisiennes vérifiées selon vos critères.',
+      action: 'Continue as Investor',
+      Icon: TrendingUp,
+    },
+    {
+      role: 'startup',
+      title: 'Startup',
+      description: 'Transformez votre idée en startup prête à rencontrer des investisseurs.',
+      action: 'Continue as Startup',
+      Icon: Rocket,
+    },
+  ];
+
+  return (
+    <section className="min-h-[calc(100vh-72px)] bg-cream px-4 py-14 sm:px-6 sm:py-20">
+      <div className="mx-auto max-w-6xl">
+        <header className="mx-auto max-w-2xl text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-coral">Votre espace StartupY</p>
+          <h1 className="mt-3 text-balance text-3xl font-semibold text-ink sm:text-5xl">
+            Choisissez votre espace StartupY
+          </h1>
+          <p className="mt-4 text-sm leading-6 text-muted sm:text-base">
+            Votre choix est enregistré dans votre profil sécurisé. L’accès administrateur exige une préautorisation.
+          </p>
+        </header>
+
+        {actionError && (
+          <div className="mx-auto mt-7 flex max-w-xl items-start gap-3 rounded-lg border border-danger/30 bg-danger-bg p-4 text-left text-sm text-danger" role="alert">
+            <AlertCircle className="mt-0.5 size-4 shrink-0" />
+            <span>{actionError}</span>
           </div>
         )}
 
-        {/* Two Required Role Cards: Startup Founder & Investor (No Admin Card) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-          
-          {/* Card 1: Startup Founder */}
-          <div 
-            onClick={() => setSelectedRole('startup')}
-            className={`p-7 rounded-3xl border-2 transition-all cursor-pointer relative group flex flex-col justify-between ${
-              selectedRole === 'startup'
-                ? 'bg-slate-900 border-blue-500 shadow-2xl shadow-blue-500/20 ring-4 ring-blue-500/10'
-                : 'bg-slate-900/70 border-slate-800 hover:border-slate-700'
-            }`}
-          >
-            {selectedRole === 'startup' && (
-              <div className="absolute top-5 right-5 w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-md">
-                <CheckCircle2 className="w-4 h-4" />
-              </div>
-            )}
-
-            <div className="space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform">
-                <Rocket className="w-7 h-7" />
-              </div>
-
-              <div>
-                <h3 className="text-xl font-bold text-white">
-                  I am a Startup Founder
-                </h3>
-                <p className="text-xs text-blue-400 font-semibold mt-0.5">
-                  Tunisian Venture Builder
-                </p>
-              </div>
-
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                Build your verified startup roadmap, track readiness for the Tunisian Startup Act, calculate objective match scores, and schedule private Bidaya Video Meetings with verified investors.
-              </p>
-            </div>
-
-            <div className="pt-6 border-t border-slate-800/80 mt-6 space-y-2">
-              <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
-                <span>11-step structured roadmap</span>
-              </div>
-              <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
-                <span>Explainable Smart Match Engine</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 2: Investor */}
-          <div 
-            onClick={() => setSelectedRole('investor')}
-            className={`p-7 rounded-3xl border-2 transition-all cursor-pointer relative group flex flex-col justify-between ${
-              selectedRole === 'investor'
-                ? 'bg-slate-900 border-violet-500 shadow-2xl shadow-violet-500/20 ring-4 ring-violet-500/10'
-                : 'bg-slate-900/70 border-slate-800 hover:border-slate-700'
-            }`}
-          >
-            {selectedRole === 'investor' && (
-              <div className="absolute top-5 right-5 w-6 h-6 rounded-full bg-violet-500 text-white flex items-center justify-center shadow-md">
-                <CheckCircle2 className="w-4 h-4" />
-              </div>
-            )}
-
-            <div className="space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 text-white flex items-center justify-center shadow-lg shadow-violet-500/30 group-hover:scale-105 transition-transform">
-                <TrendingUp className="w-7 h-7" />
-              </div>
-
-              <div>
-                <h3 className="text-xl font-bold text-white">
-                  I am an Investor
-                </h3>
-                <p className="text-xs text-violet-400 font-semibold mt-0.5">
-                  Angel, Fund, Corporate or Diaspora
-                </p>
-              </div>
-
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                Deploy smart capital in Tunisian Dinars. Complete our investor verification to access approved deal flow, review due diligence packages, and conduct 1-on-1 Bidaya Meetings.
-              </p>
-            </div>
-
-            <div className="pt-6 border-t border-slate-800/80 mt-6 space-y-2">
-              <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-violet-400" />
-                <span>Accreditation & verification process</span>
-              </div>
-              <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-violet-400" />
-                <span>Access approved Tunisian deal flow</span>
-              </div>
-            </div>
-          </div>
-
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {cards.map(({ role: cardRole, title, description, action, Icon }) => {
+            const selected = submittingRole === cardRole;
+            return (
+              <article key={cardRole} className={`flex min-h-72 flex-col rounded-xl border bg-surface-elevated p-7 shadow-sm transition sm:p-8 ${selected ? 'border-coral ring-4 ring-coral/10' : 'border-sand hover:border-coral/40'}`}>
+                <span className="flex size-12 items-center justify-center rounded-lg bg-coral/10 text-coral">
+                  <Icon className="size-6" aria-hidden="true" />
+                </span>
+                <h2 className="mt-7 text-2xl font-semibold text-ink">{title}</h2>
+                <p className="mt-3 flex-1 text-sm leading-6 text-muted">{description}</p>
+                <button
+                  type="button"
+                  onClick={() => handleChooseRole(cardRole)}
+                  disabled={Boolean(submittingRole)}
+                  className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-md bg-coral px-5 py-3 text-sm font-medium text-white shadow-sm hover:bg-coral-dark disabled:cursor-wait disabled:opacity-60"
+                >
+                  {selected ? <LoaderCircle className="size-4 animate-spin" /> : <ArrowRight className="size-4" />}
+                  {selected ? 'Enregistrement…' : action}
+                </button>
+              </article>
+            );
+          })}
         </div>
-
-        {/* Confirmation Button */}
-        <div className="pt-4 max-w-sm mx-auto">
-          <button
-            onClick={handleConfirmRole}
-            disabled={!selectedRole || submitting}
-            className={`w-full py-4 rounded-2xl font-bold text-sm text-white shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
-              selectedRole && !submitting
-                ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 shadow-blue-600/30 hover:scale-[1.02]'
-                : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed opacity-50'
-            }`}
-          >
-            <span>{submitting ? 'Confirming Role...' : 'Confirm Role Selection'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-          <p className="text-[11px] text-slate-500 mt-2">
-            Selected role is saved permanently to your profile record.
-          </p>
-        </div>
-
       </div>
-    </div>
+    </section>
   );
 }

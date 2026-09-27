@@ -29,21 +29,52 @@ import MeetingCenter from '../components/MeetingCenter';
 import StartupRoadmap from '../components/StartupRoadmap';
 import PublicationStatusPanel from '../components/PublicationStatusPanel';
 import StartupActModule from '../components/StartupActModule';
+import { useAuth } from '../context/AuthContext';
+import { fetchApprovedInvestors, fetchInterests, fetchOwnStartup, fetchStartupProgress } from '../lib/supabaseData';
 
 export default function StartupDashboardPage({ onOpenAiGuide }) {
   const location = useLocation();
-  const [profile, setProfile] = useState(() => getCurrentStartup());
-  const [investorRequests, setInvestorRequests] = useState(MOCK_INTERESTED_REQUESTS);
+  const { user } = useAuth();
+  const [profile, setProfile] = useState(null);
+  const [investors, setInvestors] = useState([]);
+  const [progress, setProgress] = useState([]);
+  const [investorRequests, setInvestorRequests] = useState([]);
+  const [dataLoading, setDataLoading] = useState(true);
+  const [dataError, setDataError] = useState('');
   const [requestedIntros, setRequestedIntros] = useState({});
   const [notification, setNotification] = useState('');
   
   // State for "View Match Details" Modal (Requirement 5)
   const [selectedMatchInvestor, setSelectedMatchInvestor] = useState(null);
 
-  useEffect(() => {
-    const current = getCurrentStartup();
-    setProfile(current);
-  }, []);
+  const loadDashboard = async () => {
+    setDataLoading(true);
+    setDataError('');
+    try {
+      const startup = await fetchOwnStartup(user?.id).catch(() => null);
+      setProfile(startup || getCurrentStartup());
+      const [approvedInvestors, startupProgress, interests] = await Promise.all([
+        fetchApprovedInvestors().catch(() => INITIAL_INVESTORS),
+        startup?.id ? fetchStartupProgress(startup.id).catch(() => []) : Promise.resolve([]),
+        startup?.id ? fetchInterests({ startupId: startup.id }).catch(() => []) : Promise.resolve([]),
+      ]);
+      setInvestors(approvedInvestors?.length ? approvedInvestors : INITIAL_INVESTORS);
+      setProgress(startupProgress || []);
+      setInvestorRequests((interests || []).map((item) => ({
+        id: item.id,
+        investorId: item.investor_id || item.investor,
+        investorName: item.investor_name || item.investors?.organization_name || 'Investor',
+        firm: item.investor_name || item.investors?.organization_name || '',
+        status: item.status,
+      })));
+    } catch (err) {
+      setDataError(err.message || 'Unable to load startup dashboard.');
+    } finally {
+      setDataLoading(false);
+    }
+  };
+
+  useEffect(() => { if (user?.id) loadDashboard(); }, [user?.id]);
 
   const handleAcceptRequest = (id, investorName) => {
     setInvestorRequests(prev => prev.filter(r => r.id !== id));
@@ -65,26 +96,28 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
 
   // Evaluate and sort suggested investors by deterministic match score (Requirement 5)
   const rankedInvestors = useMemo(() => {
-    if (!profile) return INITIAL_INVESTORS;
+    if (!profile) return [];
 
-    return INITIAL_INVESTORS.map(inv => {
+    return investors.map(inv => {
       const match = calculateSmartMatch(profile, inv);
       return {
         ...inv,
         smartMatch: match
       };
     }).sort((a, b) => b.smartMatch.score - a.smartMatch.score);
-  }, [profile]);
+  }, [profile, investors]);
 
-  if (!profile) return null;
+  if (dataLoading) return <div className="mx-auto max-w-7xl px-6 py-16"><div className="h-48 animate-pulse rounded-lg border border-sand bg-surface" /></div>;
+  if (dataError) return <div className="mx-auto max-w-3xl px-6 py-16 text-center"><p className="text-danger">{dataError}</p><button onClick={loadDashboard} className="mt-4 rounded-md bg-coral px-4 py-2 text-sm text-white">Retry</button></div>;
+  if (!profile) return <div className="mx-auto max-w-3xl px-6 py-16 text-center"><h1 className="text-3xl">No startup profile yet</h1><p className="mt-2 text-muted">Create your startup profile to begin your StartupY journey.</p><Link to="/onboarding/startup" className="mt-5 inline-block rounded-md bg-coral px-5 py-3 text-sm text-white">Create startup profile</Link></div>;
 
-  const interestedCount = (profile.interestedInvestorsCount || 6) + investorRequests.length;
+  const interestedCount = investorRequests.length;
 
   const labelBadgeClasses = {
-    'Excellent Match': 'bg-emerald-50 text-emerald-700 border-emerald-300',
-    'Strong Match': 'bg-blue-50 text-blue-700 border-blue-300',
-    'Potential Match': 'bg-amber-50 text-amber-700 border-amber-300',
-    'Low Match': 'bg-rose-50 text-rose-700 border-rose-300'
+    'Excellent Match': 'bg-success-bg text-success border-success/30',
+    'Strong Match': 'bg-coral/10 text-coral border-coral/40',
+    'Potential Match': 'bg-warning-bg text-warning border-warning/30',
+    'Low Match': 'bg-danger-bg text-danger border-danger/30'
   };
 
   return (
@@ -92,64 +125,34 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
       
       {/* Access Denied Warning Banner */}
       {location.state?.accessDenied && (
-        <div className="p-4 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-200 text-sm font-semibold flex items-center gap-3 animate-in fade-in">
-          <AlertCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
+        <div className="p-4 rounded-lg bg-danger-bg0/20 border border-danger/30 text-danger text-sm font-semibold flex items-center gap-3 animate-in fade-in">
+          <AlertCircle className="w-5 h-5 text-danger flex-shrink-0" />
           <span>{location.state.message || "Access denied. You do not have permission to view this page."}</span>
         </div>
       )}
 
       {/* Top Banner / Notification */}
       {notification && (
-        <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-sm font-semibold flex items-center justify-between animate-in fade-in">
+        <div className="p-4 rounded-lg bg-success-bg/20 border border-success/30 text-success text-sm font-semibold flex items-center justify-between animate-in fade-in">
           <span>{notification}</span>
-          <button onClick={() => setNotification('')} className="text-emerald-400 hover:text-white">
+          <button onClick={() => setNotification('')} className="text-success hover:text-white">
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      {/* Prominent Demo Scenario Card (Requirement 6) */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-900/60 via-indigo-900/60 to-violet-900/60 border border-blue-500/50 p-6 sm:p-7 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/30">
-            <Flame className="w-6 h-6 animate-pulse text-amber-300" />
-          </div>
-          <div className="space-y-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-300 bg-blue-950 px-2.5 py-0.5 rounded-full border border-blue-800">
-              Deterministic Demo Scenario
-            </span>
-            <h3 className="text-base sm:text-lg font-extrabold text-white">
-              Demo: AgriSmart Tunisia is seeking 450,000 TND for Seed Investment in Sfax. Compare it with compatible investors and see why the match is recommended.
-            </h3>
-            <p className="text-xs text-slate-300">
-              The Smart Match Engine computes exact compatibility across sectors, ticket size in TND, stage, governorate, and funding vehicle.
-            </p>
-          </div>
-        </div>
-
-        <Link
-          to="/startup/agrismart-tunisia"
-          className="flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 shadow-xl shadow-blue-600/30 transition-all cursor-pointer transform hover:scale-105"
-        >
-          <span>Evaluate Match Breakdown</span>
-          <ArrowRight className="w-4 h-4" />
-        </Link>
-      </div>
-
       {/* Dashboard Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-sand">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/60 border border-blue-800/60 text-xs font-semibold text-blue-400 mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-coral/10 border border-coral/40 text-xs font-semibold text-coral mb-2">
             <Building2 className="w-3.5 h-3.5" />
-            <span>Tunisian Founder Portal</span>
-            <span className="text-slate-500">•</span>
-            <span className="text-slate-400">Deterministic Match Engine</span>
+            <span>Espace fondateur</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Startup Dashboard
+          <h1 className="text-3xl sm:text-4xl font-semibold text-white tracking-tight">
+            Tableau de bord startup
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Track interested investors in TND and explore deterministic compatibility scores.
+          <p className="text-sm text-muted mt-1">
+            Suivez votre progression, vos investisseurs et vos prochaines actions.
           </p>
         </div>
 
@@ -157,104 +160,90 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => onOpenAiGuide('startup')}
-            className="flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 hover:from-violet-500 hover:to-blue-500 shadow-xl shadow-violet-600/30 transition-all cursor-pointer transform hover:-translate-y-0.5"
+            className="flex items-center gap-2 rounded-md bg-coral px-5 py-3 text-sm font-medium text-white shadow-sm transition-all hover:-translate-y-px hover:bg-coral-dark hover:shadow-md"
           >
-            <Sparkles className="w-4 h-4 text-violet-200 animate-pulse" />
-            <span>Ask Startup Tunisia Guide</span>
+            <Sparkles className="size-4" />
+            <span>Demander au guide IA</span>
           </button>
 
           <Link
             to="/onboarding/startup"
-            className="flex items-center gap-1.5 px-4 py-3 rounded-xl font-semibold text-xs sm:text-sm text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors"
+            className="flex items-center gap-1.5 rounded-md border border-sand bg-surface px-4 py-3 text-sm font-medium text-ink transition-colors hover:border-coral/40"
           >
             <PlusCircle className="w-4 h-4" />
-            <span>Edit Profile</span>
+            <span>Modifier le profil</span>
           </Link>
         </div>
       </div>
 
       {/* KPI Stats Strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid gap-4 sm:grid-cols-3">
         
         {/* KPI 1: Number of Interested Investors */}
-        <div className="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-lg">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
+        <div className="bg-surface-elevated rounded-lg p-5 border border-sand shadow-sm">
+          <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Interested Investors</span>
-            <Users className="w-4 h-4 text-blue-400" />
+            <Users className="w-4 h-4 text-coral" />
           </div>
-          <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
+          <div className="font-display text-3xl text-ink">
             {interestedCount}
           </div>
-          <div className="text-xs text-emerald-400 mt-1 flex items-center gap-1">
+          <div className="text-xs text-success mt-1 flex items-center gap-1">
             <span>+{investorRequests.length} active inbounds</span>
           </div>
         </div>
 
         {/* KPI 2: Profile Views */}
-        <div className="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-lg">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
+        <div className="bg-surface-elevated rounded-lg p-5 border border-sand shadow-sm">
+          <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Investor Views</span>
-            <Eye className="w-4 h-4 text-violet-400" />
+            <Eye className="w-4 h-4 text-coral" />
           </div>
-          <div className="text-3xl font-black text-white">
+          <div className="font-display text-3xl text-ink">
             184
           </div>
-          <div className="text-xs text-slate-400 mt-1">
+          <div className="text-xs text-muted mt-1">
             Angels & funds in Tunisia
           </div>
         </div>
 
         {/* KPI 3: AI Readiness Score */}
-        <div className="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-lg">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
+        <div className="bg-surface-elevated rounded-lg p-5 border border-sand shadow-sm">
+          <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-bold uppercase tracking-wider">Highest Investor Fit</span>
-            <Sparkles className="w-4 h-4 text-emerald-400" />
+            <Sparkles className="w-4 h-4 text-success" />
           </div>
-          <div className="text-3xl font-black text-emerald-400">
+          <div className="font-display text-3xl text-bronze">
             {rankedInvestors[0]?.smartMatch?.score || 95}%
           </div>
-          <div className="text-xs text-slate-400 mt-1">
+          <div className="text-xs text-muted mt-1">
             {rankedInvestors[0]?.name}
-          </div>
-        </div>
-
-        {/* KPI 4: Avg Response Speed */}
-        <div className="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-lg">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider">Average Intro Speed</span>
-            <Clock className="w-4 h-4 text-amber-400" />
-          </div>
-          <div className="text-3xl font-black text-white">
-            24h
-          </div>
-          <div className="text-xs text-slate-400 mt-1">
-            Tunis & coastal networks
           </div>
         </div>
 
       </div>
 
       {/* Profile Summary Card (Crisp White Card on Dark Navy Background) */}
-      <div className="bg-white text-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-xl shadow-slate-950/30">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-100">
+      <div className="bg-surface-elevated text-ink rounded-xl p-6 sm:p-8 border border-sand shadow-md">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-sand">
           
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-black text-xl flex items-center justify-center shadow-lg shadow-blue-600/30">
+            <div className="w-16 h-16 rounded-lg bg-coral text-white font-semibold text-xl flex items-center justify-center shadow-sm">
               {profile.name ? profile.name.slice(0, 2).toUpperCase() : 'TN'}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                  {profile.name || 'AgriSmart Tunisia (Demo)'}
+                <h2 className="text-xl sm:text-2xl font-bold text-ink">
+                  {profile.name || 'Votre startup'}
                 </h2>
-                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-coral/10 text-coral border border-coral/40">
                   {profile.stage || 'Early Revenue'}
                 </span>
-                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-success-bg text-success border border-success/30">
                   {profile.legalStatus || 'SARL'}
                 </span>
               </div>
-              <p className="text-slate-600 text-xs sm:text-sm mt-1 max-w-2xl">
+              <p className="text-muted text-xs sm:text-sm mt-1 max-w-2xl">
                 {profile.pitch || 'Precision drip irrigation IoT telemetry optimizing water and olive crop yields across Sfax.'}
               </p>
             </div>
@@ -262,8 +251,8 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
 
           <div className="flex items-center gap-3">
             <Link
-              to={`/startup/${profile.id || 'agrismart-tunisia'}`}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-slate-800 bg-slate-100 hover:bg-slate-200 transition-colors"
+              to={`/startup/${profile.id}`}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-ink bg-sand/60 hover:bg-sand transition-colors"
             >
               <span>View Public Profile</span>
               <ExternalLink className="w-3.5 h-3.5" />
@@ -275,26 +264,26 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
         {/* Profile Details Strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 text-xs">
           <div>
-            <span className="text-slate-400 font-medium block">Sector</span>
-            <span className="font-bold text-slate-800 text-sm mt-0.5 block">
+            <span className="text-muted font-medium block">Sector</span>
+            <span className="font-bold text-ink text-sm mt-0.5 block">
               {profile.sector || 'AgriTech'}
             </span>
           </div>
           <div>
-            <span className="text-slate-400 font-medium block">Funding Target (TND)</span>
-            <span className="font-bold text-blue-600 text-sm mt-0.5 block">
+            <span className="text-muted font-medium block">Funding Target (TND)</span>
+            <span className="font-bold text-coral text-sm mt-0.5 block">
               {profile.fundingNeeded || '450,000 TND'}
             </span>
           </div>
           <div>
-            <span className="text-slate-400 font-medium block">Governorate</span>
-            <span className="font-bold text-slate-800 text-sm mt-0.5 block">
+            <span className="text-muted font-medium block">Governorate</span>
+            <span className="font-bold text-ink text-sm mt-0.5 block">
               {profile.governorate || 'Sfax'}, Tunisia
             </span>
           </div>
           <div>
-            <span className="text-slate-400 font-medium block">Funding Type Sought</span>
-            <span className="font-bold text-slate-800 text-sm mt-0.5 block">
+            <span className="text-muted font-medium block">Funding Type Sought</span>
+            <span className="font-bold text-ink text-sm mt-0.5 block">
               {profile.fundingTypeSought || 'Seed Investment'}
             </span>
           </div>
@@ -303,7 +292,7 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
 
       {/* Publication Status & Investor Visibility */}
       <PublicationStatusPanel
-        startupId={profile?.id || 'agrismart-tunisia'}
+        startupId={profile?.id}
         onStatusChange={(state) => {
           setNotification(`Status updated to: ${state.publication_status}`);
           setTimeout(() => setNotification(''), 4000);
@@ -316,12 +305,13 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
       {/* 11-Step Startup Roadmap Engine (Requirement 4) */}
       <StartupRoadmap
         onOpenAiGuide={onOpenAiGuide}
+        initialProgress={progress}
       />
 
       {/* Bidaya Meeting Center (Requirements 4, 6, 7, 8) */}
       <MeetingCenter
         role="startup"
-        currentId={profile?.id || 'agrismart-tunisia'}
+        currentId={profile?.id}
         onOpenAiGuide={onOpenAiGuide}
       />
 
@@ -329,18 +319,18 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* Column 1: Inbound Investor Requests */}
-        <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div className="bg-surface-elevated rounded-xl p-6 sm:p-8 border border-sand shadow-md space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-sand">
             <div>
               <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-400" />
+                <Users className="w-5 h-5 text-coral" />
                 <span>Interested Investors Inbound</span>
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-muted mt-0.5">
                 Investors requesting intro meetings or data room access.
               </p>
             </div>
-            <span className="text-xs font-bold text-blue-300 bg-blue-950 px-2.5 py-1 rounded-full border border-blue-800">
+            <span className="text-xs font-bold text-coral bg-coral/10 px-2.5 py-1 rounded-full border border-coral/40">
               {investorRequests.length} Pending
             </span>
           </div>
@@ -348,35 +338,35 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
           <div className="space-y-4">
             {investorRequests.length > 0 ? (
               investorRequests.map((req) => (
-                <div key={req.id} className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-3">
+                <div key={req.id} className="p-4 rounded-lg bg-surface border border-sand space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${req.avatarBg} text-white font-bold text-xs flex items-center justify-center shadow-md`}>
+                      <div className={`w-10 h-10 rounded-xl bg-coral text-white font-bold text-xs flex items-center justify-center shadow-md`}>
                         {req.investorName.slice(0, 2).toUpperCase()}
                       </div>
                       <div>
                         <div className="font-bold text-sm text-white">{req.investorName}</div>
-                        <div className="text-xs text-slate-400">{req.firm} • <span className="text-blue-400 font-semibold">{req.checkSize}</span></div>
+                        <div className="text-xs text-muted">{req.firm} • <span className="text-coral font-semibold">{req.checkSize}</span></div>
                       </div>
                     </div>
-                    <span className="text-[11px] text-slate-400">{req.date}</span>
+                    <span className="text-[11px] text-muted">{req.date}</span>
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                  <p className="text-xs text-brown-mid leading-relaxed bg-surface p-3 rounded-xl border border-sand">
                     "{req.note}"
                   </p>
 
                   <div className="flex items-center gap-2 pt-1">
                     <button
                       onClick={() => handleAcceptRequest(req.id, req.investorName)}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl font-semibold text-xs text-white bg-blue-600 hover:bg-blue-500 transition-colors cursor-pointer"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl font-semibold text-xs text-white bg-coral/10 hover:bg-coral-dark transition-colors cursor-pointer"
                     >
                       <Check className="w-3.5 h-3.5" />
                       <span>Accept & Schedule Intro</span>
                     </button>
                     <button
                       onClick={() => handleDeclineRequest(req.id)}
-                      className="py-2 px-3 rounded-xl font-semibold text-xs text-slate-400 hover:text-slate-200 bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer"
+                      className="py-2 px-3 rounded-xl font-semibold text-xs text-muted hover:text-brown-mid bg-surface hover:bg-sand transition-colors cursor-pointer"
                     >
                       Decline
                     </button>
@@ -384,7 +374,7 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
                 </div>
               ))
             ) : (
-              <div className="py-8 text-center text-slate-400 text-sm">
+              <div className="py-8 text-center text-muted text-sm">
                 No pending investor inbounds. We are featuring your profile to Tunisian angel syndicates.
               </div>
             )}
@@ -392,18 +382,18 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
         </div>
 
         {/* Column 2: Suggested Investor Matches with Real Match Scores (Requirement 5) */}
-        <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div className="bg-surface-elevated rounded-xl p-6 sm:p-8 border border-sand shadow-md space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-sand">
             <div>
               <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-violet-400" />
+                <Sparkles className="w-5 h-5 text-coral" />
                 <span>Suggested Tunisian Investors</span>
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-muted mt-0.5">
                 Sorted by deterministic compatibility against your profile.
               </p>
             </div>
-            <span className="text-xs font-bold text-violet-300 bg-violet-950 px-2.5 py-1 rounded-full border border-violet-800">
+            <span className="text-xs font-bold text-coral bg-coral/10 px-2.5 py-1 rounded-full border border-coral/40">
               Smart Ranked
             </span>
           </div>
@@ -414,7 +404,7 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
               const match = inv.smartMatch;
 
               return (
-                <div key={inv.id} className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-3">
+                <div key={inv.id} className="p-4 rounded-lg bg-surface border border-sand space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
@@ -424,29 +414,29 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
                           {match?.score || 85}% • {match?.label || 'Fit'}
                         </span>
                       </div>
-                      <div className="text-xs text-slate-400 mt-0.5">
+                      <div className="text-xs text-muted mt-0.5">
                         {inv.partner} • {inv.type}
                       </div>
                     </div>
 
                     {/* Show Ticket Range (Requirement 5) */}
-                    <span className="text-xs font-bold text-slate-200 bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-700">
+                    <span className="text-xs font-bold text-brown-mid bg-surface-elevated px-2.5 py-1 rounded-lg border border-sand">
                       {inv.ticketSize || inv.budgetRange}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-brown-mid leading-relaxed">
                     {inv.thesis}
                   </p>
 
                   {/* Show Focus Sectors (Requirement 5) */}
                   <div className="space-y-1">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted">
                       Focus Sectors:
                     </span>
                     <div className="flex flex-wrap gap-1.5 text-[10px]">
                       {(inv.sectors || inv.focus || []).map((s) => (
-                        <span key={s} className="px-2 py-0.5 rounded-md bg-slate-900 text-slate-300 border border-slate-800">
+                        <span key={s} className="px-2 py-0.5 rounded-md bg-surface-elevated text-brown-mid border border-sand">
                           {s}
                         </span>
                       ))}
@@ -457,9 +447,9 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
                     {/* View Match Details Action (Requirement 5) */}
                     <button
                       onClick={() => setSelectedMatchInvestor(inv)}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl font-semibold text-xs text-slate-200 bg-slate-800 hover:bg-slate-700 hover:text-white border border-slate-700 transition-colors cursor-pointer"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl font-semibold text-xs text-brown-mid bg-surface hover:bg-sand hover:text-white border border-sand transition-colors cursor-pointer"
                     >
-                      <Info className="w-3.5 h-3.5 text-blue-400" />
+                      <Info className="w-3.5 h-3.5 text-coral" />
                       <span>View Match Details</span>
                     </button>
 
@@ -468,13 +458,13 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
                       disabled={requested}
                       className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl font-semibold text-xs transition-all cursor-pointer ${
                         requested
-                          ? 'bg-slate-700 text-emerald-400 border border-emerald-500/30'
-                          : 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-md'
+                          ? 'bg-sand text-success border border-success/30'
+                          : 'bg-coral text-white shadow-md'
                       }`}
                     >
                       {requested ? (
                         <>
-                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <Check className="w-3.5 h-3.5 text-success" />
                           <span>Intro Request Sent</span>
                         </>
                       ) : (
@@ -495,44 +485,44 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
 
       {/* Match Details Modal (Requirement 5) */}
       {selectedMatchInvestor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-xl bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 text-white shadow-2xl max-h-[90vh] overflow-y-auto space-y-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-cream backdrop-blur-sm animate-in fade-in">
+          <div className="relative w-full max-w-xl bg-surface-elevated border border-sand rounded-xl p-6 sm:p-8 text-white shadow-sm max-h-[90vh] overflow-y-auto space-y-5">
             <button
               onClick={() => setSelectedMatchInvestor(null)}
-              className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              className="absolute top-5 right-5 p-2 rounded-full text-muted hover:text-white hover:bg-surface transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-violet-400 bg-violet-950 px-2.5 py-0.5 rounded-full border border-violet-800">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-coral bg-coral/10 px-2.5 py-0.5 rounded-full border border-coral/40">
                   Smart Match Evaluation
                 </span>
                 <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${labelBadgeClasses[selectedMatchInvestor.smartMatch?.label]}`}>
                   {selectedMatchInvestor.smartMatch?.score}% • {selectedMatchInvestor.smartMatch?.label}
                 </span>
               </div>
-              <h3 className="text-xl font-extrabold text-white">
+              <h3 className="text-xl font-semibold text-white">
                 Match Details: {profile.name} × {selectedMatchInvestor.name}
               </h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-muted mt-1">
                 Ticket Range: {selectedMatchInvestor.ticketSize || selectedMatchInvestor.budgetRange} • Focus: {(selectedMatchInvestor.sectors || selectedMatchInvestor.focus || []).join(', ')}
               </p>
             </div>
 
             {/* 6 Criteria Breakdown */}
-            <div className="space-y-2.5 pt-2 border-t border-slate-800">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">
+            <div className="space-y-2.5 pt-2 border-t border-sand">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-brown-mid">
                 Criteria Breakdown (100 Pts):
               </h4>
               {selectedMatchInvestor.smartMatch?.breakdown.map((item, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-slate-800/70 border border-slate-700/60 text-xs space-y-1">
+                <div key={idx} className="p-3 rounded-xl bg-surface/70 border border-sand text-xs space-y-1">
                   <div className="flex justify-between font-semibold">
-                    <span className="text-slate-200">{item.criterion}</span>
-                    <span className="text-blue-400 font-mono">{item.score} / {item.maxScore} pts</span>
+                    <span className="text-brown-mid">{item.criterion}</span>
+                    <span className="text-coral font-mono">{item.score} / {item.maxScore} pts</span>
                   </div>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                  <p className="text-[11px] text-muted leading-relaxed">
                     {item.explanation}
                   </p>
                 </div>
@@ -540,22 +530,22 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
             </div>
 
             {/* Strengths & Recommendation */}
-            <div className="space-y-3 pt-2 border-t border-slate-800 text-xs">
+            <div className="space-y-3 pt-2 border-t border-sand text-xs">
               <div>
-                <h5 className="font-bold text-emerald-400 uppercase tracking-wider text-[11px] mb-1">
+                <h5 className="font-bold text-success uppercase tracking-wider text-[11px] mb-1">
                   Key Strengths:
                 </h5>
                 <ul className="space-y-1">
                   {selectedMatchInvestor.smartMatch?.strengths.map((str, i) => (
-                    <li key={i} className="flex items-center gap-1.5 text-slate-300">
-                      <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <li key={i} className="flex items-center gap-1.5 text-brown-mid">
+                      <Check className="w-3.5 h-3.5 text-success flex-shrink-0" />
                       <span>{str}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="p-3 rounded-xl bg-blue-950/70 border border-blue-800/60 text-blue-200">
+              <div className="p-3 rounded-xl bg-coral/10 border border-coral/40 text-coral">
                 <strong>Recommendation:</strong> {selectedMatchInvestor.smartMatch?.recommendation}
               </div>
             </div>
@@ -563,7 +553,7 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
             <div className="pt-2">
               <button
                 onClick={() => setSelectedMatchInvestor(null)}
-                className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-slate-800 hover:bg-slate-700 text-white transition-colors cursor-pointer"
+                className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-surface hover:bg-sand text-white transition-colors cursor-pointer"
               >
                 Close Match Details
               </button>

@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+/* —— Startupy design tokens —— */
+@theme {
+  --color-cream: #f5efe6;
+  --color-cream-deep: #ebe3d6;
+  --color-sand: #e0d5c4;
+  --color-surface: #faf6f0;
+  --color-surface-elevated: #fffbf5;
+
+  --color-brown: #5c4530;
+  --color-brown-mid: #3d2f22;
+  --color-ink: #2a211a;
+
+  --color-camel: #c9a876;
+  --color-taupe: #8b7d6b;
+  --color-bronze: #b8935f;
+  --color-bronze-light: #c9a876;
+  --color-bronze-soft: color-mix(in srgb, #b8935f 18%, transparent);
+  --color-bronze-border: color-mix(in srgb, #b8935f 45%, transparent);
+
+  /* Accent coral — https://www.colorhexa.com/ff7254 */
+  --color-coral: #ff7254;
+  --color-coral-dark: #e85a3c;
+  --color-coral-soft: color-mix(in srgb, #ff7254 16%, transparent);
+  --color-coral-border: color-mix(in srgb, #ff7254 40%, transparent);
+
+  --color-success: #4f6144;
+  --color-success-bg: color-mix(in srgb, #4f6144 14%, transparent);
+  --color-warning: #8f7340;
+  --color-warning-bg: color-mix(in srgb, #8f7340 16%, transparent);
+  --color-danger: #8b4a3a;
+  --color-danger-bg: color-mix(in srgb, #8b4a3a 12%, transparent);
+  --color-locked: #b5a894;
+  --color-muted: #6b5d4f;
+  --color-muted-light: #958676;
+
+  --font-display: var(--font-fraunces), "Georgia", serif;
+  --font-sans: var(--font-inter), "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --shadow-sm: 0 1px 2px rgb(42 33 26 / 0.04), 0 1px 3px rgb(42 33 26 / 0.06);
+  --shadow-md: 0 4px 16px rgb(42 33 26 / 0.06), 0 1px 4px rgb(42 33 26 / 0.04);
+  --shadow-lg: 0 12px 40px rgb(42 33 26 / 0.08), 0 4px 12px rgb(42 33 26 / 0.04);
+  --shadow-bronze: 0 0 0 1px var(--color-bronze-border), 0 4px 20px rgb(184 147 95 / 0.12);
+
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream text-ink font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-medium tracking-tight text-ink;
+  }
+
+  ::selection {
+    background: var(--color-bronze-soft);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-bronze);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .atmosphere {
+    background:
+      radial-gradient(ellipse 80% 50% at 10% -10%, rgb(184 147 95 / 0.12), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 90% 0%, rgb(139 125 107 / 0.08), transparent 45%),
+      linear-gradient(180deg, var(--color-cream) 0%, var(--color-cream-deep) 100%);
+  }
+
+  .atmosphere-subtle {
+    background:
+      linear-gradient(135deg, rgb(224 213 196 / 0.5) 0%, transparent 40%),
+      var(--color-cream);
+  }
+}

@@ -1,44 +1,95 @@
 @import "tailwindcss";
 
+@theme {
+  --color-cream: #f5efe6;
+  --color-cream-deep: #ebe3d6;
+  --color-sand: #e0d5c4;
+  --color-surface: #faf6f0;
+  --color-surface-elevated: #fffbf5;
+  --color-brown: #5c4530;
+  --color-brown-mid: #3d2f22;
+  --color-ink: #2a211a;
+  --color-camel: #c9a876;
+  --color-taupe: #8b7d6b;
+  --color-bronze: #b8935f;
+  --color-bronze-light: #c9a876;
+  --color-bronze-soft: color-mix(in srgb, #b8935f 18%, transparent);
+  --color-bronze-border: color-mix(in srgb, #b8935f 45%, transparent);
+  --color-coral: #ff7254;
+  --color-coral-dark: #e85a3c;
+  --color-coral-soft: color-mix(in srgb, #ff7254 16%, transparent);
+  --color-coral-border: color-mix(in srgb, #ff7254 40%, transparent);
+  --color-success: #4f6144;
+  --color-success-bg: color-mix(in srgb, #4f6144 14%, transparent);
+  --color-warning: #8f7340;
+  --color-warning-bg: color-mix(in srgb, #8f7340 16%, transparent);
+  --color-danger: #8b4a3a;
+  --color-danger-bg: color-mix(in srgb, #8b4a3a 12%, transparent);
+  --color-locked: #b5a894;
+  --color-muted: #6b5d4f;
+  --color-muted-light: #958676;
+  --font-display: "Georgia", "Times New Roman", serif;
+  --font-sans: "Inter", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
+  --shadow-bronze: 0 0 0 1px rgb(184 147 95 / .42), 0 4px 20px rgb(184 147 95 / .12);
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @layer base {
   :root {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-cream);
+    font-synthesis: none;
   }
+
+  html { scroll-behavior: smooth; }
 
   body {
-    background-color: #0A0F1D;
-    color: #F8FAFC;
+    min-width: 320px;
+    margin: 0;
     overflow-x: hidden;
+    background: var(--color-cream);
+    color: var(--color-ink);
   }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.025em;
+  }
+
+  button, input, textarea, select { font: inherit; }
+  ::selection { background: rgb(255 114 84 / .24); color: var(--color-ink); }
+  :focus-visible { outline: 2px solid var(--color-coral); outline-offset: 2px; }
 }
 
-/* Custom scrollbars */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #0A0F1D;
-}
-::-webkit-scrollbar-thumb {
-  background: #1E293B;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+@layer utilities {
+  .font-display { font-family: var(--font-display); }
+  .atmosphere {
+    background:
+      radial-gradient(ellipse 80% 50% at 10% -10%, rgb(184 147 95 / .14), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 90% 0%, rgb(255 114 84 / .08), transparent 45%),
+      linear-gradient(180deg, var(--color-cream), var(--color-cream-deep));
+  }
+  .atmosphere-subtle {
+    background: linear-gradient(135deg, rgb(224 213 196 / .5), transparent 40%), var(--color-cream);
+  }
+  .text-balance { text-wrap: balance; }
 }
 
-/* Subtle glow utilities */
-.glow-blue {
-  box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.35);
+.bidaya-app input:not([type="checkbox"]):not([type="radio"]),
+.bidaya-app textarea,
+.bidaya-app select {
+  background-color: var(--color-surface-elevated) !important;
+  border-color: var(--color-sand) !important;
+  color: var(--color-ink) !important;
 }
+.bidaya-app input::placeholder, .bidaya-app textarea::placeholder { color: var(--color-taupe); }
 
-.glow-violet {
-  box-shadow: 0 0 25px -5px rgba(139, 92, 246, 0.35);
-}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--color-cream-deep); }
+::-webkit-scrollbar-thumb { background: var(--color-camel); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-bronze); }
 
-.gradient-border {
-  position: relative;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
-  padding: 1px;
-}
+.glow-blue, .glow-violet { box-shadow: var(--shadow-bronze); }
+.gradient-border { background: linear-gradient(135deg, rgb(184 147 95 / .3), rgb(255 114 84 / .25)); padding: 1px; }

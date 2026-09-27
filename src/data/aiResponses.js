@@ -195,7 +195,7 @@ export const AI_SUGGESTED_QUESTIONS = {
       question: "How can I contact and support a startup?",
       answer: `**Effective Angel & VC Engagement Protocols**
 
-1. **Direct Communication via StartupBridge AI:**
+1. **Direct Communication via StartupY:**
    - Use the “I’m Interested” button on any verified startup profile to dispatch your profile and ticket size directly to the founder.
    - Schedule an introductory 20-minute discussion focused on business model assumptions and founder vision.
 
@@ -205,6 +205,28 @@ export const AI_SUGGESTED_QUESTIONS = {
    - **Hiring & Governance:** Assist in recruiting senior key hires and establishing quarterly advisory board discipline.
 
 *${AI_DISCLAIMER}*`
+    }
+  ],
+  admin: [
+    {
+      id: "q-a1",
+      question: "What advantages does the Tunisian Startup Act provide?"
+    },
+    {
+      id: "q-a2",
+      question: "What are the criteria to obtain the Startup Label in Tunisia?"
+    },
+    {
+      id: "q-a3",
+      question: "What tax incentives exist for investors under Law 2018-20?"
+    },
+    {
+      id: "q-a4",
+      question: "How does the special foreign currency bank account work for startups?"
+    },
+    {
+      id: "q-a5",
+      question: "What is the role of ANAVA Fund of Funds and Smart Capital in Tunisia?"
     }
   ]
 };

@@ -1,7 +1,7 @@
-# StartupBridge AI Tunisia 🇹🇳
+# StartupY 🇹🇳
 > **Connecting Tunisian Startups with Smart Capital.**
 
-StartupBridge AI is a specialized, responsive two-sided matchmaking platform focused exclusively on **Tunisia**, connecting Tunisian startups, founders, business angels, local venture funds, incubators, and the Tunisian diaspora, augmented by a real, secure **Tunisia-focused RAG (Retrieval-Augmented Generation) assistant**.
+StartupY is a specialized, responsive two-sided matchmaking platform focused exclusively on **Tunisia**, connecting Tunisian startups, founders, business angels, local venture funds, incubators, and the Tunisian diaspora, augmented by a real, secure **Tunisia-focused RAG (Retrieval-Augmented Generation) assistant**.
 
 ---
 
