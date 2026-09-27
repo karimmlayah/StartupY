@@ -167,9 +167,9 @@ export default function AdminDashboardPage() {
             <ShieldCheck className="w-3.5 h-3.5 text-warning" />
             <span>Direction Générale & Governance Console</span>
             <span className="text-taupe">•</span>
-            <span className="text-muted">StartupY Admin</span>
+            <span className="text-brown-mid font-semibold">StartupY Admin</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-semibold text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-ink tracking-tight">
             Institutional Administration
           </h1>
           <p className="text-sm text-muted mt-1">
@@ -178,8 +178,8 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="px-3.5 py-1.5 rounded-xl bg-surface-elevated border border-sand text-xs text-brown-mid font-mono">
-            <span className="w-2 h-2 rounded-full bg-success-bg inline-block mr-2 animate-pulse"></span>
+          <div className="px-3.5 py-1.5 rounded-xl bg-surface-elevated border border-sand text-xs text-brown-mid font-mono flex items-center">
+            <span className="w-2 h-2 rounded-full bg-emerald-600 inline-block mr-2 animate-pulse"></span>
             RLS Enforcement Active
           </div>
         </div>
@@ -194,7 +194,7 @@ export default function AdminDashboardPage() {
       {import.meta.env.DEV && (
         <div className="flex flex-col gap-4 rounded-lg border border-warning/30 bg-warning-bg p-5 sm:flex-row sm:items-center sm:justify-between">
           <div><p className="text-sm font-medium text-warning">Django Backend Management</p><p className="mt-1 text-xs text-muted">Backend powered by Django REST Framework & PostgreSQL.</p></div>
-          <div className="flex gap-2"><button onClick={() => loadAllData()} className="rounded-md bg-coral px-4 py-2 text-xs font-medium text-white">Refresh Platform Data</button></div>
+          <div className="flex gap-2"><button onClick={() => loadAllData()} className="rounded-md bg-coral px-4 py-2 text-xs font-medium text-white hover:bg-coral-dark transition-colors cursor-pointer">Refresh Platform Data</button></div>
         </div>
       )}
 
@@ -204,46 +204,46 @@ export default function AdminDashboardPage() {
             <CheckCircle2 className="w-4 h-4 text-success" />
             <span>{notification}</span>
           </div>
-          <button onClick={() => setNotification('')} className="text-muted hover:text-white">✕</button>
+          <button onClick={() => setNotification('')} className="text-muted hover:text-ink cursor-pointer">✕</button>
         </div>
       )}
 
       {/* 6 Platform Overview Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         
-        <div className="p-4 rounded-lg bg-surface-elevated border border-sand shadow-md">
-          <div className="text-xs text-muted font-semibold">Total Users</div>
-          <div className="text-2xl font-semibold text-white mt-1">{totalUsers}</div>
-          <div className="text-[11px] text-coral mt-0.5">Founders & Angels</div>
+        <div className="p-4 rounded-xl bg-surface-elevated border border-sand shadow-sm hover:border-sand/80 transition-all">
+          <div className="text-xs text-muted font-medium">Total Users</div>
+          <div className="text-2xl font-bold text-ink mt-1">{totalUsers}</div>
+          <div className="text-[11px] text-coral font-medium mt-0.5">Founders & Angels</div>
         </div>
 
-        <div className="p-4 rounded-lg bg-surface-elevated border border-sand shadow-md">
-          <div className="text-xs text-muted font-semibold">Startups Review</div>
-          <div className="text-2xl font-semibold text-warning mt-1">{pendingStartups}</div>
+        <div className="p-4 rounded-xl bg-surface-elevated border border-sand shadow-sm hover:border-sand/80 transition-all">
+          <div className="text-xs text-muted font-medium">Startups Review</div>
+          <div className="text-2xl font-bold text-amber-800 mt-1">{pendingStartups}</div>
           <div className="text-[11px] text-muted mt-0.5">Awaiting decision</div>
         </div>
 
-        <div className="p-4 rounded-lg bg-surface-elevated border border-sand shadow-md">
-          <div className="text-xs text-muted font-semibold">Investors Verify</div>
-          <div className="text-2xl font-semibold text-warning mt-1">{pendingInvestors}</div>
+        <div className="p-4 rounded-xl bg-surface-elevated border border-sand shadow-sm hover:border-sand/80 transition-all">
+          <div className="text-xs text-muted font-medium">Investors Verify</div>
+          <div className="text-2xl font-bold text-amber-800 mt-1">{pendingInvestors}</div>
           <div className="text-[11px] text-muted mt-0.5">Awaiting dossiers</div>
         </div>
 
-        <div className="p-4 rounded-lg bg-surface-elevated border border-sand shadow-md">
-          <div className="text-xs text-muted font-semibold">Approved Startups</div>
-          <div className="text-2xl font-semibold text-success mt-1">{approvedStartups}</div>
+        <div className="p-4 rounded-xl bg-surface-elevated border border-sand shadow-sm hover:border-sand/80 transition-all">
+          <div className="text-xs text-muted font-medium">Approved Startups</div>
+          <div className="text-2xl font-bold text-emerald-800 mt-1">{approvedStartups}</div>
           <div className="text-[11px] text-muted mt-0.5">Published deal flow</div>
         </div>
 
-        <div className="p-4 rounded-lg bg-surface-elevated border border-sand shadow-md">
-          <div className="text-xs text-muted font-semibold">Accredited Funds</div>
-          <div className="text-2xl font-semibold text-success mt-1">{approvedInvestors}</div>
+        <div className="p-4 rounded-xl bg-surface-elevated border border-sand shadow-sm hover:border-sand/80 transition-all">
+          <div className="text-xs text-muted font-medium">Accredited Funds</div>
+          <div className="text-2xl font-bold text-emerald-800 mt-1">{approvedInvestors}</div>
           <div className="text-[11px] text-muted mt-0.5">Verified investors</div>
         </div>
 
-        <div className="p-4 rounded-lg bg-surface-elevated border border-sand shadow-md">
-          <div className="text-xs text-muted font-semibold">Active Meetings</div>
-          <div className="text-2xl font-semibold text-coral mt-1">{upcomingMeetings}</div>
+        <div className="p-4 rounded-xl bg-surface-elevated border border-sand shadow-sm hover:border-sand/80 transition-all">
+          <div className="text-xs text-muted font-medium">Active Meetings</div>
+          <div className="text-2xl font-bold text-coral mt-1">{upcomingMeetings}</div>
           <div className="text-[11px] text-muted mt-0.5">StartupY video calls</div>
         </div>
 
@@ -262,10 +262,10 @@ export default function AdminDashboardPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+            className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer whitespace-nowrap text-xs font-semibold ${
               activeTab === tab.id
-                ? 'bg-warning-bg text-white shadow-md'
-                : 'text-muted hover:text-white hover:bg-surface'
+                ? 'bg-coral text-white shadow-sm'
+                : 'text-brown-mid hover:text-ink hover:bg-surface border border-transparent'
             }`}
           >
             {tab.label}
@@ -278,26 +278,26 @@ export default function AdminDashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
           {/* Recent Audit Trail Preview */}
-          <div className="bg-surface-elevated rounded-xl p-6 sm:p-7 border border-sand shadow-md space-y-4">
+          <div className="bg-surface-elevated rounded-xl p-6 sm:p-7 border border-sand shadow-sm space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-sand">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Clock className="w-4 h-4 text-warning" />
+              <h3 className="text-base font-bold text-ink flex items-center gap-2">
+                <Clock className="w-4 h-4 text-coral" />
                 <span>Recent Platform Activity Feed</span>
               </h3>
-              <button onClick={() => setActiveTab('logs')} className="text-xs text-coral hover:underline">
+              <button onClick={() => setActiveTab('logs')} className="text-xs font-semibold text-coral hover:text-coral-dark hover:underline cursor-pointer">
                 View All Logs
               </button>
             </div>
 
             <div className="space-y-3">
               {auditLogs.slice(0, 5).map(log => (
-                <div key={log.id} className="p-3.5 rounded-lg bg-surface border border-sand text-xs space-y-1">
+                <div key={log.id} className="p-3.5 rounded-lg bg-surface border border-sand text-xs space-y-1 hover:border-sand/90 transition-colors">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-warning font-mono text-[11px]">{log.action}</span>
-                    <span className="text-[10px] text-taupe">{new Date(log.createdAt).toLocaleTimeString()}</span>
+                    <span className="font-bold text-amber-800 font-mono text-[11px] bg-amber-100/70 px-2 py-0.5 rounded border border-amber-300/60">{log.action}</span>
+                    <span className="text-[10px] text-muted">{new Date(log.createdAt).toLocaleTimeString()}</span>
                   </div>
-                  <div className="text-brown-mid">
-                    Target: <strong>{log.entityName}</strong> ({log.entityType})
+                  <div className="text-ink font-medium">
+                    Target: <strong className="text-ink font-bold">{log.entityName}</strong> <span className="text-muted">({log.entityType})</span>
                   </div>
                   {log.metadata && (
                     <div className="text-[11px] text-muted italic">
@@ -310,9 +310,9 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Quick Pending Summary */}
-          <div className="bg-surface-elevated rounded-xl p-6 sm:p-7 border border-sand shadow-md space-y-4">
-            <h3 className="text-base font-bold text-white flex items-center gap-2 pb-3 border-b border-sand">
-              <AlertTriangle className="w-4 h-4 text-warning" />
+          <div className="bg-surface-elevated rounded-xl p-6 sm:p-7 border border-sand shadow-sm space-y-4">
+            <h3 className="text-base font-bold text-ink flex items-center gap-2 pb-3 border-b border-sand">
+              <AlertTriangle className="w-4 h-4 text-amber-600" />
               <span>Priority Action Items</span>
             </h3>
 
@@ -320,13 +320,13 @@ export default function AdminDashboardPage() {
               {startups.filter(s => s.publicationStatus === 'under_review').slice(0, 2).map(s => (
                 <div key={s.id} className="p-4 rounded-lg bg-surface border border-sand flex items-center justify-between gap-4">
                   <div>
-                    <div className="font-bold text-sm text-white">{s.name}</div>
+                    <div className="font-bold text-sm text-ink">{s.name}</div>
                     <div className="text-xs text-muted">{s.sector} • {s.governorate} • Seeking {s.fundingNeeded}</div>
-                    <div className="text-[11px] text-warning font-semibold mt-1">Readiness Score: {s.readinessScore || 85}%</div>
+                    <div className="text-[11px] text-amber-800 font-semibold mt-1">Readiness Score: {s.readinessScore || 85}%</div>
                   </div>
                   <button
                     onClick={() => setActiveTab('startups')}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-coral/10 hover:bg-coral-dark"
+                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-coral hover:bg-coral-dark shadow-sm transition-colors cursor-pointer"
                   >
                     Review
                   </button>
@@ -336,13 +336,13 @@ export default function AdminDashboardPage() {
               {investors.filter(i => i.verificationStatus === 'under_review').slice(0, 2).map(inv => (
                 <div key={inv.id} className="p-4 rounded-lg bg-surface border border-sand flex items-center justify-between gap-4">
                   <div>
-                    <div className="font-bold text-sm text-white">{inv.name}</div>
+                    <div className="font-bold text-sm text-ink">{inv.name}</div>
                     <div className="text-xs text-muted">{inv.type} • Ticket {inv.budgetRange}</div>
                     <div className="text-[11px] text-coral font-semibold mt-1">Dossier complete with RNE</div>
                   </div>
                   <button
                     onClick={() => setActiveTab('investors')}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-coral/10 hover:bg-coral-dark"
+                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-coral hover:bg-coral-dark shadow-sm transition-colors cursor-pointer"
                   >
                     Accredit
                   </button>
@@ -373,8 +373,8 @@ export default function AdminDashboardPage() {
                   <div className="space-y-1.5">
                     <div className="flex flex-wrap items-center gap-2.5">
                       <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
-                        isApproved ? 'bg-success-bg/20 text-success border-success/30' :
-                        isPending ? 'bg-warning-bg/20 text-warning border-warning/30' :
+                        isApproved ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                        isPending ? 'bg-amber-100 text-amber-800 border-amber-300' :
                         'bg-surface text-muted border-sand'
                       }`}>
                         {s.publicationStatus}
@@ -384,7 +384,7 @@ export default function AdminDashboardPage() {
                       <span className="text-xs text-brown-mid font-bold">Target: {s.fundingNeeded}</span>
                     </div>
 
-                    <h4 className="text-base font-bold text-white flex items-center gap-2">
+                    <h4 className="text-base font-bold text-ink flex items-center gap-2">
                       <Building2 className="w-4 h-4 text-coral" />
                       <span>{s.name}</span>
                     </h4>
@@ -401,7 +401,7 @@ export default function AdminDashboardPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <Link
                       to={`/startup/${s.id}`}
-                      className="px-3 py-1.5 rounded-xl text-xs font-medium text-brown-mid bg-surface hover:text-white transition-colors"
+                      className="px-3 py-1.5 rounded-lg text-xs font-semibold text-ink bg-surface border border-sand hover:bg-sand/40 transition-colors"
                       target="_blank"
                     >
                       Inspect Profile
@@ -409,21 +409,21 @@ export default function AdminDashboardPage() {
 
                     <button
                       onClick={() => handleOpenActionModal('startup', 'approved', s)}
-                      className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-success-bg hover:bg-success-bg transition-colors"
+                      className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-800 shadow-sm transition-colors cursor-pointer"
                     >
                       Approve
                     </button>
 
                     <button
                       onClick={() => handleOpenActionModal('startup', 'changes', s)}
-                      className="px-3 py-1.5 rounded-xl text-xs font-bold text-brown-mid bg-surface hover:bg-sand border border-sand transition-colors"
+                      className="px-3 py-1.5 rounded-lg text-xs font-medium text-brown-mid bg-surface hover:bg-sand/50 border border-sand transition-colors cursor-pointer"
                     >
                       Request Changes
                     </button>
 
                     <button
                       onClick={() => handleOpenActionModal('startup', 'rejected', s)}
-                      className="px-3 py-1.5 rounded-xl text-xs font-medium text-danger hover:bg-danger-bg transition-colors"
+                      className="px-3 py-1.5 rounded-lg text-xs font-medium text-danger hover:bg-danger-bg border border-danger/20 transition-colors cursor-pointer"
                     >
                       Reject
                     </button>
@@ -452,8 +452,8 @@ export default function AdminDashboardPage() {
                   <div className="space-y-1.5">
                     <div className="flex flex-wrap items-center gap-2.5">
                       <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
-                        isApproved ? 'bg-success-bg/20 text-success border-success/30' :
-                        isPending ? 'bg-warning-bg/20 text-warning border-warning/30' :
+                        isApproved ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                        isPending ? 'bg-amber-100 text-amber-800 border-amber-300' :
                         'bg-surface text-muted border-sand'
                       }`}>
                         {inv.verificationStatus}
@@ -462,7 +462,7 @@ export default function AdminDashboardPage() {
                       <span className="text-xs text-brown-mid font-bold">Ticket: {inv.budgetRange}</span>
                     </div>
 
-                    <h4 className="text-base font-bold text-white flex items-center gap-2">
+                    <h4 className="text-base font-bold text-ink flex items-center gap-2">
                       <TrendingUp className="w-4 h-4 text-coral" />
                       <span>{inv.name}</span>
                     </h4>
@@ -476,7 +476,7 @@ export default function AdminDashboardPage() {
                         <span key={dIdx} className="px-2 py-0.5 rounded-lg bg-surface text-brown-mid border border-sand flex items-center gap-1">
                           <FileText className="w-3 h-3 text-coral" />
                           <span>{doc.type}</span>
-                          <span className={doc.verified ? 'text-success font-bold' : 'text-warning'}>
+                          <span className={doc.verified ? 'text-emerald-700 font-bold' : 'text-amber-800'}>
                             {doc.verified ? '✓' : 'Pending'}
                           </span>
                         </span>
@@ -487,21 +487,21 @@ export default function AdminDashboardPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <button
                       onClick={() => handleOpenActionModal('investor', 'approved', inv)}
-                      className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-success-bg hover:bg-success-bg transition-colors"
+                      className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-800 shadow-sm transition-colors cursor-pointer"
                     >
                       Approve Accreditation
                     </button>
 
                     <button
                       onClick={() => handleOpenActionModal('investor', 'documents', inv)}
-                      className="px-3 py-2 rounded-xl text-xs font-bold text-brown-mid bg-surface hover:bg-sand border border-sand transition-colors"
+                      className="px-3 py-2 rounded-lg text-xs font-medium text-brown-mid bg-surface hover:bg-sand/50 border border-sand transition-colors cursor-pointer"
                     >
                       Request Documents
                     </button>
 
                     <button
                       onClick={() => handleOpenActionModal('investor', 'rejected', inv)}
-                      className="px-3 py-2 rounded-xl text-xs font-medium text-danger hover:bg-danger-bg transition-colors"
+                      className="px-3 py-2 rounded-lg text-xs font-medium text-danger hover:bg-danger-bg border border-danger/20 transition-colors cursor-pointer"
                     >
                       Reject
                     </button>
@@ -527,10 +527,10 @@ export default function AdminDashboardPage() {
             {meetings.map(m => (
               <div key={m.id} className="p-4 rounded-lg bg-surface-elevated border border-sand flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1 text-xs">
-                  <div className="flex items-center gap-2 font-bold text-white text-sm">
+                  <div className="flex items-center gap-2 font-bold text-ink text-sm sm:text-base">
                     <Video className="w-4 h-4 text-coral" />
                     <span>{m.startupName} ↔ {m.investorName}</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-surface text-brown-mid border border-sand">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-surface text-brown-mid border border-sand font-medium">
                       {m.status}
                     </span>
                   </div>
@@ -542,7 +542,7 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
-                <div className="text-xs text-taupe font-mono">
+                <div className="text-xs text-brown-mid font-mono font-medium">
                   {m.outcomeStatus ? `Outcome: ${m.outcomeStatus}` : 'No outcome reported'}
                 </div>
               </div>
@@ -558,9 +558,9 @@ export default function AdminDashboardPage() {
             Registered platform accounts across Tunisian governorates.
           </div>
 
-          <div className="overflow-x-auto rounded-lg border border-sand bg-surface-elevated">
+          <div className="overflow-x-auto rounded-lg border border-sand bg-surface-elevated shadow-sm">
             <table className="w-full text-left text-xs text-brown-mid">
-              <thead className="bg-surface text-muted font-semibold border-b border-sand uppercase tracking-wider text-[10px]">
+              <thead className="bg-surface text-muted font-bold border-b border-sand uppercase tracking-wider text-[10px]">
                 <tr>
                   <th className="py-3 px-4">User</th>
                   <th className="py-3 px-4">Role</th>
@@ -571,23 +571,23 @@ export default function AdminDashboardPage() {
               </thead>
               <tbody className="divide-y divide-sand">
                 {users.map(u => (
-                  <tr key={u.id} className="hover:bg-surface/40 transition-colors">
-                    <td className="py-3.5 px-4 font-bold text-white">
+                  <tr key={u.id} className="hover:bg-surface/60 transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-ink">
                       <div>{u.name}</div>
-                      <div className="text-[11px] text-taupe font-normal">{u.email}</div>
+                      <div className="text-[11px] text-muted font-normal">{u.email}</div>
                     </td>
                     <td className="py-3.5 px-4">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                        u.role === 'admin' ? 'bg-warning-bg/20 text-warning border-warning/30' :
-                        u.role === 'startup' ? 'bg-coral-dark/20 text-coral border-coral/40' :
-                        'bg-coral-dark/20 text-coral border-coral/40'
+                        u.role === 'admin' ? 'bg-amber-100 text-amber-800 border-amber-300' :
+                        u.role === 'startup' ? 'bg-coral/10 text-coral border-coral/30' :
+                        'bg-coral/10 text-coral border-coral/30'
                       }`}>
                         {u.role}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4">{u.org}</td>
-                    <td className="py-3.5 px-4">{u.governorate}</td>
-                    <td className="py-3.5 px-4 text-taupe">{u.joined}</td>
+                    <td className="py-3.5 px-4 text-ink">{u.org}</td>
+                    <td className="py-3.5 px-4 text-ink">{u.governorate}</td>
+                    <td className="py-3.5 px-4 text-muted">{u.joined}</td>
                   </tr>
                 ))}
               </tbody>
@@ -605,22 +605,22 @@ export default function AdminDashboardPage() {
 
           <div className="space-y-2.5">
             {auditLogs.map(log => (
-              <div key={log.id} className="p-4 rounded-lg bg-surface-elevated border border-sand text-xs space-y-1.5">
+              <div key={log.id} className="p-4 rounded-lg bg-surface-elevated border border-sand text-xs space-y-1.5 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-warning font-mono text-[11px] bg-warning-bg px-2 py-0.5 rounded border border-warning/30">
+                    <span className="font-bold text-amber-800 font-mono text-[11px] bg-amber-100/70 px-2 py-0.5 rounded border border-amber-300/60">
                       {log.action}
                     </span>
-                    <span className="text-brown-mid font-semibold">{log.entityName}</span>
-                    <span className="text-[10px] text-taupe uppercase">({log.entityType})</span>
+                    <span className="text-ink font-semibold">{log.entityName}</span>
+                    <span className="text-[10px] text-muted uppercase">({log.entityType})</span>
                   </div>
-                  <span className="text-taupe text-[11px]">{new Date(log.createdAt).toLocaleString()}</span>
+                  <span className="text-muted text-[11px]">{new Date(log.createdAt).toLocaleString()}</span>
                 </div>
 
                 <div className="text-muted flex items-center justify-between">
-                  <span>Actor: <strong className="text-brown-mid">{log.actorName}</strong></span>
+                  <span>Actor: <strong className="text-ink">{log.actorName}</strong></span>
                   {log.metadata && (
-                    <span className="font-mono text-[10px] text-taupe truncate max-w-md">
+                    <span className="font-mono text-[10px] text-muted truncate max-w-md">
                       {JSON.stringify(log.metadata)}
                     </span>
                   )}
@@ -633,23 +633,23 @@ export default function AdminDashboardPage() {
 
       {/* Admin Action Confirmation Modal (Requirement 6) */}
       {confirmModal.isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-cream backdrop-blur-sm animate-in fade-in">
-          <div className="bg-surface-elevated border border-sand rounded-xl max-w-lg w-full p-6 sm:p-7 shadow-sm space-y-5 text-ink">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/40 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-surface-elevated border border-sand rounded-xl max-w-lg w-full p-6 sm:p-7 shadow-xl space-y-5 text-ink">
             <div className="space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-warning bg-warning-bg px-2.5 py-0.5 rounded-full border border-warning/30">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300">
                 Administrative Confirmation
               </span>
-              <h3 className="text-xl font-semibold text-white">
+              <h3 className="text-xl font-bold text-ink">
                 Confirm {confirmModal.action?.toUpperCase()} Decision
               </h3>
-              <p className="text-xs text-brown-mid">
-                You are about to issue a formal administrative decision for <strong>{confirmModal.item?.name}</strong>.
+              <p className="text-xs text-muted">
+                You are about to issue a formal administrative decision for <strong className="text-ink">{confirmModal.item?.name}</strong>.
               </p>
             </div>
 
             {/* Internal Reviewer Note */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-brown-mid">
+              <label className="text-xs font-bold text-ink">
                 Internal Reviewer Note (Confidential to Admins):
               </label>
               <textarea
@@ -664,7 +664,7 @@ export default function AdminDashboardPage() {
             {/* User-facing Feedback (for startups) */}
             {confirmModal.type === 'startup' && (
               <div className="space-y-1">
-                <label className="text-xs font-bold text-brown-mid">
+                <label className="text-xs font-bold text-ink">
                   Feedback to Founder (User-facing):
                 </label>
                 <textarea
@@ -672,7 +672,7 @@ export default function AdminDashboardPage() {
                   value={confirmModal.founderFeedback}
                   onChange={(e) => setConfirmModal(prev => ({ ...prev, founderFeedback: e.target.value }))}
                   placeholder="Message visible to the founder on their dashboard..."
-                  className="w-full px-3.5 py-2 rounded-xl bg-surface border border-sand text-xs text-white focus:outline-none focus:ring-2 focus:ring-coral/30"
+                  className="w-full px-3.5 py-2 rounded-xl bg-surface border border-sand text-xs text-ink focus:outline-none focus:ring-2 focus:ring-coral/30"
                 />
               </div>
             )}
@@ -681,14 +681,14 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setConfirmModal({ isOpen: false, type: null, action: null, item: null, internalNote: '', founderFeedback: '' })}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-muted hover:text-white bg-surface"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-muted hover:text-ink bg-surface border border-sand/60 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleConfirmDecision}
-                className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-warning-bg hover:bg-warning-bg shadow-md transition-all cursor-pointer"
+                className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-coral hover:bg-coral-dark shadow-sm transition-all cursor-pointer"
               >
                 Confirm Decision & Record in Audit Log
               </button>
