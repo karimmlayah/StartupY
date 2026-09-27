@@ -85,6 +85,52 @@ For every pair evaluated, the engine returns:
 
 ---
 
+## 📹 Secure In-Platform Video Meetings (Bidaya Meeting & ZEGOCLOUD)
+
+Bidaya Tunisia provides **secure, private, in-app video meetings** between Tunisian founders and verified investors using the official **ZEGOCLOUD Web UIKit** (`@zegocloud/zego-uikit-prebuilt`).
+
+### 1. Security Architecture & Server-Side Token Generation
+- **Strict Server-Side Token Issuance:** The frontend client **never** receives or handles the `ZEGO_SERVER_SECRET` or `AppSign`.
+- **Backend Token Endpoint:** `POST /api/meetings/:meetingId/join-token`
+  - Validates meeting existence, participant roles, and `accepted` status.
+  - Generates the encrypted ZEGOCLOUD Kit Token server-side via AES-128-CBC.
+  - Returns strictly `{ appID, kitToken, roomId, userID, userName }`.
+- **Zero Frontend Secret Exposure:** No `VITE_ZEGO_SERVER_SECRET` is ever used.
+
+### 2. ZEGOCLOUD Account Setup & Credentials
+1. Create a free account on the [ZEGOCLOUD Admin Console](https://console.zegocloud.com/).
+2. Create a project under **Voice & Video Calling** (or Video Conference).
+3. In the project settings, retrieve your:
+   - **AppID** (numeric integer, e.g. `123456789`)
+   - **ServerSecret** (32-character hex string)
+4. Add these credentials to your local `.env` file:
+   ```env
+   ZEGO_APP_ID=123456789
+   ZEGO_SERVER_SECRET=your_32_character_server_secret
+   ```
+> [!WARNING]
+> **Security Warning:** Never commit `ZEGO_SERVER_SECRET` to GitHub or version control. `.env` is ignored by Git. Test tokens are for development only; production deployments require authenticated session verification and server-side token renewal.
+
+### 3. In-App Meeting Features (`/meeting/:meetingId`)
+- **One-to-One Mode:** Engineered specifically for confidential founder-investor diligence sessions.
+- **Controls Included:** Camera toggle, microphone toggle, speaker settings, in-room chat, screen sharing, leave meeting button, and participant names.
+- **Branded Bidaya Tunisia Interface:** Custom top header with privacy status and meeting metadata.
+- **Post-Meeting Outcome Capture:** Upon leaving a call, users are prompted to record the session outcome (`Interested`, `Follow-up Needed`, `Declined`, `No Show`).
+
+### 4. Meeting Center & Privacy Safeguards
+- Reusable `MeetingCenter` integrated into both **Startup Dashboard** and **Investor Dashboard**:
+  - Upcoming scheduled sessions
+  - Pending meeting requests (with Accept, Decline, and Propose Alternative Time actions)
+  - Past completed sessions with recorded outcomes
+  - **Demo Instant Join Override:** Allows instant video room entry for test walkthroughs without waiting for the scheduled calendar clock.
+- **Strict Privacy & Consent Standards:**
+  - *“This meeting is private and accessible only to the accepted startup and investor.”*
+  - *“Recording and transcription are disabled by default.”*
+  - *“Any recording or transcription requires explicit consent from all participants.”*
+  - No automated recording is implemented; real financial or personal documents are never exposed in demo rooms.
+
+---
+
 ## 🧠 Real, Secure Tunisia RAG Assistant
 
 StartupBridge AI features an intelligent, server-side RAG engine grounded in local Tunisian ecosystem knowledge:

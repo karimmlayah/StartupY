@@ -30,9 +30,11 @@ import {
   ShieldCheck,
   AlertTriangle,
   Lightbulb,
-  ArrowRight
+  ArrowRight,
+  Video
 } from 'lucide-react';
 import InterestSuccessModal from '../components/InterestSuccessModal';
+import MeetingRequestModal from '../components/MeetingRequestModal';
 import { AI_DISCLAIMER } from '../data/aiResponses';
 import { calculateSmartMatch } from '../utils/matchEngine';
 import { INITIAL_INVESTORS } from '../data/mockInvestors';
@@ -45,6 +47,7 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
   const [isSaved, setIsSaved] = useState(false);
   const [hasExpressedInterest, setHasExpressedInterest] = useState(false);
   const [showInterestModal, setShowInterestModal] = useState(false);
+  const [showMeetingModal, setShowMeetingModal] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   
   // Active investor to evaluate match against
@@ -246,6 +249,15 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
             >
               <HeartHandshake className="w-4 h-4" />
               <span>{hasExpressedInterest ? 'Interest Sent (Send Again)' : 'I’m Interested'}</span>
+            </button>
+
+            {/* Request a Bidaya Meeting (Requirement 4) */}
+            <button
+              onClick={() => setShowMeetingModal(true)}
+              className="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl font-bold text-xs sm:text-sm text-slate-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-all cursor-pointer shadow-sm hover:shadow"
+            >
+              <Video className="w-4 h-4 text-blue-600" />
+              <span>Request a Bidaya Meeting</span>
             </button>
 
             <button
@@ -575,6 +587,17 @@ export default function StartupDetailsPage({ onOpenAiGuide }) {
         isOpen={showInterestModal}
         onClose={() => setShowInterestModal(false)}
         startupName={startup.name}
+      />
+
+      {/* Meeting Request Scheduling Modal (Requirement 4) */}
+      <MeetingRequestModal
+        isOpen={showMeetingModal}
+        onClose={() => setShowMeetingModal(false)}
+        startup={startup}
+        investor={activeInvestor}
+        onMeetingCreated={() => {
+          // optionally notify
+        }}
       />
 
     </div>

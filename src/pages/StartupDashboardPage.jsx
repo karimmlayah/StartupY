@@ -24,6 +24,7 @@ import {
 import { getCurrentStartup } from '../utils/storage';
 import { INITIAL_INVESTORS, MOCK_INTERESTED_REQUESTS } from '../data/mockInvestors';
 import { calculateSmartMatch } from '../utils/matchEngine';
+import MeetingCenter from '../components/MeetingCenter';
 
 export default function StartupDashboardPage({ onOpenAiGuide }) {
   const [profile, setProfile] = useState(() => getCurrentStartup());
@@ -286,6 +287,13 @@ export default function StartupDashboardPage({ onOpenAiGuide }) {
           </div>
         </div>
       </div>
+
+      {/* Bidaya Meeting Center (Requirements 4, 6, 7, 8) */}
+      <MeetingCenter
+        role="startup"
+        currentId={profile?.id || 'agrismart-tunisia'}
+        onOpenAiGuide={onOpenAiGuide}
+      />
 
       {/* Two Column Grid: Inbound Investor Requests + Suggested Investor Matches Sorted by Calculated Score */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

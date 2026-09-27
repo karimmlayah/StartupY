@@ -12,6 +12,7 @@ import StartupDetailsPage from './pages/StartupDetailsPage';
 import StartupDashboardPage from './pages/StartupDashboardPage';
 import InvestorDashboardPage from './pages/InvestorDashboardPage';
 import OfficialResourcesPage from './pages/OfficialResourcesPage';
+import MeetingRoomPage from './pages/MeetingRoomPage';
 
 // Helper to scroll to top on route navigation
 function ScrollToTop() {
@@ -57,6 +58,7 @@ export default function App() {
             <Route path="/startup-dashboard" element={<StartupDashboardPage onOpenAiGuide={handleOpenAiGuide} />} />
             <Route path="/dashboard/investor" element={<InvestorDashboardPage onOpenAiGuide={handleOpenAiGuide} />} />
             <Route path="/investor-dashboard" element={<InvestorDashboardPage onOpenAiGuide={handleOpenAiGuide} />} />
+            <Route path="/meeting/:meetingId" element={<MeetingRoomPage />} />
             {/* Fallback */}
             <Route path="*" element={<LandingPage onOpenAiGuide={handleOpenAiGuide} />} />
           </Routes>
